@@ -8,7 +8,6 @@ export const TransactionContext = React.createContext()
 
 export const TransactionsProvider = ({ children }) => {
   
-  const metaMaskHref = 'https://chromewebstore.google.com/detail/nkbihfbeogaeaoehlefnkodbefgpgknn?utm_source=item-share-cb'
   const [currentAccount, setCurrentAccount] = useState('')
   const [formData, setFormData] = useState({ addressTo: '', value: '' })
   const [isLoading, setIsLoading] = useState(false)
@@ -298,7 +297,7 @@ function findPoolIdFromTokens() {
       getMyTransactionCount,
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
-      findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress
+      findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
     }}>
       {children}
     </TransactionContext.Provider>

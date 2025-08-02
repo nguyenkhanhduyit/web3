@@ -20,9 +20,6 @@ const ModalSwap = ({ theme, onClose }) => {
 
   const [showModalTransaction, setShowModalTransaction] = useState(false);
 
-  const [tokenIn, setTokenIn] = useState('');
-  const [tokenOut, setTokenOut] = useState('')
-
   const [amountFrom, setAmountFrom] = useState(0);
   const [amountTo, setAmountTo] = useState(0);
 
@@ -35,40 +32,25 @@ const ModalSwap = ({ theme, onClose }) => {
 
  const { 
          getTokenBalance,currentAccount,tokenBalance,
-         findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress
+         findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
      } = useContext(TransactionContext)
 
 
 useEffect(() => {
-  if (tokenInAddress.length>0 && currentAccount.length>0) 
+  if (tokenInAddress && currentAccount && (tokenInAddress !== tokenOutAddress)) 
       getTokenBalance()
-}, [currentAccount,tokenInAddress])
-  
-const assignValueToTokenInAndTokenOut = async() => {
-  if(tokenInAddress.length > 0 ){
-      const token = TOKEN_LIST.filter(token => { if(token.tokenAddress == tokenInAddress) return token})
-      setTokenIn(token[0].symbol)
-  }else{
-    setTokenIn('')
-      getTokenBalance()
+  else if(tokenInAddress && currentAccount && (tokenInAddress === tokenOutAddress)){
+    setTokenInAddress('')
+    setTokenOutAddress('')
+    setTokenBalance('0')
   }
-  if(tokenOutAddress.length>0){
-       const token = TOKEN_LIST.filter(token => { if(token.tokenAddress == tokenOutAddress) return token})
-      setTokenOut(token[0].symbol)
-  }else{
-    setTokenOut('')
-      getTokenBalance()
-  }
-}
-useEffect(() => {
-  assignValueToTokenInAndTokenOut()
-}, [tokenInAddress,tokenOutAddress])
+}, [currentAccount,tokenInAddress,tokenOutAddress,tokenBalance])
+
 
 const handleSwapTokenIndex = async() => {
   const temp = tokenInAddress;
   setTokenInAddress(tokenOutAddress);
   setTokenOutAddress(temp);
-  assignValueToTokenInAndTokenOut()
 };
 
 useEffect(() => {
@@ -162,7 +144,11 @@ useEffect(() => {
 {/*phần content Modal chứa input*/}
 <div className="flex flex-col w-full items-center">
   <div className="flex flex-col w-full sticky top-15 z-20 my-5">
-    <p className='text-white font-bold text-sm'>{tokenIn} available : {tokenBalance} </p>
+    <p className='text-white font-bold text-sm'>
+      {
+          TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.symbol
+      } available : {tokenBalance} 
+    </p>
         <div className="flex relative bg-[#2d2f36] border-[2px] border-gray-600 w-full h-auto p-4 rounded-2xl flex-row justify-between items-center shadow-md">
           <input
             name="amountIn"

@@ -5,60 +5,61 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useEffect,useState,useContext } from 'react';
 
-export default function SelectToken({values,isTokenOut,isSwapIndex }) {
-
-  const [tokenIn, setTokenIn] = useState('')
-  const [tokenOut,setTokenOut] = useState('')
+export default function SelectToken({values,isTokenOut}) {
 
   const { 
          currentAccount,tokenInAddress,tokenOutAddress,setTokenInAddress,setTokenOutAddress
       } = useContext(TransactionContext)
 
+  const[tokenIn,setTokenIn] = useState('')
+  const[tokenOut,setTokenOut] = useState('')
+
+useEffect(
+  () =>{
+    setTokenIn(values.find((token)=> token.tokenAddress === tokenInAddress)?.symbol)
+    setTokenOut(values.find((token)=> token.tokenAddress === tokenOutAddress)?.symbol)
+},[tokenInAddress,tokenOutAddress])
+
   const handleChange = async(e) => {
-    if(isTokenOut === false){
-        const inSymbol = e.target.value
-     if(inSymbol.length > 0 && (inSymbol !== tokenOut)){
-            const token = values.filter((token)=>{if(token.symbol === e.target.value) return token})
-            setTokenInAddress(token[0].tokenAddress)
-            setTokenIn(inSymbol)
-       }else {
-            setTokenIn('')
-            setTokenInAddress('')
-      }
+    if(isTokenOut){//token out
+      if(e.target.value){
+          const token = values.filter((token)=>{if(token.symbol === e.target.value) return token})
+          if(token[0].tokenAddress === tokenInAddress){
+              setTokenOutAddress("")
+              setTokenOut("")
+          }
+          else{
+             setTokenOutAddress(token[0].tokenAddress)
+             setTokenOut(token[0].symbol)
+          }
+        }
     }
-    if(isTokenOut){
-      const outSymbol = e.target.value
-       if(outSymbol.length > 0 && (outSymbol !== tokenIn)){
-            const token = values.filter((token)=>{if(token.symbol === e.target.value) return token})
-            setTokenOutAddress(token[0].tokenAddress)
-            setTokenOut(outSymbol)
-       }else {
-        setTokenOut('')
-        setTokenOutAddress('')
-      }
+    if(!isTokenOut){//token in
+       if(e.target.value){
+          const token = values.filter((token)=>{if(token.symbol === e.target.value) return token})
+          if(token[0].tokenAddress === tokenOutAddress)
+             {
+                setTokenInAddress("")
+                setTokenIn("")
+          }
+          else
+            {  
+              setTokenInAddress(token[0].tokenAddress) 
+              setTokenIn(token[0].symbol)
+            }
     }
-  };
-
-useEffect(() => {
-  if(tokenInAddress.length > 0 && (tokenInAddress !== tokenOutAddress)){
-      const token = values.filter(token => { if(token.tokenAddress == tokenInAddress) return token})
-      setTokenIn(token[0].symbol)
   }
-  if(tokenOutAddress.length>0 && (tokenOutAddress !== tokenInAddress)){
-       const token = values.filter(token => { if(token.tokenAddress == tokenOutAddress) return token})
-      setTokenOut(token[0].symbol)
-  }
-}, [tokenInAddress,tokenOutAddress])
-
+}
 
   return (
     <div>
       <FormControl sx={{ m: 1, minWidth: 80 }} className='flex-1'>
-        <InputLabel id={`${isTokenOut ? 'to-token-input-label':'from-token-input-label'}`} style={{color:'white'}}>{`${isTokenOut ? 'To':'From'}`}</InputLabel>
+        <InputLabel id={`${isTokenOut ? 'to-token-input-label':'from-token-input-label'}`} style={{color:'white'}}>
+        {`${isTokenOut ? 'To':'From'}`}</InputLabel>
         <Select
           labelId={`${isTokenOut ? 'to-token-label':'from-token-label'}`}
           id={`${isTokenOut ? 'to-token':'from-token'}`}
-          value={`${isTokenOut ? tokenOut : tokenIn ? tokenIn:'' }`}
+          value={`${isTokenOut ? tokenOut : tokenIn ? tokenIn : '' }`}
           autoWidth
           label={`${isTokenOut ? 'To':'From'}`}
           onChange={handleChange}
@@ -79,8 +80,10 @@ useEffect(() => {
             }}
         >
           {
-            values.map((token,index) => {
-                return (
+            values.filter((token) => 
+                token.tokenAddress !== (isTokenOut ? tokenInAddress : tokenOutAddress)
+            ).map((token,index)=>{
+              return (
                 <MenuItem className="text-white" value={token.symbol}>
                   {`${token.symbol} (${token.name})`}
                 </MenuItem>
