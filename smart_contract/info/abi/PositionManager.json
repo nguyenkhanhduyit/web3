@@ -1,0 +1,40 @@
+{
+    "abi": [
+  {
+    "inputs": [
+      {
+        "components": [
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+          { "internalType": "bytes", "name": "hookData", "type": "bytes" },
+          {
+            "components": [
+              { "internalType": "address", "name": "currency0", "type": "address" },
+              { "internalType": "address", "name": "currency1", "type": "address" },
+              { "internalType": "int24", "name": "tickLower", "type": "int24" },
+              { "internalType": "int24", "name": "tickUpper", "type": "int24" },
+              { "internalType": "uint24", "name": "tierId", "type": "uint24" },
+              { "internalType": "uint128", "name": "liquidityDelta", "type": "uint128" },
+              { "internalType": "bytes", "name": "data", "type": "bytes" }
+            ],
+            "internalType": "struct IPoolManager.ModifyPositionParams[]",
+            "name": "params",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct IMulticall.MintParams",
+        "name": "mintParams",
+        "type": "tuple"
+      }
+    ],
+    "name": "mint",
+    "outputs": [
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]
+
+
+}

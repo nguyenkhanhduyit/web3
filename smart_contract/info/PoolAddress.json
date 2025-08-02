@@ -1,0 +1,26 @@
+{
+  "Bitcoin-Ethereum": {
+    "poolId": "0xd67efa0d69f46c2284781008a2988b74602116aba3f5ec928826eb1994ff8d81",
+    "token0": "0xcabFa05AFC68981fa00a6E62debF133d4e3eb4A1",
+    "token1": "0xfF8df2BFc40F8b7f769D530d25452E2CA895970b",
+    "fee": 3000,
+    "tickSpacing": 60,
+    "createdAt": "2025-07-26T22:54:21.732+07:00"
+  },
+  "Bitcoin-Tether": {
+    "poolId": "0xadba5c4e136dc3899803a5bbd00ef610b60e296dcb268ecf1feeb41cdfd909d6",
+    "token0": "0x34A25887D8842662d11FB132C26790A4F166AAE4",
+    "token1": "0xfF8df2BFc40F8b7f769D530d25452E2CA895970b",
+    "fee": 3000,
+    "tickSpacing": 60,
+    "createdAt": "2025-07-26T22:54:30.612+07:00"
+  },
+  "Ethereum-Tether": {
+    "poolId": "0xddc6695d27a936b2fb6f90f0f4a5bbf14aa7e8b3345cbdc03b0528f8f6e14b4c",
+    "token0": "0x34A25887D8842662d11FB132C26790A4F166AAE4",
+    "token1": "0xcabFa05AFC68981fa00a6E62debF133d4e3eb4A1",
+    "fee": 3000,
+    "tickSpacing": 60,
+    "createdAt": "2025-07-26T22:54:43.494+07:00"
+  }
+}
