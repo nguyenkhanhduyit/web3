@@ -8,6 +8,7 @@ import SelectToken from './SelectToken';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
+import { ethers } from 'ethers'
 
 import TOKENS  from '../../utils/swap/info/TokenAddress.json';
 import AmountOut from './AmountOut';
@@ -32,8 +33,29 @@ const ModalSwap = ({ theme, onClose }) => {
 
  const { 
          getTokenBalance,currentAccount,tokenBalance,
-         findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
+         findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance,
+         estimateAmountOutViaQuoter
      } = useContext(TransactionContext)
+
+useEffect(() => {
+  const fetchEstimate = async () => {
+    try {
+      if (!amountFrom || isNaN(amountFrom)) {
+        setAmountTo("0");
+        return;
+      }
+
+      const decimals = TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.decimals
+      const parsedAmount = ethers.utils.parseUnits(amountFrom.toString(), decimals);
+      const estimate = await estimateAmountOutViaQuoter(parsedAmount);
+      setAmountTo(estimate);
+    } catch (err) {
+      console.error("Error estimating amountOut:", err);
+      setAmountTo("0");
+    }
+  };
+  fetchEstimate();
+}, [amountFrom, tokenInAddress, tokenOutAddress]);
 
 
 useEffect(() => {

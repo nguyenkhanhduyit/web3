@@ -4,6 +4,10 @@ import { contractABI, contractAddress } from '../utils/Constants'
 import axios from 'axios'
 import { keccak256, defaultAbiCoder, getAddress } from "ethers/lib/utils";
 import PoolAddress from '../../client/utils/swap/info/PoolAddress.json'
+import TokenAddress from '../../client/utils/swap/info/TokenAddress.json'
+import { UNISWAP_V4_ADDRESSES } from "../../client/utils/swap/info/UniswapV4Constants"
+import  QUOTER_ABI  from "../../client/utils/swap/info/QuoterABI.json"
+
 export const TransactionContext = React.createContext()
 
 export const TransactionsProvider = ({ children }) => {
@@ -254,7 +258,7 @@ function computePoolId(token0, token1, fee, tickSpacing, hooks) {
 
 function findPoolIdFromTokens() {
   for (const [name, pool] of Object.entries(PoolAddress)) {
-      const tokenA = getAddress(tokenInAddress);
+    const tokenA = getAddress(tokenInAddress);
     const tokenB = getAddress(tokenOutAddress);
     const token0 = getAddress(pool.token0);
     const token1 = getAddress(pool.token1);
@@ -282,6 +286,84 @@ function findPoolIdFromTokens() {
   return null;
 }
 
+
+
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+const estimateAmountOutViaQuoter = async (amountInBigNumber) => {
+  try {
+    if (
+      !tokenInAddress ||
+      !tokenOutAddress ||
+      tokenInAddress.toLowerCase() === tokenOutAddress.toLowerCase()
+    ) {
+      return "0";
+    }
+
+    const signer = await getSigner();
+    const tokenIn = getAddress(tokenInAddress);
+    const tokenOut = getAddress(tokenOutAddress);
+
+    for (const [, pool] of Object.entries(PoolAddress)) {
+      const token0 = getAddress(pool.token0);
+      const token1 = getAddress(pool.token1);
+      const isMatch =
+        (tokenIn === token0 && tokenOut === token1) ||
+        (tokenIn === token1 && tokenOut === token0);
+
+      if (!isMatch) continue;
+
+      const quoter = new ethers.Contract(
+        UNISWAP_V4_ADDRESSES.Quoter,
+        QUOTER_ABI.abi,
+        signer
+      );
+
+      const zeroForOne = tokenIn.toLowerCase() < tokenOut.toLowerCase();
+      const fee = pool.fee;
+      const tickSpacing = pool.tickSpacing;
+
+      // Đây là phần params đúng format
+      const params = {
+        poolKey: {
+          currency0: token0,
+          currency1: token1,
+          fee: fee,
+          tickSpacing: tickSpacing,
+          hooks: ZERO_ADDRESS
+        },
+        zeroForOne: zeroForOne,
+        exactAmount: amountInBigNumber,
+        hookData: "0x"
+      };
+
+      console.log("quoteExactInputSingle params", params);
+
+      const result = await quoter.quoteExactInputSingle(params);
+
+      const amountOut = result.amountOut || result[0]; // fallback cho các provider
+      let decimalsOut = 18;
+
+      for (const tokenName in TokenAddress) {
+        const info = TokenAddress[tokenName];
+        if (getAddress(info.tokenAddress) === tokenOut) {
+          decimalsOut = info.decimals;
+          break;
+        }
+      }
+
+      return formatUnits(amountOut, decimalsOut);
+    }
+
+    return "0";
+  } catch (err) {
+    console.error("Quoter estimate failed:", err);
+    return "0";
+  }
+};
+
+
+
   return (
     <TransactionContext.Provider value={{
       handleLogin,
@@ -298,6 +380,7 @@ function findPoolIdFromTokens() {
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
       findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
+      ,estimateAmountOutViaQuoter
     }}>
       {children}
     </TransactionContext.Provider>
