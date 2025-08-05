@@ -665,52 +665,6 @@
         "SafeCast"
       ]
     },
-    "D:\\Coding\\web3.0\\smart_contract\\contracts\\V4LiquidityManager.sol": {
-      "lastModificationDate": 1754363646767,
-      "contentHash": "dbdc813fa21cda48d902d752d6771538",
-      "sourceName": "contracts/V4LiquidityManager.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "../interfaces/IPoolManager.sol",
-        "../interfaces/callback/IUnlockCallback.sol",
-        "../types/Currency.sol",
-        "../types/PoolId.sol",
-        "../types/PoolKey.sol",
-        "../types/PoolOperation.sol",
-        "../types/BalanceDelta.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "V4LiquidityManager"
-      ]
-    },
     "D:\\Coding\\web3.0\\smart_contract\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
       "lastModificationDate": 1754066141179,
       "contentHash": "9261adf6457863de3e9892f51317ec89",
@@ -1021,45 +975,6 @@
         "ReentrancyGuard"
       ]
     },
-    "D:\\Coding\\web3.0\\smart_contract\\contracts\\SimpleLiquidity.sol": {
-      "lastModificationDate": 1754134486252,
-      "contentHash": "4e41d1ca463ce3ab7ea168d019a752c8",
-      "sourceName": "contracts/SimpleLiquidity.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
-      ],
-      "versionPragmas": [
-        ">=0.4.16 <0.9.0"
-      ],
-      "artifacts": [
-        "SimpleLiquidity"
-      ]
-    },
     "D:\\Coding\\web3.0\\smart_contract\\contracts\\Token.sol": {
       "lastModificationDate": 1754327486877,
       "contentHash": "eb3e50e5bd62c3de8b46c4e73953707f",
@@ -1135,6 +1050,45 @@
       ],
       "artifacts": [
         "IUnlockCallback"
+      ]
+    },
+    "D:\\Coding\\web3.0\\smart_contract\\contracts\\SimpleDEX.sol": {
+      "lastModificationDate": 1754396657333,
+      "contentHash": "3d308206f800d4fcdc1fdcacb2d7883d",
+      "sourceName": "contracts/SimpleDEX.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        ">=0.4.16 <0.9.0"
+      ],
+      "artifacts": [
+        "SimpleDEX"
       ]
     }
   }

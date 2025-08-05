@@ -4,6 +4,7 @@
 import type * as approveTokenSol from "./ApproveToken.sol";
 export type { approveTokenSol };
 export type { CreatePool } from "./CreatePool";
+export type { SimpleDEX } from "./SimpleDEX";
 export type { SimpleLiquidity } from "./SimpleLiquidity";
 export type { Token } from "./Token";
 export type { Transactions } from "./Transactions";

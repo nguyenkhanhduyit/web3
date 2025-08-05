@@ -57,6 +57,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CreatePool__factory>;
     getContractFactory(
+      name: "SimpleDEX",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SimpleDEX__factory>;
+    getContractFactory(
       name: "SimpleLiquidity",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SimpleLiquidity__factory>;
@@ -180,6 +184,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.CreatePool>;
+    getContractAt(
+      name: "SimpleDEX",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SimpleDEX>;
     getContractAt(
       name: "SimpleLiquidity",
       address: string,

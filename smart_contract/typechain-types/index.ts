@@ -32,6 +32,8 @@ export type { TokenApprover } from "./contracts/ApproveToken.sol/TokenApprover";
 export { TokenApprover__factory } from "./factories/contracts/ApproveToken.sol/TokenApprover__factory";
 export type { CreatePool } from "./contracts/CreatePool";
 export { CreatePool__factory } from "./factories/contracts/CreatePool__factory";
+export type { SimpleDEX } from "./contracts/SimpleDEX";
+export { SimpleDEX__factory } from "./factories/contracts/SimpleDEX__factory";
 export type { SimpleLiquidity } from "./contracts/SimpleLiquidity";
 export { SimpleLiquidity__factory } from "./factories/contracts/SimpleLiquidity__factory";
 export type { Token } from "./contracts/Token";

@@ -4,26 +4,26 @@
     "symbol": "BTC",
     "initialSupply": "1000000",
     "decimals": 18,
-    "tokenAddress": "0xaC2981B2b533a441Ed01cE5E5760016298b92b16",
-    "blockNumber": 8915309,
-    "deployedAt": "2025-08-05T03:10:28.655Z"
+    "tokenAddress": "0x02f3451468d76B3A273a2503732d3A301079c8dD",
+    "blockNumber": 8918028,
+    "deployedAt": "2025-08-05T12:15:52.071Z"
   },
   "Ethereum": {
     "name": "Ethereum",
     "symbol": "ETH",
     "initialSupply": "1000000",
     "decimals": 18,
-    "tokenAddress": "0x82dB96446399bEB976255fB6AD56F3bE6E0Aa2A3",
-    "blockNumber": 8915310,
-    "deployedAt": "2025-08-05T03:10:40.273Z"
+    "tokenAddress": "0xf4aB31ccB64c21a66C1aF0B581AA172E3604a561",
+    "blockNumber": 8918029,
+    "deployedAt": "2025-08-05T12:16:02.123Z"
   },
   "Tether": {
     "name": "Tether",
     "symbol": "USDT",
     "initialSupply": "1000000",
     "decimals": 6,
-    "tokenAddress": "0x412059C5f0b46ab94c04Be97f0eA0ee60e86d216",
-    "blockNumber": 8915311,
-    "deployedAt": "2025-08-05T03:10:51.412Z"
+    "tokenAddress": "0x7550b831E1103B175bb5aB9B012A64BA7bE2B301",
+    "blockNumber": 8918030,
+    "deployedAt": "2025-08-05T12:16:16.332Z"
   }
 }

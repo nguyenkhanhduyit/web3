@@ -3,6 +3,7 @@
 /* eslint-disable */
 export * as approveTokenSol from "./ApproveToken.sol";
 export { CreatePool__factory } from "./CreatePool__factory";
+export { SimpleDEX__factory } from "./SimpleDEX__factory";
 export { SimpleLiquidity__factory } from "./SimpleLiquidity__factory";
 export { Token__factory } from "./Token__factory";
 export { Transactions__factory } from "./Transactions__factory";
