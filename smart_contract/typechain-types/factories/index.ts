@@ -3,6 +3,3 @@
 /* eslint-disable */
 export * as openzeppelin from "./@openzeppelin";
 export * as contracts from "./contracts";
-export * as interfaces from "./interfaces";
-export * as libraries from "./libraries";
-export * as types from "./types";

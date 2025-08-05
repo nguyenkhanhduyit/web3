@@ -41,93 +41,29 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "ReentrancyGuard",
+      name: "Faucet",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ReentrancyGuard__factory>;
+    ): Promise<Contracts.Faucet__factory>;
     getContractFactory(
-      name: "IERC20",
+      name: "IERC20Extended",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC20__factory>;
+    ): Promise<Contracts.IERC20Extended__factory>;
     getContractFactory(
-      name: "TokenApprover",
+      name: "LiquidityMining",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TokenApprover__factory>;
+    ): Promise<Contracts.LiquidityMining__factory>;
     getContractFactory(
-      name: "CreatePool",
+      name: "PriceOracle",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CreatePool__factory>;
+    ): Promise<Contracts.PriceOracle__factory>;
     getContractFactory(
       name: "SimpleDEX",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SimpleDEX__factory>;
     getContractFactory(
-      name: "SimpleLiquidity",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SimpleLiquidity__factory>;
-    getContractFactory(
       name: "Token",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Token__factory>;
-    getContractFactory(
-      name: "Transactions",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Transactions__factory>;
-    getContractFactory(
-      name: "V4LiquidityManager",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.V4LiquidityManager__factory>;
-    getContractFactory(
-      name: "IUnlockCallback",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IUnlockCallback__factory>;
-    getContractFactory(
-      name: "IERC20Minimal",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC20Minimal__factory>;
-    getContractFactory(
-      name: "IERC6909Claims",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC6909Claims__factory>;
-    getContractFactory(
-      name: "IExtsload",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IExtsload__factory>;
-    getContractFactory(
-      name: "IExttload",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IExttload__factory>;
-    getContractFactory(
-      name: "IHooks",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IHooks__factory>;
-    getContractFactory(
-      name: "IPoolManager",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IPoolManager__factory>;
-    getContractFactory(
-      name: "IProtocolFees",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IProtocolFees__factory>;
-    getContractFactory(
-      name: "CustomRevert",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CustomRevert__factory>;
-    getContractFactory(
-      name: "SafeCast",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SafeCast__factory>;
-    getContractFactory(
-      name: "BalanceDeltaLibrary",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.BalanceDeltaLibrary__factory>;
-    getContractFactory(
-      name: "BeforeSwapDeltaLibrary",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.BeforeSwapDeltaLibrary__factory>;
-    getContractFactory(
-      name: "CurrencyLibrary",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CurrencyLibrary__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -165,115 +101,35 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "ReentrancyGuard",
+      name: "Faucet",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ReentrancyGuard>;
+    ): Promise<Contracts.Faucet>;
     getContractAt(
-      name: "IERC20",
+      name: "IERC20Extended",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IERC20>;
+    ): Promise<Contracts.IERC20Extended>;
     getContractAt(
-      name: "TokenApprover",
+      name: "LiquidityMining",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.TokenApprover>;
+    ): Promise<Contracts.LiquidityMining>;
     getContractAt(
-      name: "CreatePool",
+      name: "PriceOracle",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.CreatePool>;
+    ): Promise<Contracts.PriceOracle>;
     getContractAt(
       name: "SimpleDEX",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SimpleDEX>;
     getContractAt(
-      name: "SimpleLiquidity",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SimpleLiquidity>;
-    getContractAt(
       name: "Token",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Token>;
-    getContractAt(
-      name: "Transactions",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Transactions>;
-    getContractAt(
-      name: "V4LiquidityManager",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.V4LiquidityManager>;
-    getContractAt(
-      name: "IUnlockCallback",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IUnlockCallback>;
-    getContractAt(
-      name: "IERC20Minimal",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC20Minimal>;
-    getContractAt(
-      name: "IERC6909Claims",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC6909Claims>;
-    getContractAt(
-      name: "IExtsload",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IExtsload>;
-    getContractAt(
-      name: "IExttload",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IExttload>;
-    getContractAt(
-      name: "IHooks",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IHooks>;
-    getContractAt(
-      name: "IPoolManager",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IPoolManager>;
-    getContractAt(
-      name: "IProtocolFees",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IProtocolFees>;
-    getContractAt(
-      name: "CustomRevert",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CustomRevert>;
-    getContractAt(
-      name: "SafeCast",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SafeCast>;
-    getContractAt(
-      name: "BalanceDeltaLibrary",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.BalanceDeltaLibrary>;
-    getContractAt(
-      name: "BeforeSwapDeltaLibrary",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.BeforeSwapDeltaLibrary>;
-    getContractAt(
-      name: "CurrencyLibrary",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CurrencyLibrary>;
 
     // default types
     getContractFactory(

@@ -1,10 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "D:\\Coding\\web3.0\\smart_contract\\contracts\\ApproveToken.sol": {
-      "lastModificationDate": 1754134486251,
-      "contentHash": "5433451ab9bab598fc6858a4a22f704b",
-      "sourceName": "contracts/ApproveToken.sol",
+    "D:\\Coding\\web3.0\\smart_contract\\contracts\\LiquidityMining.sol": {
+      "lastModificationDate": 1754397856198,
+      "contentHash": "2446f797411948f9ab0afaac7aca4313",
+      "sourceName": "contracts/LiquidityMining.sol",
       "solcConfig": {
         "version": "0.8.28",
         "settings": {
@@ -30,639 +30,14 @@
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
       "versionPragmas": [
         ">=0.4.16 <0.9.0"
       ],
       "artifacts": [
-        "IERC20",
-        "TokenApprover"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\contracts\\CreatePool.sol": {
-      "lastModificationDate": 1754134486251,
-      "contentHash": "f52e5df1d34d1b158ea8283654630d9b",
-      "sourceName": "contracts/CreatePool.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../interfaces/IPoolManager.sol"
-      ],
-      "versionPragmas": [
-        ">=0.8.0"
-      ],
-      "artifacts": [
-        "CreatePool"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\interfaces\\IPoolManager.sol": {
-      "lastModificationDate": 1754134486258,
-      "contentHash": "292bf74e744d6bc4d97a617265c9eca3",
-      "sourceName": "interfaces/IPoolManager.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../types/Currency.sol",
-        "../types/PoolKey.sol",
-        "./IHooks.sol",
-        "./external/IERC6909Claims.sol",
-        "./IProtocolFees.sol",
-        "../types/BalanceDelta.sol",
-        "../types/PoolId.sol",
-        "./IExtsload.sol",
-        "./IExttload.sol",
-        "../types/PoolOperation.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.24"
-      ],
-      "artifacts": [
-        "IPoolManager"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\types\\Currency.sol": {
-      "lastModificationDate": 1754134486309,
-      "contentHash": "9bb6c46851f95f4325c1dc781ac5a659",
-      "sourceName": "types/Currency.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../interfaces/external/IERC20Minimal.sol",
-        "../libraries/CustomRevert.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "CurrencyLibrary"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\types\\PoolKey.sol": {
-      "lastModificationDate": 1754134486309,
-      "contentHash": "3bf757fd933dffc0cda5fbe0dc1da154",
-      "sourceName": "types/PoolKey.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./Currency.sol",
-        "../interfaces/IHooks.sol",
-        "./PoolId.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": []
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\types\\BalanceDelta.sol": {
-      "lastModificationDate": 1754134486308,
-      "contentHash": "96254ebdb66abd7ca139cd3b74062bdb",
-      "sourceName": "types/BalanceDelta.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../libraries/SafeCast.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "BalanceDeltaLibrary"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\types\\PoolId.sol": {
-      "lastModificationDate": 1754134486309,
-      "contentHash": "26d52d79b7459c497b95e6b51384e623",
-      "sourceName": "types/PoolId.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./PoolKey.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "PoolIdLibrary"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\types\\PoolOperation.sol": {
-      "lastModificationDate": 1754134486309,
-      "contentHash": "8679b66a21aaf0470b0a13448f4f24f9",
-      "sourceName": "types/PoolOperation.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../types/PoolKey.sol",
-        "../types/BalanceDelta.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.24"
-      ],
-      "artifacts": []
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\interfaces\\IProtocolFees.sol": {
-      "lastModificationDate": 1754134486259,
-      "contentHash": "1349423a3853dabdd54ce40f1014d025",
-      "sourceName": "interfaces/IProtocolFees.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../types/Currency.sol",
-        "../types/PoolId.sol",
-        "../types/PoolKey.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IProtocolFees"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\interfaces\\IHooks.sol": {
-      "lastModificationDate": 1754134486258,
-      "contentHash": "b8d3a45abd55ef6b4cce5afaf0ebae89",
-      "sourceName": "interfaces/IHooks.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../types/PoolKey.sol",
-        "../types/BalanceDelta.sol",
-        "../types/PoolOperation.sol",
-        "../types/BeforeSwapDelta.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IHooks"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\interfaces\\IExtsload.sol": {
-      "lastModificationDate": 1754134486257,
-      "contentHash": "dad22a5073b977f63e33127cc1562a08",
-      "sourceName": "interfaces/IExtsload.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IExtsload"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\interfaces\\IExttload.sol": {
-      "lastModificationDate": 1754134486258,
-      "contentHash": "fdfc5a0f6b760169ba5a3c0ab39ec02c",
-      "sourceName": "interfaces/IExttload.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.24"
-      ],
-      "artifacts": [
-        "IExttload"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\interfaces\\external\\IERC6909Claims.sol": {
-      "lastModificationDate": 1754134486260,
-      "contentHash": "82ffffbc1be764d799dc5da8d248b099",
-      "sourceName": "interfaces/external/IERC6909Claims.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC6909Claims"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\libraries\\CustomRevert.sol": {
-      "lastModificationDate": 1754134486262,
-      "contentHash": "6b31a4da0fe10bc7ae71550102720439",
-      "sourceName": "libraries/CustomRevert.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "CustomRevert"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\interfaces\\external\\IERC20Minimal.sol": {
-      "lastModificationDate": 1754134486260,
-      "contentHash": "3d9ed76bedbe53d44401fdac6239b7f0",
-      "sourceName": "interfaces/external/IERC20Minimal.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC20Minimal"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\types\\BeforeSwapDelta.sol": {
-      "lastModificationDate": 1754134486309,
-      "contentHash": "7f311d80e8bdb38684e8bd1fb3c4a383",
-      "sourceName": "types/BeforeSwapDelta.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "BeforeSwapDeltaLibrary"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\libraries\\SafeCast.sol": {
-      "lastModificationDate": 1754134486266,
-      "contentHash": "76979288525ef4916f29c4696b0f5ce5",
-      "sourceName": "libraries/SafeCast.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./CustomRevert.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeCast"
+        "LiquidityMining"
       ]
     },
     "D:\\Coding\\web3.0\\smart_contract\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
@@ -783,6 +158,43 @@
         "ERC20"
       ]
     },
+    "D:\\Coding\\web3.0\\smart_contract\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
+      "lastModificationDate": 1754066141314,
+      "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
     "D:\\Coding\\web3.0\\smart_contract\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
       "lastModificationDate": 1754066140987,
       "contentHash": "5041977bbe908de2e6ed0270447f79ad",
@@ -822,43 +234,6 @@
         "IERC721Errors"
       ]
     },
-    "D:\\Coding\\web3.0\\smart_contract\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1754066141314,
-      "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
-      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "Context"
-      ]
-    },
     "D:\\Coding\\web3.0\\smart_contract\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
       "lastModificationDate": 1754066140450,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
@@ -896,83 +271,6 @@
       ],
       "artifacts": [
         "Ownable"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\contracts\\Transactions.sol": {
-      "lastModificationDate": 1754134486252,
-      "contentHash": "314ccf372b7dd044f5b6cfe19e7ba0dc",
-      "sourceName": "contracts/Transactions.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
-      ],
-      "versionPragmas": [
-        ">=0.4.16 <0.9.0"
-      ],
-      "artifacts": [
-        "Transactions"
-      ]
-    },
-    "D:\\Coding\\web3.0\\smart_contract\\node_modules\\@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol": {
-      "lastModificationDate": 1754066141350,
-      "contentHash": "190613e556d509d9e9a0ea43dc5d891d",
-      "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "viaIR": true,
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "ReentrancyGuard"
       ]
     },
     "D:\\Coding\\web3.0\\smart_contract\\contracts\\Token.sol": {
@@ -1015,10 +313,10 @@
         "Token"
       ]
     },
-    "D:\\Coding\\web3.0\\smart_contract\\interfaces\\callback\\IUnlockCallback.sol": {
-      "lastModificationDate": 1754134486259,
-      "contentHash": "c8454050d0823d32a34d4dee07e21629",
-      "sourceName": "interfaces/callback/IUnlockCallback.sol",
+    "D:\\Coding\\web3.0\\smart_contract\\contracts\\SimpleDEX.sol": {
+      "lastModificationDate": 1754399876311,
+      "contentHash": "81d5ec4d5371e50d5174be8667bd8b91",
+      "sourceName": "contracts/SimpleDEX.sol",
       "solcConfig": {
         "version": "0.8.28",
         "settings": {
@@ -1044,18 +342,20 @@
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.19"
       ],
       "artifacts": [
-        "IUnlockCallback"
+        "SimpleDEX"
       ]
     },
-    "D:\\Coding\\web3.0\\smart_contract\\contracts\\SimpleDEX.sol": {
-      "lastModificationDate": 1754396657333,
-      "contentHash": "3d308206f800d4fcdc1fdcacb2d7883d",
-      "sourceName": "contracts/SimpleDEX.sol",
+    "D:\\Coding\\web3.0\\smart_contract\\contracts\\PriceOracle.sol": {
+      "lastModificationDate": 1754397856196,
+      "contentHash": "469bfeff78ecc0aecfea61db0a90eee1",
+      "sourceName": "contracts/PriceOracle.sol",
       "solcConfig": {
         "version": "0.8.28",
         "settings": {
@@ -1088,7 +388,48 @@
         ">=0.4.16 <0.9.0"
       ],
       "artifacts": [
-        "SimpleDEX"
+        "PriceOracle"
+      ]
+    },
+    "D:\\Coding\\web3.0\\smart_contract\\contracts\\Faucet.sol": {
+      "lastModificationDate": 1754399931650,
+      "contentHash": "8d5ada1644a7689203ff2cd018d4dfbc",
+      "sourceName": "contracts/Faucet.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "Faucet",
+        "IERC20Extended"
       ]
     }
   }

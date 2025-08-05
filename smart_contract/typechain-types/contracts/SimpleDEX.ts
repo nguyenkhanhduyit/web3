@@ -29,26 +29,41 @@ import type {
 
 export interface SimpleDEXInterface extends utils.Interface {
   functions: {
+    "FEE_DENOMINATOR()": FunctionFragment;
+    "SWAP_FEE()": FunctionFragment;
     "addLiquidity(address,address,uint256,uint256)": FunctionFragment;
     "getBalance(address,address,address)": FunctionFragment;
     "getLiquidity(address,address)": FunctionFragment;
+    "getPrice(address,address)": FunctionFragment;
     "getReserves(address,address)": FunctionFragment;
     "pools(address,address)": FunctionFragment;
     "removeLiquidity(address,address,uint256)": FunctionFragment;
     "swap(address,address,uint256)": FunctionFragment;
+    "swapExactTokensForTokens(address,address,uint256)": FunctionFragment;
+    "swapTokensForExactTokens(address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "FEE_DENOMINATOR"
+      | "SWAP_FEE"
       | "addLiquidity"
       | "getBalance"
       | "getLiquidity"
+      | "getPrice"
       | "getReserves"
       | "pools"
       | "removeLiquidity"
       | "swap"
+      | "swapExactTokensForTokens"
+      | "swapTokensForExactTokens"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "FEE_DENOMINATOR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "SWAP_FEE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addLiquidity",
     values: [
@@ -68,6 +83,10 @@ export interface SimpleDEXInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getLiquidity",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPrice",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -94,7 +113,28 @@ export interface SimpleDEXInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "swapExactTokensForTokens",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "swapTokensForExactTokens",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "FEE_DENOMINATOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "SWAP_FEE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addLiquidity",
     data: BytesLike
@@ -104,6 +144,7 @@ export interface SimpleDEXInterface extends utils.Interface {
     functionFragment: "getLiquidity",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getReserves",
     data: BytesLike
@@ -114,13 +155,23 @@ export interface SimpleDEXInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "swap", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "swapExactTokensForTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "swapTokensForExactTokens",
+    data: BytesLike
+  ): Result;
 
   events: {
     "LiquidityAdded(address,address,uint256,uint256,uint256,address)": EventFragment;
+    "LiquidityRemoved(address,address,uint256,uint256,uint256,address)": EventFragment;
     "Swap(address,address,uint256,uint256,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "LiquidityAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Swap"): EventFragment;
 }
 
@@ -138,6 +189,22 @@ export type LiquidityAddedEvent = TypedEvent<
 >;
 
 export type LiquidityAddedEventFilter = TypedEventFilter<LiquidityAddedEvent>;
+
+export interface LiquidityRemovedEventObject {
+  token0: string;
+  token1: string;
+  amount0: BigNumber;
+  amount1: BigNumber;
+  liquidity: BigNumber;
+  provider: string;
+}
+export type LiquidityRemovedEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber, string],
+  LiquidityRemovedEventObject
+>;
+
+export type LiquidityRemovedEventFilter =
+  TypedEventFilter<LiquidityRemovedEvent>;
 
 export interface SwapEventObject {
   tokenIn: string;
@@ -180,6 +247,10 @@ export interface SimpleDEX extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    FEE_DENOMINATOR(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    SWAP_FEE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     addLiquidity(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
@@ -196,6 +267,12 @@ export interface SimpleDEX extends BaseContract {
     ): Promise<[BigNumber]>;
 
     getLiquidity(
+      token0: PromiseOrValue<string>,
+      token1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getPrice(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -234,7 +311,25 @@ export interface SimpleDEX extends BaseContract {
       amountIn: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    swapExactTokensForTokens(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    swapTokensForExactTokens(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
+
+  FEE_DENOMINATOR(overrides?: CallOverrides): Promise<BigNumber>;
+
+  SWAP_FEE(overrides?: CallOverrides): Promise<BigNumber>;
 
   addLiquidity(
     token0: PromiseOrValue<string>,
@@ -252,6 +347,12 @@ export interface SimpleDEX extends BaseContract {
   ): Promise<BigNumber>;
 
   getLiquidity(
+    token0: PromiseOrValue<string>,
+    token1: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getPrice(
     token0: PromiseOrValue<string>,
     token1: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -291,7 +392,25 @@ export interface SimpleDEX extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  swapExactTokensForTokens(
+    tokenIn: PromiseOrValue<string>,
+    tokenOut: PromiseOrValue<string>,
+    amountIn: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  swapTokensForExactTokens(
+    tokenIn: PromiseOrValue<string>,
+    tokenOut: PromiseOrValue<string>,
+    amountOut: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
+    FEE_DENOMINATOR(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SWAP_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
     addLiquidity(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
@@ -308,6 +427,12 @@ export interface SimpleDEX extends BaseContract {
     ): Promise<BigNumber>;
 
     getLiquidity(
+      token0: PromiseOrValue<string>,
+      token1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPrice(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -348,6 +473,20 @@ export interface SimpleDEX extends BaseContract {
       amountIn: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    swapExactTokensForTokens(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    swapTokensForExactTokens(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -368,6 +507,23 @@ export interface SimpleDEX extends BaseContract {
       provider?: PromiseOrValue<string> | null
     ): LiquidityAddedEventFilter;
 
+    "LiquidityRemoved(address,address,uint256,uint256,uint256,address)"(
+      token0?: PromiseOrValue<string> | null,
+      token1?: PromiseOrValue<string> | null,
+      amount0?: null,
+      amount1?: null,
+      liquidity?: null,
+      provider?: PromiseOrValue<string> | null
+    ): LiquidityRemovedEventFilter;
+    LiquidityRemoved(
+      token0?: PromiseOrValue<string> | null,
+      token1?: PromiseOrValue<string> | null,
+      amount0?: null,
+      amount1?: null,
+      liquidity?: null,
+      provider?: PromiseOrValue<string> | null
+    ): LiquidityRemovedEventFilter;
+
     "Swap(address,address,uint256,uint256,address)"(
       tokenIn?: PromiseOrValue<string> | null,
       tokenOut?: PromiseOrValue<string> | null,
@@ -385,6 +541,10 @@ export interface SimpleDEX extends BaseContract {
   };
 
   estimateGas: {
+    FEE_DENOMINATOR(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SWAP_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
     addLiquidity(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
@@ -401,6 +561,12 @@ export interface SimpleDEX extends BaseContract {
     ): Promise<BigNumber>;
 
     getLiquidity(
+      token0: PromiseOrValue<string>,
+      token1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPrice(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -429,11 +595,29 @@ export interface SimpleDEX extends BaseContract {
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
       amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    swapExactTokensForTokens(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    swapTokensForExactTokens(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    FEE_DENOMINATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    SWAP_FEE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addLiquidity(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
@@ -450,6 +634,12 @@ export interface SimpleDEX extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getLiquidity(
+      token0: PromiseOrValue<string>,
+      token1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPrice(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -478,6 +668,20 @@ export interface SimpleDEX extends BaseContract {
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
       amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapExactTokensForTokens(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapTokensForExactTokens(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
