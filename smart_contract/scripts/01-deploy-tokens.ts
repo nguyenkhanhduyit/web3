@@ -13,20 +13,20 @@ async function main() {
     {
       name: "Bitcoin",
       symbol: "BTC",
-      decimals: 8,
-      totalSupply: "1000000000" // 1B BTC
+      decimals: 18,
+      totalSupply: "100000000" // 1.000.000.000
     },
     {
       name: "Ethereum", 
       symbol: "ETH",
       decimals: 18,
-      totalSupply: "1000000000" // 1B ETH
+      totalSupply: "100000000" // 1.000.000.000
     },
     {
       name: "Tether USD",
       symbol: "USDT", 
-      decimals: 6,
-      totalSupply: "1000000000" // 1B USDT
+      decimals: 18,
+      totalSupply: "100000000" // 1.000.000.000
     }
   ];
 

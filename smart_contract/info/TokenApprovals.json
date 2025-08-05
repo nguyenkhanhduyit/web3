@@ -1,23 +1,23 @@
 {
   "Bitcoin": {
     "status": "approved",
-    "amount": "100000000.0",
-    "transactionHash": "0xcb77067d18dfad7e3feb81148aae39cface172cb5ee69093d18adc6e1d5ca5d5",
-    "gasUsed": "45938",
-    "timestamp": "2025-08-05T16:34:04.129Z"
+    "amount": "10000000.0",
+    "transactionHash": "0x9b593b8aa085b0443baa16b9901345c7091f090464dfaa2419116b3339459640",
+    "gasUsed": "45986",
+    "timestamp": "2025-08-05T20:25:26.873Z"
   },
   "Ethereum": {
     "status": "approved",
-    "amount": "100000000.0",
-    "transactionHash": "0x4019e2f457968526bd59b9df10b5dcd5ccabe0fd9c23e82b29eacfe6353ad62d",
-    "gasUsed": "45974",
-    "timestamp": "2025-08-05T16:34:13.767Z"
+    "amount": "10000000.0",
+    "transactionHash": "0x8c181fca4e5ce07afd2269765e6fd71cd59d6b51510799fb79d0bdceed0eac9c",
+    "gasUsed": "45986",
+    "timestamp": "2025-08-05T20:25:39.562Z"
   },
   "Tether USD": {
     "status": "approved",
-    "amount": "100000000.0",
-    "transactionHash": "0x257c8d11f0c412cb4122a1c0073199012ea62c6e6e4528a628ca76bae9c26998",
-    "gasUsed": "45938",
-    "timestamp": "2025-08-05T16:34:27.679Z"
+    "amount": "10000000.0",
+    "transactionHash": "0x7f0144ab63e0cd0571e9ccd8335e00b9798352dfa9f09ca6eb97a156303e446c",
+    "gasUsed": "45986",
+    "timestamp": "2025-08-05T20:25:50.666Z"
   }
 }

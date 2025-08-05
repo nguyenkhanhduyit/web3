@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-08-05T19:23:03.165Z",
+  "testName": "Kiểm tra trạng thái ban đầu",
+  "status": "success",
+  "data": {
+    "reserves": {
+      "reserve0": "100000000000.0",
+      "reserve1": "0.000001"
+    },
+    "liquidity": {
+      "total": "0.003162277660168379",
+      "user": "0.003162277660168379"
+    },
+    "userBalance": {
+      "token0": "999989990.0",
+      "token1": "999999980.0"
+    },
+    "poolInfo": {
+      "reserve0": "100000000000.0",
+      "reserve1": "0.000001",
+      "totalSupply": "0.003162277660168379"
+    }
+  }
+}

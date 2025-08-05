@@ -2,167 +2,140 @@ import { ethers } from "hardhat";
 import fs from "fs";
 import path from "path";
 
-/**
- * Script kiểm tra trạng thái ban đầu của SimpleDEX
- * Chức năng:
- * - Kiểm tra reserves (dự trữ) của pool
- * - Kiểm tra tổng thanh khoản
- * - Kiểm tra thanh khoản của người dùng
- * - Kiểm tra số dư token của người dùng
- * - Lưu kết quả kiểm tra
- */
 async function main() {
-  console.log("🔍 Đang kiểm tra trạng thái ban đầu của SimpleDEX...\n");
+  console.log("🔍 Kiểm tra trạng thái ban đầu của SimpleDEX...\n");
 
-  // Đọc thông tin token đã deploy từ file JSON
+  // Đọc địa chỉ các token đã deploy
   const tokens = JSON.parse(
     fs.readFileSync(path.resolve(__dirname, "../info/TokenAddress.json"), "utf8")
   );
   
-  // Đọc địa chỉ SimpleDEX đã deploy từ file JSON
+  // Đọc địa chỉ SimpleDEX đã deploy
   const simpleDexAddress = JSON.parse(
     fs.readFileSync(path.resolve(__dirname, "../info/SimpleDEXAddress.json"), "utf8")
   ).address;
 
-  // Lấy thông tin người deploy (ví chính)
+  // Lấy thông tin người deploy
   const [deployer] = await ethers.getSigners();
   
-  // Hiển thị thông tin cơ bản
-  console.log("📍 Địa chỉ người kiểm tra:", deployer.address);
-  console.log("🏦 Địa chỉ SimpleDEX:", simpleDexAddress);
+  console.log("📍 Người deploy:", deployer.address);
+  console.log("🏦 SimpleDEX:", simpleDexAddress);
 
   // Lấy thông tin 2 token đầu tiên để test
   const tokenEntries = Object.entries(tokens);
-  const [token1Name, token1Info] = tokenEntries[0]; // Token đầu tiên (ví dụ: Bitcoin)
-  const [token2Name, token2Info] = tokenEntries[1]; // Token thứ hai (ví dụ: Ethereum)
+  const [token1Name, token1Info] = tokenEntries[0];
+  const [token2Name, token2Info] = tokenEntries[1];
 
-  console.log(`\n🪙 Đang kiểm tra với cặp token: ${token1Name} (${token1Info.symbol}) & ${token2Name} (${token2Info.symbol})`);
+  console.log(`\n🪙 Sử dụng cặp token: ${token1Name} (${token1Info.symbol}) & ${token2Name} (${token2Info.symbol})`);
 
-  // Lấy contract instance của SimpleDEX
+  // Lấy contract SimpleDEX
   const simpleDex = await ethers.getContractAt("SimpleDEX", simpleDexAddress);
 
-  // Tạo contract instance cho token1 với các function cần thiết
+  // Lấy contract của 2 token
   const token1Contract = new ethers.Contract(token1Info.tokenAddress, [
-    "function balanceOf(address) external view returns (uint256)", // Function kiểm tra số dư
-    "function approve(address,uint256) external returns (bool)"     // Function phê duyệt chi tiêu
+    "function balanceOf(address) external view returns (uint256)",
+    "function approve(address,uint256) external returns (bool)"
   ], deployer);
   
-  // Tạo contract instance cho token2 với các function cần thiết
   const token2Contract = new ethers.Contract(token2Info.tokenAddress, [
-    "function balanceOf(address) external view returns (uint256)", // Function kiểm tra số dư
-    "function approve(address,uint256) external returns (bool)"     // Function phê duyệt chi tiêu
+    "function balanceOf(address) external view returns (uint256)",
+    "function approve(address,uint256) external returns (bool)"
   ], deployer);
 
-  // Khởi tạo object để lưu kết quả kiểm tra
+  // Lưu kết quả test
   const testResults: any = {
-    timestamp: new Date().toISOString(), // Thời gian kiểm tra
-    testType: "initial_state_check",     // Loại test
-    testResults: {}                      // Kết quả test sẽ được lưu ở đây
+    timestamp: new Date().toISOString(),
+    testName: "Kiểm tra trạng thái ban đầu",
+    status: "completed"
   };
 
-  // ===== KIỂM TRA TRẠNG THÁI BAN ĐẦU =====
   console.log("\n" + "=".repeat(50));
   console.log("📊 KIỂM TRA TRẠNG THÁI BAN ĐẦU");
   console.log("=".repeat(50));
 
-  // Lấy thông tin reserves (dự trữ) của pool
-  console.log("🔍 Đang lấy thông tin reserves...");
-  const reserves = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
-  
-  // Lấy tổng thanh khoản của pool
-  console.log("🔍 Đang lấy tổng thanh khoản...");
-  const liquidity = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
-  
-  // Lấy thanh khoản của người dùng hiện tại
-  console.log("🔍 Đang lấy thanh khoản của người dùng...");
-  const userLiquidity = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
-  
-  // Lấy số dư token1 của người dùng
-  console.log("🔍 Đang lấy số dư token1...");
-  const balance1 = await token1Contract.balanceOf(deployer.address);
-  
-  // Lấy số dư token2 của người dùng
-  console.log("🔍 Đang lấy số dư token2...");
-  const balance2 = await token2Contract.balanceOf(deployer.address);
+  try {
+    // Bước 1: Kiểm tra reserves của pool
+    console.log("🔍 Bước 1: Kiểm tra reserves của pool...");
+    const reserves = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
+    console.log(`💰 Reserves: ${ethers.utils.formatUnits(reserves[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reserves[1], token2Info.decimals)} ${token2Info.symbol}`);
 
-  // Hiển thị kết quả kiểm tra
-  console.log(`\n💰 Thông tin Reserves (Dự trữ):`);
-  console.log(`   • ${token1Info.symbol}: ${ethers.utils.formatUnits(reserves[0], token1Info.decimals)}`);
-  console.log(`   • ${token2Info.symbol}: ${ethers.utils.formatUnits(reserves[1], token2Info.decimals)}`);
-  
-  console.log(`\n🏊 Thông tin Thanh khoản:`);
-  console.log(`   • Tổng thanh khoản: ${ethers.utils.formatUnits(liquidity, 18)}`);
-  console.log(`   • Thanh khoản của người dùng: ${ethers.utils.formatUnits(userLiquidity, 18)}`);
-  
-  console.log(`\n💳 Số dư Token của người dùng:`);
-  console.log(`   • ${token1Info.symbol}: ${ethers.utils.formatUnits(balance1, token1Info.decimals)}`);
-  console.log(`   • ${token2Info.symbol}: ${ethers.utils.formatUnits(balance2, token2Info.decimals)}`);
+    // Bước 2: Kiểm tra tổng thanh khoản
+    console.log("🔍 Bước 2: Kiểm tra tổng thanh khoản...");
+    const liquidity = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
+    console.log(`🏊 Tổng thanh khoản: ${ethers.utils.formatUnits(liquidity, 18)} LP tokens`);
 
-  // Lưu kết quả kiểm tra vào object
-  testResults.testResults.initialState = {
-    status: "passed", // Trạng thái: thành công
-    reserves: {
-      reserve0: ethers.utils.formatUnits(reserves[0], token1Info.decimals), // Reserve của token1
-      reserve1: ethers.utils.formatUnits(reserves[1], token2Info.decimals)  // Reserve của token2
-    },
-    liquidity: {
-      total: ethers.utils.formatUnits(liquidity, 18),     // Tổng thanh khoản
-      user: ethers.utils.formatUnits(userLiquidity, 18)   // Thanh khoản của người dùng
-    },
-    userBalance: {
-      token0: ethers.utils.formatUnits(balance1, token1Info.decimals), // Số dư token1
-      token1: ethers.utils.formatUnits(balance2, token2Info.decimals)  // Số dư token2
-    },
-    testTokens: {
-      token1: {
-        name: token1Name,
-        symbol: token1Info.symbol,
-        address: token1Info.tokenAddress,
-        decimals: token1Info.decimals
+    // Bước 3: Kiểm tra thanh khoản của user
+    console.log("🔍 Bước 3: Kiểm tra thanh khoản của user...");
+    const userLiquidity = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
+    console.log(`👤 Thanh khoản của user: ${ethers.utils.formatUnits(userLiquidity, 18)} LP tokens`);
+
+    // Bước 4: Kiểm tra số dư token của user
+    console.log("🔍 Bước 4: Kiểm tra số dư token của user...");
+    const balance1 = await token1Contract.balanceOf(deployer.address);
+    const balance2 = await token2Contract.balanceOf(deployer.address);
+    console.log(`💳 Số dư ${token1Info.symbol}: ${ethers.utils.formatUnits(balance1, token1Info.decimals)}`);
+    console.log(`💳 Số dư ${token2Info.symbol}: ${ethers.utils.formatUnits(balance2, token2Info.decimals)}`);
+
+    // Bước 5: Kiểm tra thông tin pool
+    console.log("🔍 Bước 5: Kiểm tra thông tin pool...");
+    const poolInfo = await simpleDex.getPoolInfo(token1Info.tokenAddress, token2Info.tokenAddress);
+    console.log(`📊 Thông tin pool:`);
+    console.log(`   - Token0: ${poolInfo.token0}`);
+    console.log(`   - Token1: ${poolInfo.token1}`);
+    console.log(`   - Reserve0: ${ethers.utils.formatUnits(poolInfo.reserve0, token1Info.decimals)} ${token1Info.symbol}`);
+    console.log(`   - Reserve1: ${ethers.utils.formatUnits(poolInfo.reserve1, token2Info.decimals)} ${token2Info.symbol}`);
+    console.log(`   - Total Supply: ${ethers.utils.formatUnits(poolInfo.totalSupply, 18)} LP tokens`);
+
+    // Lưu kết quả
+    testResults.data = {
+      reserves: {
+        reserve0: ethers.utils.formatUnits(reserves[0], token1Info.decimals),
+        reserve1: ethers.utils.formatUnits(reserves[1], token2Info.decimals)
       },
-      token2: {
-        name: token2Name,
-        symbol: token2Info.symbol,
-        address: token2Info.tokenAddress,
-        decimals: token2Info.decimals
+      liquidity: {
+        total: ethers.utils.formatUnits(liquidity, 18),
+        user: ethers.utils.formatUnits(userLiquidity, 18)
+      },
+      userBalance: {
+        token0: ethers.utils.formatUnits(balance1, token1Info.decimals),
+        token1: ethers.utils.formatUnits(balance2, token2Info.decimals)
+      },
+      poolInfo: {
+        token0: poolInfo.token0,
+        token1: poolInfo.token1,
+        reserve0: ethers.utils.formatUnits(poolInfo.reserve0, token1Info.decimals),
+        reserve1: ethers.utils.formatUnits(poolInfo.reserve1, token2Info.decimals),
+        totalSupply: ethers.utils.formatUnits(poolInfo.totalSupply, 18)
       }
-    }
-  };
+    };
 
-  // ===== LƯU KẾT QUẢ KIỂM TRA =====
-  console.log("\n💾 Đang lưu kết quả kiểm tra...");
-  
-  // Tạo thư mục info nếu chưa có
+    console.log("\n✅ Kiểm tra trạng thái ban đầu hoàn thành thành công!");
+    testResults.status = "success";
+
+  } catch (error) {
+    console.log("❌ Lỗi khi kiểm tra trạng thái ban đầu:", error.message);
+    testResults.status = "failed";
+    testResults.error = error.message;
+  }
+
+  // Lưu kết quả vào file
   const infoDir = path.resolve(__dirname, "../info");
   if (!fs.existsSync(infoDir)) {
     fs.mkdirSync(infoDir, { recursive: true });
   }
-  
-  // Lưu kết quả vào file JSON
+
   fs.writeFileSync(
-    path.resolve(infoDir, "InitialStateTest.json"),
+    path.resolve(infoDir, "05a-test-initial-state.json"),
     JSON.stringify(testResults, null, 2)
   );
 
-  // ===== HIỂN THỊ TỔNG KẾT =====
   console.log("\n" + "=".repeat(50));
-  console.log("✅ HOÀN THÀNH KIỂM TRA TRẠNG THÁI BAN ĐẦU!");
+  console.log("📁 Kết quả đã lưu vào: info/05a-test-initial-state.json");
+  console.log("🎯 Bước tiếp theo: Chạy 05b-test-add-liquidity.ts");
   console.log("=".repeat(50));
-  console.log("📁 Kết quả đã lưu vào: info/InitialStateTest.json");
-  console.log("🔍 Trạng thái SimpleDEX đã được kiểm tra thành công!");
-  console.log("📊 Tất cả thông tin reserves, liquidity và balance đã được ghi nhận");
-  
-  console.log("\n🚀 BƯỚC TIẾP THEO:");
-  console.log("-".repeat(40));
-  console.log("1. Chạy 05b-test-add-liquidity.ts để thêm thanh khoản");
-  console.log("2. Chạy 05c-test-swap-token1-to-token2.ts để test swap");
-  console.log("3. Chạy 05d-test-swap-token2-to-token1.ts để test swap ngược");
-  console.log("4. Chạy 05e-test-remove-liquidity.ts để test rút thanh khoản");
-  console.log("5. Hoặc chạy 05f-test-all-dex-features.ts để test tất cả");
 }
 
-// Chạy script chính
 main().catch(e => {
-  console.error("❌ Lỗi khi chạy script:", e);
+  console.error(e);
   process.exit(1);
 }); 

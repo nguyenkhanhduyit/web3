@@ -1,0 +1,68 @@
+{
+  "totalPairs": 3,
+  "successCount": 0,
+  "failCount": 3,
+  "pools": [
+    {
+      "poolName": "Bitcoin-Ethereum",
+      "token0": {
+        "name": "Bitcoin",
+        "address": "0x0111C263a336dF678c84D35DEf3baf5666F94512",
+        "symbol": "BTC",
+        "decimals": 8,
+        "amount": "10000000000000000.0"
+      },
+      "token1": {
+        "name": "Ethereum",
+        "address": "0xB3E389caCE9Cf3B55ea673d8A5a7A61305Ed0D86",
+        "symbol": "ETH",
+        "decimals": 18,
+        "amount": "1000000.0"
+      },
+      "error": "transaction failed [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ] (transactionHash=\"0x6039c0a11419e8361aa5303271509e6180881d6a6425eebd4137291c07332753\", transaction={\"hash\":\"0x6039c0a11419e8361aa5303271509e6180881d6a6425eebd4137291c07332753\",\"type\":2,\"accessList\":[],\"blockHash\":null,\"blockNumber\":null,\"transactionIndex\":null,\"confirmations\":0,\"from\":\"0x45f10654522FF65646Ea31Ef7673AE0F02972505\",\"gasPrice\":{\"type\":\"BigNumber\",\"hex\":\"0x4f3dd2a3\"},\"maxPriorityFeePerGas\":{\"type\":\"BigNumber\",\"hex\":\"0x0f7f4900\"},\"maxFeePerGas\":{\"type\":\"BigNumber\",\"hex\":\"0x4f3dd2a3\"},\"gasLimit\":{\"type\":\"BigNumber\",\"hex\":\"0x07a120\"},\"to\":\"0x156a5a318a4F1F4B2b7A1d0a5082bc306381A98D\",\"value\":{\"type\":\"BigNumber\",\"hex\":\"0x00\"},\"nonce\":602,\"data\":\"0xcf6c62ea0000000000000000000000000111c263a336df678c84d35def3baf5666f94512000000000000000000000000b3e389cace9cf3b55ea673d8a5a7a61305ed0d8600000000000000000000000000000000000000000000d3c21bcecceda100000000000000000000000000000000000000000000000000d3c21bcecceda1000000\",\"r\":\"0xb52bb5a9b09020a969bf81490c7104804a84a931ba5fef6c98d1ab7d254c4848\",\"s\":\"0x6aeb4d205fb6905ff7090d94c98e188d1fd7cdc12bdaf8299ee6094cbbd390d4\",\"v\":1,\"creates\":null,\"chainId\":11155111}, receipt={\"to\":\"0x156a5a318a4F1F4B2b7A1d0a5082bc306381A98D\",\"from\":\"0x45f10654522FF65646Ea31Ef7673AE0F02972505\",\"contractAddress\":null,\"transactionIndex\":103,\"gasUsed\":{\"type\":\"BigNumber\",\"hex\":\"0x6fa3\"},\"logsBloom\":\"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"blockHash\":\"0xb9d23fd4ca7c0034d4e439ddfd73764ac5ed31f0920b9a85460f3917d984e9e8\",\"transactionHash\":\"0x6039c0a11419e8361aa5303271509e6180881d6a6425eebd4137291c07332753\",\"logs\":[],\"blockNumber\":8919885,\"confirmations\":1,\"cumulativeGasUsed\":{\"type\":\"BigNumber\",\"hex\":\"0x848b89\"},\"effectiveGasPrice\":{\"type\":\"BigNumber\",\"hex\":\"0x4e1b96f0\"},\"status\":0,\"type\":2,\"byzantium\":true}, code=CALL_EXCEPTION, version=providers/5.7.2)",
+      "status": "failed",
+      "createdAt": "2025-08-05T18:28:50.022Z"
+    },
+    {
+      "poolName": "Bitcoin-Tether USD",
+      "token0": {
+        "name": "Bitcoin",
+        "address": "0x0111C263a336dF678c84D35DEf3baf5666F94512",
+        "symbol": "BTC",
+        "decimals": 8,
+        "amount": "1000000.0"
+      },
+      "token1": {
+        "name": "Tether USD",
+        "address": "0xC6ef5d4fcD9E47aeeC5a8d442DD47AfbFcAe005c",
+        "symbol": "USDT",
+        "decimals": 6,
+        "amount": "100000000.0"
+      },
+      "error": "transaction failed [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ] (transactionHash=\"0xa1dca01fed12599c6199ed92e4bd0dd61356b20ad1ce6fe31d719dce4088e1f5\", transaction={\"hash\":\"0xa1dca01fed12599c6199ed92e4bd0dd61356b20ad1ce6fe31d719dce4088e1f5\",\"type\":2,\"accessList\":[],\"blockHash\":null,\"blockNumber\":null,\"transactionIndex\":null,\"confirmations\":0,\"from\":\"0x45f10654522FF65646Ea31Ef7673AE0F02972505\",\"gasPrice\":{\"type\":\"BigNumber\",\"hex\":\"0x4a1d6d1a\"},\"maxPriorityFeePerGas\":{\"type\":\"BigNumber\",\"hex\":\"0x0f7f4900\"},\"maxFeePerGas\":{\"type\":\"BigNumber\",\"hex\":\"0x4a1d6d1a\"},\"gasLimit\":{\"type\":\"BigNumber\",\"hex\":\"0x07a120\"},\"to\":\"0x156a5a318a4F1F4B2b7A1d0a5082bc306381A98D\",\"value\":{\"type\":\"BigNumber\",\"hex\":\"0x00\"},\"nonce\":603,\"data\":\"0xcf6c62ea0000000000000000000000000111c263a336df678c84d35def3baf5666f94512000000000000000000000000c6ef5d4fcd9e47aeec5a8d442dd47afbfcae005c00000000000000000000000000000000000000000000000000005af3107a400000000000000000000000000000000000000000000000000000005af3107a4000\",\"r\":\"0x38ba7fcea300436624afccc30bf81001d7c3d0233e7f86e5698080ce0125a396\",\"s\":\"0x2799a222c452f867d63e585fbd66939babd89be9df8c5faef4f9695b81c3dd7d\",\"v\":1,\"creates\":null,\"chainId\":11155111}, receipt={\"to\":\"0x156a5a318a4F1F4B2b7A1d0a5082bc306381A98D\",\"from\":\"0x45f10654522FF65646Ea31Ef7673AE0F02972505\",\"contractAddress\":null,\"transactionIndex\":99,\"gasUsed\":{\"type\":\"BigNumber\",\"hex\":\"0xc12d\"},\"logsBloom\":\"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"blockHash\":\"0xdcffaed60d1f0a8e6fdfefb91b8f64f260a0d02a3fe3d824900970f03ca1ec38\",\"transactionHash\":\"0xa1dca01fed12599c6199ed92e4bd0dd61356b20ad1ce6fe31d719dce4088e1f5\",\"logs\":[],\"blockNumber\":8919886,\"confirmations\":1,\"cumulativeGasUsed\":{\"type\":\"BigNumber\",\"hex\":\"0xb14838\"},\"effectiveGasPrice\":{\"type\":\"BigNumber\",\"hex\":\"0x4a0ea25e\"},\"status\":0,\"type\":2,\"byzantium\":true}, code=CALL_EXCEPTION, version=providers/5.7.2)",
+      "status": "failed",
+      "createdAt": "2025-08-05T18:29:05.263Z"
+    },
+    {
+      "poolName": "Ethereum-Tether USD",
+      "token0": {
+        "name": "Ethereum",
+        "address": "0xB3E389caCE9Cf3B55ea673d8A5a7A61305Ed0D86",
+        "symbol": "ETH",
+        "decimals": 18,
+        "amount": "1000000.0"
+      },
+      "token1": {
+        "name": "Tether USD",
+        "address": "0xC6ef5d4fcD9E47aeeC5a8d442DD47AfbFcAe005c",
+        "symbol": "USDT",
+        "decimals": 6,
+        "amount": "1000000000000000000.0"
+      },
+      "error": "transaction failed [ See: https://links.ethers.org/v5-errors-CALL_EXCEPTION ] (transactionHash=\"0x97aab3a363d37b787efb455971902443d1b0635e38897037c9fc624995617f2d\", transaction={\"hash\":\"0x97aab3a363d37b787efb455971902443d1b0635e38897037c9fc624995617f2d\",\"type\":2,\"accessList\":[],\"blockHash\":null,\"blockNumber\":null,\"transactionIndex\":null,\"confirmations\":0,\"from\":\"0x45f10654522FF65646Ea31Ef7673AE0F02972505\",\"gasPrice\":{\"type\":\"BigNumber\",\"hex\":\"0x5360ad26\"},\"maxPriorityFeePerGas\":{\"type\":\"BigNumber\",\"hex\":\"0x010b70a2\"},\"maxFeePerGas\":{\"type\":\"BigNumber\",\"hex\":\"0x5360ad26\"},\"gasLimit\":{\"type\":\"BigNumber\",\"hex\":\"0x07a120\"},\"to\":\"0x156a5a318a4F1F4B2b7A1d0a5082bc306381A98D\",\"value\":{\"type\":\"BigNumber\",\"hex\":\"0x00\"},\"nonce\":604,\"data\":\"0xcf6c62ea000000000000000000000000b3e389cace9cf3b55ea673d8a5a7a61305ed0d86000000000000000000000000c6ef5d4fcd9e47aeec5a8d442dd47afbfcae005c00000000000000000000000000000000000000000000d3c21bcecceda100000000000000000000000000000000000000000000000000d3c21bcecceda1000000\",\"r\":\"0x21051b2b251411182d015ff64585553be5bc8294bf13b2f2af3c24ec61b506a0\",\"s\":\"0x5a74562695db46cc9929f6fc0bafbfea7ebeb1e2a28ed342c6cb06cbc4aff7cd\",\"v\":1,\"creates\":null,\"chainId\":11155111}, receipt={\"to\":\"0x156a5a318a4F1F4B2b7A1d0a5082bc306381A98D\",\"from\":\"0x45f10654522FF65646Ea31Ef7673AE0F02972505\",\"contractAddress\":null,\"transactionIndex\":115,\"gasUsed\":{\"type\":\"BigNumber\",\"hex\":\"0xc15d\"},\"logsBloom\":\"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\",\"blockHash\":\"0xa146baa740314bf9b04b31eac5b2405f737e9519a10e2624cc7525ba6979d5aa\",\"transactionHash\":\"0x97aab3a363d37b787efb455971902443d1b0635e38897037c9fc624995617f2d\",\"logs\":[],\"blockNumber\":8919887,\"confirmations\":1,\"cumulativeGasUsed\":{\"type\":\"BigNumber\",\"hex\":\"0x011c3b29\"},\"effectiveGasPrice\":{\"type\":\"BigNumber\",\"hex\":\"0x42ec5e94\"},\"status\":0,\"type\":2,\"byzantium\":true}, code=CALL_EXCEPTION, version=providers/5.7.2)",
+      "status": "failed",
+      "createdAt": "2025-08-05T18:29:15.306Z"
+    }
+  ],
+  "createdAt": "2025-08-05T18:29:15.306Z"
+}
