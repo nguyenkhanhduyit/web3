@@ -50,7 +50,7 @@ async function main() {
   };
 
   console.log("\n" + "=".repeat(50));
-  console.log("📊 KIỂM TRA TRẠNG THÁI BAN ĐẦU");
+  console.log("KIỂM TRA TRẠNG THÁI BAN ĐẦU");
   console.log("=".repeat(50));
 
   try {
@@ -58,55 +58,55 @@ async function main() {
      * Reserves :
      Hiển thị số lượng token đang có trong pool (2 token):
 
-reserves[0]: số lượng token0 hiện tại trong pool (BigNumber)
+    reserves[0]: số lượng token0 hiện tại trong pool (BigNumber)
 
-reserves[1]: số lượng token1 hiện tại trong pool (BigNumber)
+    reserves[1]: số lượng token1 hiện tại trong pool (BigNumber)
      */
     // Bước 1: Kiểm tra reserves của pool
     console.log("Bước 1: Kiểm tra reserves của pool...");
     const reserves = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
-    console.log(`💰 Reserves: ${ethers.utils.formatUnits(reserves[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reserves[1], token2Info.decimals)} ${token2Info.symbol}`);
+    console.log(`Reserves: ${ethers.utils.formatUnits(reserves[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reserves[1], token2Info.decimals)} ${token2Info.symbol}`);
 
     // Bước 2: Kiểm tra tổng thanh khoản
     /*
-    Total Liquidity:
-    Tổng thanh khoản của pool – thường là tổng lượng liquidity token được mint khi bạn và người khác thêm thanh khoản vào.
+      Total Liquidity:
+      Tổng thanh khoản của pool – thường là tổng lượng liquidity token được mint khi bạn và người khác thêm thanh khoản vào.
 
-liquidity là giá trị kiểu BigNumber
+      liquidity là giá trị kiểu BigNumber
 
-Format về 18 decimals (Uniswap liquidity thường chuẩn 18)
+      Format về 18 decimals (Uniswap liquidity thường chuẩn 18)
     */
-    console.log("🔍 Bước 2: Kiểm tra tổng thanh khoản...");
+    console.log("Bước 2: Kiểm tra tổng thanh khoản...");
     const liquidity = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
-    console.log(`🏊 Tổng thanh khoản: ${ethers.utils.formatUnits(liquidity, 18)} LP tokens`);
+    console.log(`Tổng thanh khoản: ${ethers.utils.formatUnits(liquidity, 18)} LP tokens`);
 
     // Bước 3: Kiểm tra thanh khoản của user
     /*
-    User Liquidity:
-     Số lượng thanh khoản (LP tokens) mà riêng user vừa thêm vào (hoặc đang giữ trong pool).
+      User Liquidity:
+      Số lượng thanh khoản (LP tokens) mà riêng user vừa thêm vào (hoặc đang giữ trong pool).
 
-Cũng dùng formatUnits(..., 18) vì LP token thường có 18 decimals.
+      Cũng dùng formatUnits(..., 18) vì LP token thường có 18 decimals.
     */
-    console.log("🔍 Bước 3: Kiểm tra thanh khoản của user...");
+    console.log("Bước 3: Kiểm tra thanh khoản của user...");
     const userLiquidity = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
-    console.log(`👤 Thanh khoản của user: ${ethers.utils.formatUnits(userLiquidity, 18)} LP tokens`);
+    console.log(`Thanh khoản của user: ${ethers.utils.formatUnits(userLiquidity, 18)} LP tokens`);
 
     // Bước 4: Kiểm tra số dư token của user
-    console.log("🔍 Bước 4: Kiểm tra số dư token của user...");
+    console.log("Bước 4: Kiểm tra số dư token của user...");
     const balance1 = await token1Contract.balanceOf(deployer.address);
     const balance2 = await token2Contract.balanceOf(deployer.address);
-    console.log(`💳 Số dư ${token1Info.symbol}: ${ethers.utils.formatUnits(balance1, token1Info.decimals)}`);
-    console.log(`💳 Số dư ${token2Info.symbol}: ${ethers.utils.formatUnits(balance2, token2Info.decimals)}`);
+    console.log(`Số dư ${token1Info.symbol}: ${ethers.utils.formatUnits(balance1, token1Info.decimals)}`);
+    console.log(`Số dư ${token2Info.symbol}: ${ethers.utils.formatUnits(balance2, token2Info.decimals)}`);
 
     // Bước 5: Kiểm tra thông tin pool
-    console.log("🔍 Bước 5: Kiểm tra thông tin pool...");
+    console.log("Bước 5: Kiểm tra thông tin pool...");
     const poolInfo = await simpleDex.getPoolInfo(token1Info.tokenAddress, token2Info.tokenAddress);
-    console.log(`📊 Thông tin pool:`);
-    console.log(`   - Token0: ${poolInfo.token0}`);
-    console.log(`   - Token1: ${poolInfo.token1}`);
-    console.log(`   - Reserve0: ${ethers.utils.formatUnits(poolInfo.reserve0, token1Info.decimals)} ${token1Info.symbol}`);
-    console.log(`   - Reserve1: ${ethers.utils.formatUnits(poolInfo.reserve1, token2Info.decimals)} ${token2Info.symbol}`);
-    console.log(`   - Total Supply: ${ethers.utils.formatUnits(poolInfo.totalSupply, 18)} LP tokens`);
+    console.log(`Thông tin pool:`);
+    console.log(`- Token0: ${poolInfo.token0}`);
+    console.log(`- Token1: ${poolInfo.token1}`);
+    console.log(`- Reserve0: ${ethers.utils.formatUnits(poolInfo.reserve0, token1Info.decimals)} ${token1Info.symbol}`);
+    console.log(`- Reserve1: ${ethers.utils.formatUnits(poolInfo.reserve1, token2Info.decimals)} ${token2Info.symbol}`);
+    console.log(`- Total Supply: ${ethers.utils.formatUnits(poolInfo.totalSupply, 18)} LP tokens`);
 
     // Lưu kết quả
     testResults.data = {
@@ -131,11 +131,11 @@ Cũng dùng formatUnits(..., 18) vì LP token thường có 18 decimals.
       }
     };
 
-    console.log("\n✅ Kiểm tra trạng thái ban đầu hoàn thành thành công!");
+    console.log("\nKiểm tra trạng thái ban đầu hoàn thành thành công!");
     testResults.status = "success";
 
   } catch (error) {
-    console.log("❌ Lỗi khi kiểm tra trạng thái ban đầu:", error.message);
+    console.log("Lỗi khi kiểm tra trạng thái ban đầu:", error.message);
     testResults.status = "failed";
     testResults.error = error.message;
   }
@@ -152,8 +152,8 @@ Cũng dùng formatUnits(..., 18) vì LP token thường có 18 decimals.
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("📁 Kết quả đã lưu vào: info/05a-test-initial-state.json");
-  console.log("🎯 Bước tiếp theo: Chạy 05b-test-add-liquidity.ts");
+  console.log("Kết quả đã lưu vào: info/05a-test-initial-state.json");
+  console.log("Bước tiếp theo: Chạy 05b-test-add-liquidity.ts");
   console.log("=".repeat(50));
 }
 
