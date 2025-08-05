@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("➕ Test thêm thanh khoản vào SimpleDEX...\n");
+  console.log("Test thêm thanh khoản vào SimpleDEX...\n");
 
   // Đọc địa chỉ các token đã deploy
   const tokens = JSON.parse(
@@ -18,15 +18,15 @@ async function main() {
   // Lấy thông tin người deploy
   const [deployer] = await ethers.getSigners();
   
-  console.log("📍 Người deploy:", deployer.address);
-  console.log("🏦 SimpleDEX:", simpleDexAddress);
+  console.log("Người deploy:", deployer.address);
+  console.log("SimpleDEX:", simpleDexAddress);
 
   // Lấy thông tin 2 token đầu tiên để test
   const tokenEntries = Object.entries(tokens);
   const [token1Name, token1Info] = tokenEntries[0];
   const [token2Name, token2Info] = tokenEntries[1];
 
-  console.log(`\n🪙 Sử dụng cặp token: ${token1Name} (${token1Info.symbol}) & ${token2Name} (${token2Info.symbol})`);
+  console.log(`\nSử dụng cặp token: ${token1Name} (${token1Info.symbol}) & ${token2Name} (${token2Info.symbol})`);
 
   // Lấy contract SimpleDEX
   const simpleDex = await ethers.getContractAt("SimpleDEX", simpleDexAddress);
@@ -50,30 +50,30 @@ async function main() {
   };
 
   console.log("\n" + "=".repeat(50));
-  console.log("➕ TEST THÊM THANH KHOẢN");
+  console.log("TEST THÊM THANH KHOẢN");
   console.log("=".repeat(50));
 
   try {
     // Bước 1: Kiểm tra trạng thái trước khi thêm thanh khoản
-    console.log("🔍 Bước 1: Kiểm tra trạng thái trước khi thêm thanh khoản...");
+    console.log("Bước 1: Kiểm tra trạng thái trước khi thêm thanh khoản...");
     const reservesBefore = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
     const liquidityBefore = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
     const userLiquidityBefore = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
     const balance1Before = await token1Contract.balanceOf(deployer.address);
     const balance2Before = await token2Contract.balanceOf(deployer.address);
 
-    console.log(`💰 Reserves trước: ${ethers.utils.formatUnits(reservesBefore[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reservesBefore[1], token2Info.decimals)} ${token2Info.symbol}`);
-    console.log(`🏊 Tổng thanh khoản trước: ${ethers.utils.formatUnits(liquidityBefore, 18)} LP tokens`);
-    console.log(`👤 Thanh khoản user trước: ${ethers.utils.formatUnits(userLiquidityBefore, 18)} LP tokens`);
-    console.log(`💳 Số dư ${token1Info.symbol} trước: ${ethers.utils.formatUnits(balance1Before, token1Info.decimals)}`);
-    console.log(`💳 Số dư ${token2Info.symbol} trước: ${ethers.utils.formatUnits(balance2Before, token2Info.decimals)}`);
+    console.log(`Reserves trước: ${ethers.utils.formatUnits(reservesBefore[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reservesBefore[1], token2Info.decimals)} ${token2Info.symbol}`);
+    console.log(`Tổng thanh khoản trước: ${ethers.utils.formatUnits(liquidityBefore, 18)} LP tokens`);
+    console.log(`Thanh khoản user trước: ${ethers.utils.formatUnits(userLiquidityBefore, 18)} LP tokens`);
+    console.log(`Số dư ${token1Info.symbol} trước: ${ethers.utils.formatUnits(balance1Before, token1Info.decimals)}`);
+    console.log(`Số dư ${token2Info.symbol} trước: ${ethers.utils.formatUnits(balance2Before, token2Info.decimals)}`);
 
     // Bước 2: Chuẩn bị số lượng token để thêm thanh khoản
-    console.log("🔍 Bước 2: Chuẩn bị số lượng token để thêm thanh khoản...");
-    const addAmount1 = ethers.utils.parseUnits("50", token1Info.decimals); // 50 token1
-    const addAmount2 = ethers.utils.parseUnits("50", token2Info.decimals); // 50 token2
+    console.log("Bước 2: Chuẩn bị số lượng token để thêm thanh khoản...");
+    const addAmount1 = ethers.utils.parseUnits("5000", token1Info.decimals); // 5k token1
+    const addAmount2 = ethers.utils.parseUnits("5000", token2Info.decimals); // 5k token2
 
-    console.log(`📈 Sẽ thêm: ${ethers.utils.formatUnits(addAmount1, token1Info.decimals)} ${token1Info.symbol} + ${ethers.utils.formatUnits(addAmount2, token2Info.decimals)} ${token2Info.symbol}`);
+    console.log(`Sẽ thêm: ${ethers.utils.formatUnits(addAmount1, token1Info.decimals)} ${token1Info.symbol} + ${ethers.utils.formatUnits(addAmount2, token2Info.decimals)} ${token2Info.symbol}`);
 
     // Kiểm tra số dư có đủ không
     if (balance1Before.lt(addAmount1)) {
@@ -84,20 +84,24 @@ async function main() {
     }
 
     // Bước 3: Approve token cho SimpleDEX
-    console.log("🔍 Bước 3: Approve token cho SimpleDEX...");
-    console.log("🔐 Approving token1...");
+    /*
+    Khi muốn smart contract thay mặt bạn làm gì đó với token
+     (ví dụ thêm thanh khoản, swap, stake, transfer,...) thì bạn phải cấp phép (approve) trước
+    */
+    console.log("Bước 3: Approve token cho SimpleDEX...");
+    console.log("Approving token1...");
     const approve1Tx = await token1Contract.approve(simpleDexAddress, addAmount1);
     await approve1Tx.wait();
-    console.log("✅ Token1 approved thành công!");
+    console.log("Token1 approved thành công!");
 
-    console.log("🔐 Approving token2...");
+    console.log("Approving token2...");
     const approve2Tx = await token2Contract.approve(simpleDexAddress, addAmount2);
     await approve2Tx.wait();
-    console.log("✅ Token2 approved thành công!");
+    console.log("Token2 approved thành công!");
 
     // Bước 4: Thêm thanh khoản
-    console.log("🔍 Bước 4: Thêm thanh khoản...");
-    console.log("⏳ Đang gửi transaction thêm thanh khoản...");
+    console.log("Bước 4: Thêm thanh khoản...");
+    console.log("Đang gửi transaction thêm thanh khoản...");
     const addLiquidityTx = await simpleDex.addLiquidity(
       token1Info.tokenAddress,  // Địa chỉ token1
       token2Info.tokenAddress,  // Địa chỉ token2
@@ -106,34 +110,34 @@ async function main() {
       { gasLimit: 300000 }      // Giới hạn gas để tránh lỗi
     );
     
-    console.log("📝 Transaction hash:", addLiquidityTx.hash);
-    console.log("⏳ Đang chờ xác nhận...");
+    console.log("Transaction hash:", addLiquidityTx.hash);
+    console.log("Đang chờ xác nhận...");
     await addLiquidityTx.wait();
-    console.log("✅ Thêm thanh khoản thành công!");
+    console.log("Thêm thanh khoản thành công!");
 
     // Bước 5: Kiểm tra trạng thái sau khi thêm thanh khoản
-    console.log("🔍 Bước 5: Kiểm tra trạng thái sau khi thêm thanh khoản...");
+    console.log("Bước 5: Kiểm tra trạng thái sau khi thêm thanh khoản...");
     const reservesAfter = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
     const liquidityAfter = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
     const userLiquidityAfter = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
     const balance1After = await token1Contract.balanceOf(deployer.address);
     const balance2After = await token2Contract.balanceOf(deployer.address);
 
-    console.log(`💰 Reserves sau: ${ethers.utils.formatUnits(reservesAfter[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reservesAfter[1], token2Info.decimals)} ${token2Info.symbol}`);
-    console.log(`🏊 Tổng thanh khoản sau: ${ethers.utils.formatUnits(liquidityAfter, 18)} LP tokens`);
-    console.log(`👤 Thanh khoản user sau: ${ethers.utils.formatUnits(userLiquidityAfter, 18)} LP tokens`);
-    console.log(`💳 Số dư ${token1Info.symbol} sau: ${ethers.utils.formatUnits(balance1After, token1Info.decimals)}`);
-    console.log(`💳 Số dư ${token2Info.symbol} sau: ${ethers.utils.formatUnits(balance2After, token2Info.decimals)}`);
+    console.log(`Reserves sau: ${ethers.utils.formatUnits(reservesAfter[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reservesAfter[1], token2Info.decimals)} ${token2Info.symbol}`);
+    console.log(`Tổng thanh khoản sau: ${ethers.utils.formatUnits(liquidityAfter, 18)} LP tokens`);
+    console.log(`Thanh khoản user sau: ${ethers.utils.formatUnits(userLiquidityAfter, 18)} LP tokens`);
+    console.log(`Số dư ${token1Info.symbol} sau: ${ethers.utils.formatUnits(balance1After, token1Info.decimals)}`);
+    console.log(`Số dư ${token2Info.symbol} sau: ${ethers.utils.formatUnits(balance2After, token2Info.decimals)}`);
 
     // Bước 6: Tính toán thay đổi
-    console.log("🔍 Bước 6: Tính toán thay đổi...");
+    console.log("Bước 6: Tính toán thay đổi...");
     const liquidityAdded = userLiquidityAfter.sub(userLiquidityBefore);
     const token1Used = balance1Before.sub(balance1After);
     const token2Used = balance2Before.sub(balance2After);
 
-    console.log(`📈 Thanh khoản đã thêm: ${ethers.utils.formatUnits(liquidityAdded, 18)} LP tokens`);
-    console.log(`💸 ${token1Info.symbol} đã sử dụng: ${ethers.utils.formatUnits(token1Used, token1Info.decimals)}`);
-    console.log(`💸 ${token2Info.symbol} đã sử dụng: ${ethers.utils.formatUnits(token2Used, token2Info.decimals)}`);
+    console.log(`Thanh khoản đã thêm: ${ethers.utils.formatUnits(liquidityAdded, 18)} LP tokens`);
+    console.log(`${token1Info.symbol} đã sử dụng: ${ethers.utils.formatUnits(token1Used, token1Info.decimals)}`);
+    console.log(`${token2Info.symbol} đã sử dụng: ${ethers.utils.formatUnits(token2Used, token2Info.decimals)}`);
 
     // Lưu kết quả
     testResults.data = {
@@ -173,11 +177,11 @@ async function main() {
       }
     };
 
-    console.log("\n✅ Test thêm thanh khoản hoàn thành thành công!");
+    console.log("\nTest thêm thanh khoản hoàn thành thành công!");
     testResults.status = "success";
 
   } catch (error) {
-    console.log("❌ Lỗi khi test thêm thanh khoản:", error.message);
+    console.log("Lỗi khi test thêm thanh khoản:", error.message);
     testResults.status = "failed";
     testResults.error = error.message;
   }
@@ -194,8 +198,8 @@ async function main() {
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("📁 Kết quả đã lưu vào: info/05b-test-add-liquidity.json");
-  console.log("🎯 Bước tiếp theo: Chạy 05c-test-swap-token1-to-token2.ts");
+  console.log("Kết quả đã lưu vào: info/05b-test-add-liquidity.json");
+  console.log("Bước tiếp theo: Chạy 05c-test-swap-token1-to-token2.ts");
   console.log("=".repeat(50));
 }
 

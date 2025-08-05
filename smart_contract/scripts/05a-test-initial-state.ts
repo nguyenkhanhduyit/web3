@@ -102,8 +102,8 @@ async function main() {
     console.log("Bước 5: Kiểm tra thông tin pool...");
     const poolInfo = await simpleDex.getPoolInfo(token1Info.tokenAddress, token2Info.tokenAddress);
     console.log(`Thông tin pool:`);
-    console.log(`- Token0: ${poolInfo.token0}`);
-    console.log(`- Token1: ${poolInfo.token1}`);
+    console.log(`- Token0: ${token1Info.symbol}`);
+    console.log(`- Token1: ${token2Info.symbol}`);
     console.log(`- Reserve0: ${ethers.utils.formatUnits(poolInfo.reserve0, token1Info.decimals)} ${token1Info.symbol}`);
     console.log(`- Reserve1: ${ethers.utils.formatUnits(poolInfo.reserve1, token2Info.decimals)} ${token2Info.symbol}`);
     console.log(`- Total Supply: ${ethers.utils.formatUnits(poolInfo.totalSupply, 18)} LP tokens`);
