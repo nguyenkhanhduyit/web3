@@ -57,17 +57,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CreatePool__factory>;
     getContractFactory(
-      name: "Token",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Token__factory>;
-    getContractFactory(
       name: "SimpleLiquidity",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SimpleLiquidity__factory>;
     getContractFactory(
+      name: "Token",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Token__factory>;
+    getContractFactory(
       name: "Transactions",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Transactions__factory>;
+    getContractFactory(
+      name: "V4LiquidityManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.V4LiquidityManager__factory>;
+    getContractFactory(
+      name: "IUnlockCallback",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUnlockCallback__factory>;
     getContractFactory(
       name: "IERC20Minimal",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -173,20 +181,30 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.CreatePool>;
     getContractAt(
-      name: "Token",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Token>;
-    getContractAt(
       name: "SimpleLiquidity",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SimpleLiquidity>;
     getContractAt(
+      name: "Token",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Token>;
+    getContractAt(
       name: "Transactions",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Transactions>;
+    getContractAt(
+      name: "V4LiquidityManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.V4LiquidityManager>;
+    getContractAt(
+      name: "IUnlockCallback",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUnlockCallback>;
     getContractAt(
       name: "IERC20Minimal",
       address: string,

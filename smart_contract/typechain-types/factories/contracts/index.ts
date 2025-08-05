@@ -2,7 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as approveTokenSol from "./ApproveToken.sol";
-export * as createTokenSol from "./CreateToken.sol";
 export { CreatePool__factory } from "./CreatePool__factory";
 export { SimpleLiquidity__factory } from "./SimpleLiquidity__factory";
+export { Token__factory } from "./Token__factory";
 export { Transactions__factory } from "./Transactions__factory";
+export { V4LiquidityManager__factory } from "./V4LiquidityManager__factory";

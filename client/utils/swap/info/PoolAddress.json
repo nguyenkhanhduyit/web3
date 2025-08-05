@@ -17,8 +17,8 @@
   },
   "Ethereum-Tether": {
     "poolId": "0xddc6695d27a936b2fb6f90f0f4a5bbf14aa7e8b3345cbdc03b0528f8f6e14b4c",
-    "token0": "0x34A25887D8842662d11FB132C26790A4F166AAE4",
-    "token1": "0xcabFa05AFC68981fa00a6E62debF133d4e3eb4A1",
+    "token0": "0xcabFa05AFC68981fa00a6E62debF133d4e3eb4A1",
+    "token1": "0x34A25887D8842662d11FB132C26790A4F166AAE4",
     "fee": 3000,
     "tickSpacing": 60,
     "createdAt": "2025-07-26T22:54:43.494+07:00"
