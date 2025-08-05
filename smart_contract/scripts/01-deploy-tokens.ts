@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("...Đang deploy tokens...\n");
+  console.log("Đang deploy tokens...\n");
 
   const [deployer] = await ethers.getSigners();
   console.log("Người deploy có địa chỉ  :", deployer.address);
@@ -33,14 +33,14 @@ async function main() {
   const deployedTokens: any = {};
 
   for (const tokenConfig of tokens) {
-    console.log(`\n ...Đang deploy token có thông tin : ${tokenConfig.name} (${tokenConfig.symbol})...`);
+    console.log(`\nĐang deploy token có thông tin : ${tokenConfig.name} (${tokenConfig.symbol})...`);
     
     const Token = await ethers.getContractFactory("Token");
     const token = await Token.deploy(
       tokenConfig.name,
       tokenConfig.symbol,
-      tokenConfig.decimals,
-      ethers.utils.parseUnits(tokenConfig.totalSupply, tokenConfig.decimals)
+      ethers.utils.parseUnits(tokenConfig.totalSupply, tokenConfig.decimals),
+      { gasLimit: 3000000 } // Thêm gasLimit rõ ràng để tránh lỗi _hex
     );
     
     await token.deployed();
@@ -69,7 +69,7 @@ async function main() {
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("...Tất cả token đã được deploy...");
+  console.log("Tất cả token đã được deploy...");
   console.log("=".repeat(50));
   console.log("Thông tin về token được lưu tại : info/TokenAddress.json");
   console.log("Bước tiếp theo sẽ là 02-deploy-simple-dex.ts");

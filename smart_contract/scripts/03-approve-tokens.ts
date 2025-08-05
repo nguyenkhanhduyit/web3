@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("...Đang approve tokens for SimpleDEX...\n");
+  console.log("Đang approve tokens for SimpleDEX...\n");
 
   // Read deployed addresses
   const tokens = JSON.parse(
@@ -23,7 +23,7 @@ async function main() {
 
   // Approve all tokens for SimpleDEX
   for (const [tokenName, tokenInfo] of Object.entries(tokens)) {
-    console.log(`\n...Đang approve token có tên : ${tokenName} - (${tokenInfo.symbol})...`);
+    console.log(`\nĐang approve token có tên : ${tokenName} - (${tokenInfo.symbol})...`);
     console.log(`Có địa chỉ Token : ${tokenInfo.tokenAddress}`);
     
     const tokenContract = new ethers.Contract(tokenInfo.tokenAddress, [
@@ -39,11 +39,11 @@ async function main() {
       if (currentAllowance.isZero()) {
         // Approve tokens for SimpleDEX
         const approveAmount = ethers.utils.parseUnits("100000000", tokenInfo.decimals); // 100M tokens
-        console.log(`...Đang pprove ${ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)} ${tokenInfo.symbol} for SimpleDEX...`);
+        console.log(`Đang pprove ${ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)} ${tokenInfo.symbol} for SimpleDEX...`);
         
         const approveTx = await tokenContract.approve(simpleDexAddress, approveAmount);
         console.log("Hash Giao dịch :", approveTx.hash);
-        console.log("...Đang chờ xác nhận...");
+        console.log("Đang chờ xác nhận...");
         
         const receipt = await approveTx.wait();
         console.log("Đã approve thành công");

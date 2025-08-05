@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("...Đang khởi tạo thanh khoản đến SimpleDEX...\n");
+  console.log("Đang khởi tạo thanh khoản đến SimpleDEX...\n");
 
   const tokens = JSON.parse(
     fs.readFileSync(path.resolve(__dirname, "../info/TokenAddress.json"), "utf8")
@@ -51,7 +51,7 @@ async function main() {
     const [token2Name, token2Info] = token2Entry;
 
     console.log(`\n${"=".repeat(60)}`);
-    console.log(`...Đang thêm thanh khoản cho pool ${i + 1}/${tokenPairs.length}: ${token1Name}-${token2Name}...`);
+    console.log(`Đang thêm thanh khoản cho pool ${i + 1}/${tokenPairs.length}: ${token1Name}-${token2Name}...`);
     console.log(`Token1 (${token1Info.symbol}): ${token1Info.tokenAddress}`);
     console.log(`Token2 (${token2Info.symbol}): ${token2Info.tokenAddress}`);
 
@@ -65,7 +65,7 @@ async function main() {
 
     try {
       // Add initial liquidity
-      console.log("\n...Đang thêm thanh khoản...");
+      console.log("\nĐang thêm thanh khoản...");
       const addLiquidityTx = await simpleDex.addLiquidity(
         token1Info.tokenAddress,
         token2Info.tokenAddress,
@@ -75,7 +75,7 @@ async function main() {
       );
       
       console.log("Transaction sent:", addLiquidityTx.hash);
-      console.log("...Đang chờ sự xác nhận...");
+      console.log("Đang chờ sự xác nhận...");
       
       const receipt = await addLiquidityTx.wait();
       console.log("Thanh khoản đã được thêm thành công!");
