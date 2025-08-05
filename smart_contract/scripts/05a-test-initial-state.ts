@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("🔍 Kiểm tra trạng thái ban đầu của SimpleDEX...\n");
+  console.log("Kiểm tra trạng thái ban đầu của SimpleDEX...\n");
 
   // Đọc địa chỉ các token đã deploy
   const tokens = JSON.parse(
@@ -18,15 +18,15 @@ async function main() {
   // Lấy thông tin người deploy
   const [deployer] = await ethers.getSigners();
   
-  console.log("📍 Người deploy:", deployer.address);
-  console.log("🏦 SimpleDEX:", simpleDexAddress);
+  console.log("Người deploy:", deployer.address);
+  console.log("SimpleDEX:", simpleDexAddress);
 
   // Lấy thông tin 2 token đầu tiên để test
   const tokenEntries = Object.entries(tokens);
   const [token1Name, token1Info] = tokenEntries[0];
   const [token2Name, token2Info] = tokenEntries[1];
 
-  console.log(`\n🪙 Sử dụng cặp token: ${token1Name} (${token1Info.symbol}) & ${token2Name} (${token2Info.symbol})`);
+  console.log(`\nSử dụng cặp token: ${token1Name} (${token1Info.symbol}) & ${token2Name} (${token2Info.symbol})`);
 
   // Lấy contract SimpleDEX
   const simpleDex = await ethers.getContractAt("SimpleDEX", simpleDexAddress);
@@ -54,17 +54,39 @@ async function main() {
   console.log("=".repeat(50));
 
   try {
+    /**
+     * Reserves :
+     Hiển thị số lượng token đang có trong pool (2 token):
+
+reserves[0]: số lượng token0 hiện tại trong pool (BigNumber)
+
+reserves[1]: số lượng token1 hiện tại trong pool (BigNumber)
+     */
     // Bước 1: Kiểm tra reserves của pool
-    console.log("🔍 Bước 1: Kiểm tra reserves của pool...");
+    console.log("Bước 1: Kiểm tra reserves của pool...");
     const reserves = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
     console.log(`💰 Reserves: ${ethers.utils.formatUnits(reserves[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reserves[1], token2Info.decimals)} ${token2Info.symbol}`);
 
     // Bước 2: Kiểm tra tổng thanh khoản
+    /*
+    Total Liquidity:
+    Tổng thanh khoản của pool – thường là tổng lượng liquidity token được mint khi bạn và người khác thêm thanh khoản vào.
+
+liquidity là giá trị kiểu BigNumber
+
+Format về 18 decimals (Uniswap liquidity thường chuẩn 18)
+    */
     console.log("🔍 Bước 2: Kiểm tra tổng thanh khoản...");
     const liquidity = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
     console.log(`🏊 Tổng thanh khoản: ${ethers.utils.formatUnits(liquidity, 18)} LP tokens`);
 
     // Bước 3: Kiểm tra thanh khoản của user
+    /*
+    User Liquidity:
+     Số lượng thanh khoản (LP tokens) mà riêng user vừa thêm vào (hoặc đang giữ trong pool).
+
+Cũng dùng formatUnits(..., 18) vì LP token thường có 18 decimals.
+    */
     console.log("🔍 Bước 3: Kiểm tra thanh khoản của user...");
     const userLiquidity = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
     console.log(`👤 Thanh khoản của user: ${ethers.utils.formatUnits(userLiquidity, 18)} LP tokens`);
