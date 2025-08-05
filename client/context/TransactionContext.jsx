@@ -257,11 +257,25 @@ function computePoolId(token0, token1, fee, tickSpacing, hooks) {
 }
 
 function findPoolIdFromTokens() {
+  console.log("Finding pool for tokens:", {
+    tokenInAddress,
+    tokenOutAddress
+  });
+  
   for (const [name, pool] of Object.entries(PoolAddress)) {
     const tokenA = getAddress(tokenInAddress);
     const tokenB = getAddress(tokenOutAddress);
     const token0 = getAddress(pool.token0);
     const token1 = getAddress(pool.token1);
+    
+    console.log(`Checking pool ${name}:`, {
+      tokenA,
+      tokenB,
+      token0,
+      token1,
+      isMatch: (tokenA === token0 && tokenB === token1) || (tokenA === token1 && tokenB === token0)
+    });
+    
     if (
        (tokenA === token0 && tokenB === token1) ||
       (tokenA === token1 && tokenB === token0)
@@ -275,6 +289,15 @@ function findPoolIdFromTokens() {
       const tickSpacing = pool.tickSpacing;
       const poolId = computePoolId(finalToken0, finalToken1, fee, tickSpacing, HOOKS_ADDRESS);
 
+      console.log("Found matching pool:", {
+        name,
+        poolId,
+        finalToken0,
+        finalToken1,
+        fee,
+        tickSpacing
+      });
+
       return {
         name,
         poolId,
@@ -283,12 +306,55 @@ function findPoolIdFromTokens() {
     }
   }
 
+  console.log("No matching pool found");
   return null;
 }
 
 
-
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+
+// Helper function to check if pool has liquidity
+const checkPoolLiquidity = async (poolManager, poolId) => {
+  try {
+    // Check pool state slot
+    const poolStateSlot = ethers.utils.keccak256(
+      ethers.utils.defaultAbiCoder.encode(
+        ["bytes32", "uint256"],
+        [poolId, 0] // slot 0 for pool state
+      )
+    );
+    
+    const poolState = await poolManager.extsload(poolStateSlot);
+    
+    // If pool state is all zeros, the pool is not initialized
+    if (poolState === "0x0000000000000000000000000000000000000000000000000000000000000000") {
+      return false;
+    }
+    
+    // Check liquidity slot
+    const liquiditySlot = ethers.utils.keccak256(
+      ethers.utils.defaultAbiCoder.encode(
+        ["bytes32", "uint256"],
+        [poolId, 1] // slot 1 for liquidity
+      )
+    );
+    
+    const liquidity = await poolManager.extsload(liquiditySlot);
+    
+    // If liquidity is zero, the pool has no liquidity
+    if (liquidity === "0x0000000000000000000000000000000000000000000000000000000000000000") {
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.log("Error checking pool liquidity:", error.message);
+    return false;
+  }
+};
+
+
 
 const estimateAmountOutViaQuoter = async (amountInBigNumber) => {
   try {
@@ -300,11 +366,37 @@ const estimateAmountOutViaQuoter = async (amountInBigNumber) => {
       return "0";
     }
 
+     if (!amountInBigNumber || amountInBigNumber.isZero()) {
+      console.log("Amount is zero or invalid");
+      return "0";
+    }
+
+     // Check if amount is reasonable (less than 1000 ETH)
+    const maxAmount = ethers.utils.parseEther("1000");
+    if (amountInBigNumber.gt(maxAmount)) {
+      console.log("Amount is too large for quote");
+      return "0";
+    }
+
+    // Try with a smaller amount first to test if the pool works
+    console.log("Estimating amount out for:", {
+      tokenInAddress,
+      tokenOutAddress,
+      amountIn: amountInBigNumber.toString()
+    });
+
     const signer = await getSigner();
     const tokenIn = getAddress(tokenInAddress);
     const tokenOut = getAddress(tokenOutAddress);
 
-    for (const [, pool] of Object.entries(PoolAddress)) {
+    // Check if pool exists and has liquidity
+    const poolManager = new ethers.Contract(
+      UNISWAP_V4_ADDRESSES.PoolManager,
+      ["function extsload(bytes32 slot) view returns (bytes32)"],
+      signer
+    );
+
+  for (const [, pool] of Object.entries(PoolAddress)) {
       const token0 = getAddress(pool.token0);
       const token1 = getAddress(pool.token1);
       const isMatch =
@@ -319,11 +411,14 @@ const estimateAmountOutViaQuoter = async (amountInBigNumber) => {
         signer
       );
 
-      const zeroForOne = tokenIn.toLowerCase() < tokenOut.toLowerCase();
+      // Calculate zeroForOne based on the pool's token order
+      // If tokenIn is token0, then zeroForOne is true (token0 -> token1)
+      // If tokenIn is token1, then zeroForOne is false (token1 -> token0)
+      const zeroForOne = tokenIn === token0;
       const fee = pool.fee;
       const tickSpacing = pool.tickSpacing;
 
-      // Đây là phần params đúng format
+      // Ensure the pool key uses the correct token order from the pool data
       const params = {
         poolKey: {
           currency0: token0,
@@ -338,6 +433,10 @@ const estimateAmountOutViaQuoter = async (amountInBigNumber) => {
       };
 
       console.log("quoteExactInputSingle params", params);
+      console.log("Pool found:", pool);
+      console.log("TokenIn:", tokenIn, "TokenOut:", tokenOut);
+      console.log("Token0:", token0, "Token1:", token1);
+      console.log("ZeroForOne:", zeroForOne);
 
       const result = await quoter.quoteExactInputSingle(params);
 
@@ -351,13 +450,38 @@ const estimateAmountOutViaQuoter = async (amountInBigNumber) => {
           break;
         }
       }
+  console.log("Quote result:", {
+        amountOut: amountOut.toString(),
+        decimalsOut,
+        formattedAmount: formatUnits(amountOut, decimalsOut)
+      });
 
       return formatUnits(amountOut, decimalsOut);
     }
 
+    console.log("No valid pool found for the token pair");
     return "0";
   } catch (err) {
     console.error("Quoter estimate failed:", err);
+    console.error("Error details:", {
+      tokenInAddress,
+      tokenOutAddress,
+      amountInBigNumber: amountInBigNumber?.toString(),
+      error: err.message,
+      errorData: err.error?.data
+    });
+    
+    // Check for specific error types
+    if (err.error?.data && err.error.data.includes("NotEnoughLiquidity")) {
+      console.error("Pool does not have enough liquidity for this swap");
+      return "0";
+    }
+    
+    if (err.error?.data && err.error.data.includes("PoolNotInitialized")) {
+      console.error("Pool is not initialized");
+      return "0";
+    }
+    
     return "0";
   }
 };
