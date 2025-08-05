@@ -3,20 +3,20 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("🏦 Deploying SimpleDEX...\n");
+  console.log("...Đang deploy SimpleDEX...\n");
 
   const [deployer] = await ethers.getSigners();
-  console.log("📍 Deployer:", deployer.address);
+  console.log("Người deploy có địa chỉ ví :", deployer.address);
 
   // Deploy SimpleDEX
-  console.log("🚀 Deploying SimpleDEX contract...");
+  console.log("...Đang Deploy SimpleDEX contract...");
   const SimpleDEX = await ethers.getContractFactory("SimpleDEX");
   const simpleDex = await SimpleDEX.deploy();
   await simpleDex.deployed();
 
-  console.log("✅ SimpleDEX deployed at:", simpleDex.address);
+  console.log("Đã deploy SimleDex có địa chỉ là :", simpleDex.address);
 
-  // Save SimpleDEX address
+  // Lưu lại thông tin SimpleDEX
   const infoDir = path.resolve(__dirname, "../info");
   if (!fs.existsSync(infoDir)) {
     fs.mkdirSync(infoDir, { recursive: true });
@@ -35,10 +35,10 @@ async function main() {
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("🎉 SIMPLEDEX DEPLOYED SUCCESSFULLY!");
+  console.log("Đã Deploy SimpleDEX thành công");
   console.log("=".repeat(50));
-  console.log("📁 SimpleDEX address saved to: info/SimpleDEXAddress.json");
-  console.log("📋 Next step: Run 03-approve-tokens.ts");
+  console.log("Thông tin về SimpleDEX lưu tại : info/SimpleDEXAddress.json");
+  console.log("Bước tiếp theo là approve tokens : 03-approve-tokens.ts");
 }
 
 main().catch(e => {

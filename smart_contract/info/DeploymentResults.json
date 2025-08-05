@@ -1,0 +1,14 @@
+{
+  "startTime": "2025-08-05T13:30:16.518Z",
+  "steps": [
+    {
+      "step": 1,
+      "name": "Deploy Tokens",
+      "startTime": "2025-08-05T13:30:16.519Z"
+    }
+  ],
+  "totalTime": 2875,
+  "status": "failed",
+  "error": "Command failed: npx hardhat run scripts/01-deploy-tokens.ts --network sepolia",
+  "endTime": "2025-08-05T13:30:19.393Z"
+}

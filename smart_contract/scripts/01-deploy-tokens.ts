@@ -3,10 +3,10 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("🪙 Deploying tokens...\n");
+  console.log("...Đang deploy tokens...\n");
 
   const [deployer] = await ethers.getSigners();
-  console.log("📍 Deployer:", deployer.address);
+  console.log("Người deploy có địa chỉ  :", deployer.address);
 
   // Token configurations
   const tokens = [
@@ -14,26 +14,26 @@ async function main() {
       name: "Bitcoin",
       symbol: "BTC",
       decimals: 8,
-      totalSupply: "1000000" // 1M BTC
+      totalSupply: "1000000000" // 1B BTC
     },
     {
       name: "Ethereum", 
       symbol: "ETH",
       decimals: 18,
-      totalSupply: "1000000" // 1M ETH
+      totalSupply: "1000000000" // 1B ETH
     },
     {
       name: "Tether USD",
       symbol: "USDT", 
       decimals: 6,
-      totalSupply: "1000000" // 1M USDT
+      totalSupply: "1000000000" // 1B USDT
     }
   ];
 
   const deployedTokens: any = {};
 
   for (const tokenConfig of tokens) {
-    console.log(`\n🚀 Deploying ${tokenConfig.name} (${tokenConfig.symbol})...`);
+    console.log(`\n ...Đang deploy token có thông tin : ${tokenConfig.name} (${tokenConfig.symbol})...`);
     
     const Token = await ethers.getContractFactory("Token");
     const token = await Token.deploy(
@@ -45,8 +45,8 @@ async function main() {
     
     await token.deployed();
     
-    console.log(`✅ ${tokenConfig.name} deployed at: ${token.address}`);
-    console.log(`💰 Total supply: ${tokenConfig.totalSupply} ${tokenConfig.symbol}`);
+    console.log(`Đã deploy token có tên : ${tokenConfig.name} và có địa chỉ : ${token.address}`);
+    console.log(`Với tổng cung : ${tokenConfig.totalSupply} - ${tokenConfig.symbol}`);
     
     deployedTokens[tokenConfig.name] = {
       tokenAddress: token.address,
@@ -57,7 +57,7 @@ async function main() {
     };
   }
 
-  // Save token addresses
+  // Lưu lại thông tin token
   const infoDir = path.resolve(__dirname, "../info");
   if (!fs.existsSync(infoDir)) {
     fs.mkdirSync(infoDir, { recursive: true });
@@ -69,10 +69,10 @@ async function main() {
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("🎉 TOKENS DEPLOYED SUCCESSFULLY!");
+  console.log("...Tất cả token đã được deploy...");
   console.log("=".repeat(50));
-  console.log("📁 Token addresses saved to: info/TokenAddress.json");
-  console.log("📋 Next step: Run 02-deploy-simple-dex.ts");
+  console.log("Thông tin về token được lưu tại : info/TokenAddress.json");
+  console.log("Bước tiếp theo sẽ là 02-deploy-simple-dex.ts");
 }
 
 main().catch(e => {

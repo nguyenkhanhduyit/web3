@@ -9,6 +9,7 @@ Một hệ thống Decentralized Exchange (DEX) hoàn chỉnh với các tính n
 - **SimpleDEX**: Automated Market Maker (AMM) với công thức Constant Product
 - **Liquidity Management**: Thêm/rút thanh khoản với LP tokens
 - **Token Swapping**: Swap tokens với 2 chế độ (Exact Input/Output)
+- **Swap Estimation**: Ước lượng số lượng token sẽ nhận được khi swap
 - **Price Oracle**: Hệ thống cung cấp giá token real-time
 - **Liquidity Mining**: Khuyến khích cung cấp thanh khoản với rewards
 - **Faucet System**: Phân phối token miễn phí với cooldown 24h
@@ -37,16 +38,27 @@ smart_contract/
 │   ├── 03-approve-tokens.ts       # Approve tokens cho DEX
 │   ├── 04-add-initial-liquidity.ts # Thêm thanh khoản ban đầu
 │   ├── 05-test-dex-features.ts    # Test các tính năng DEX
-│   ├── 06-deploy-advanced-features.ts # Deploy PriceOracle & LiquidityMining
+│   ├── 06a-deploy-price-oracle.ts # Deploy Price Oracle
+│   ├── 06b-deploy-liquidity-mining.ts # Deploy Liquidity Mining
+│   ├── 06c-test-advanced-features.ts # Test tích hợp tính năng nâng cao
 │   ├── 07-deploy-faucet.ts        # Deploy Faucet system
-│   └── 08-swap-tokens.ts          # Script riêng cho swap tokens
+│   ├── 08-swap-tokens.ts          # Script riêng cho swap tokens
+│   ├── 09-test-swap-estimation.ts # Test tính năng ước lượng swap
+│   └── 10-demo-swap-estimation.ts # Demo swap estimation
 ├── info/                          # Thông tin deployment
 │   ├── TokenAddress.json          # Địa chỉ các token
 │   ├── SimpleDEXAddress.json      # Địa chỉ SimpleDEX
+│   ├── AllInitialLiquidity.json   # Thông tin thanh khoản tất cả cặp
+│   ├── PriceOracleDeployment.json # Thông tin Price Oracle
+│   ├── LiquidityMiningDeployment.json # Thông tin Liquidity Mining
+│   ├── AdvancedFeaturesIntegrationTest.json # Kết quả test tích hợp
 │   ├── FaucetInfo.json            # Thông tin Faucet
-│   ├── AdvancedFeatures.json      # Thông tin advanced features
 │   ├── SwapResults.json           # Kết quả swap tests
+│   ├── SwapEstimationResults.json # Kết quả test ước lượng swap
 │   └── DeploymentReport.json      # Báo cáo deployment tổng hợp
+├── docs/
+│   ├── SWAP_ESTIMATION_FEATURE.md # Tài liệu tính năng ước lượng swap
+│   └── ADVANCED_FEATURES.md       # Tài liệu tính năng nâng cao
 └── README.md                      # Tài liệu này
 ```
 
@@ -105,9 +117,19 @@ npx hardhat run scripts/04-add-initial-liquidity.ts --network sepolia
 npx hardhat run scripts/05-test-dex-features.ts --network sepolia
 ```
 
-6. **Deploy advanced features**:
+6a. **Deploy Price Oracle**:
 ```bash
-npx hardhat run scripts/06-deploy-advanced-features.ts --network sepolia
+npx hardhat run scripts/06a-deploy-price-oracle.ts --network sepolia
+```
+
+6b. **Deploy Liquidity Mining**:
+```bash
+npx hardhat run scripts/06b-deploy-liquidity-mining.ts --network sepolia
+```
+
+6c. **Test tích hợp tính năng nâng cao**:
+```bash
+npx hardhat run scripts/06c-test-advanced-features.ts --network sepolia
 ```
 
 7. **Deploy Faucet**:
@@ -216,6 +238,32 @@ const amountIn = await simpleDex.swapTokensForExactTokens(
 );
 ```
 
+### Ước lượng Swap
+
+1. **Ước lượng output cho input cố định**:
+```javascript
+const estimatedOut = await simpleDex.getAmountOut(
+    tokenInAddress,
+    tokenOutAddress,
+    amountIn
+);
+```
+
+2. **Ước lượng input cho output cố định**:
+```javascript
+const estimatedIn = await simpleDex.getAmountIn(
+    tokenInAddress,
+    tokenOutAddress,
+    amountOut
+);
+```
+
+3. **Lấy thông tin chi tiết pool**:
+```javascript
+const poolInfo = await simpleDex.getPoolInfo(token0Address, token1Address);
+// Trả về: reserve0, reserve1, totalSupply, price0to1, price1to0
+```
+
 ### Tính toán giá
 ```javascript
 const price = await simpleDex.getPrice(token0Address, token1Address);
@@ -283,6 +331,9 @@ npx hardhat run scripts/05-test-dex-features.ts --network sepolia
 
 # Test swap riêng
 npx hardhat run scripts/08-swap-tokens.ts --network sepolia
+
+# Test tính năng ước lượng swap
+npx hardhat run scripts/09-test-swap-estimation.ts --network sepolia
 ```
 
 ### Test thủ công
@@ -357,6 +408,13 @@ npx hardhat run scripts/debug-pool-state.ts --network sepolia
 ## 📄 License
 
 MIT License - xem file LICENSE để biết thêm chi tiết.
+
+## 📚 Documentation
+
+- **Swap Estimation**: [SWAP_ESTIMATION_FEATURE.md](./docs/SWAP_ESTIMATION_FEATURE.md) - Chi tiết về tính năng ước lượng swap
+- **Advanced Features**: [ADVANCED_FEATURES.md](./docs/ADVANCED_FEATURES.md) - Chi tiết về Price Oracle và Liquidity Mining
+- **Code Comments**: Xem comments trong code để hiểu implementation
+- **Examples**: Chạy các script test để hiểu cách sử dụng
 
 ## 🆘 Support
 

@@ -363,6 +363,93 @@ contract SimpleDEX {
         }
     }
     
+    /**
+     * @dev Ước lượng số lượng token sẽ nhận được khi swap với số lượng input cố định
+     * @param tokenIn Địa chỉ token muốn bán
+     * @param tokenOut Địa chỉ token muốn mua
+     * @param amountIn Số lượng token muốn bán
+     * @return amountOut Số lượng token sẽ nhận được
+     */
+    function getAmountOut(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn
+    ) external view returns (uint256 amountOut) {
+        require(tokenIn != tokenOut, "IDENTICAL_ADDRESSES");
+        require(amountIn > 0, "INSUFFICIENT_INPUT_AMOUNT");
+        
+        // Sắp xếp token
+        (address tokenA, address tokenB) = tokenIn < tokenOut ? (tokenIn, tokenOut) : (tokenOut, tokenIn);
+        
+        Pool storage pool = pools[tokenA][tokenB];
+        require(pool.reserve0 > 0 && pool.reserve1 > 0, "INSUFFICIENT_LIQUIDITY");
+        
+        amountOut = _getAmountOut(amountIn, tokenIn, tokenOut, pool);
+        require(amountOut > 0, "INSUFFICIENT_OUTPUT_AMOUNT");
+        
+        return amountOut;
+    }
+    
+    /**
+     * @dev Ước lượng số lượng token cần bán để nhận được số lượng output cố định
+     * @param tokenIn Địa chỉ token muốn bán
+     * @param tokenOut Địa chỉ token muốn mua
+     * @param amountOut Số lượng token muốn nhận
+     * @return amountIn Số lượng token cần bán
+     */
+    function getAmountIn(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountOut
+    ) external view returns (uint256 amountIn) {
+        require(tokenIn != tokenOut, "IDENTICAL_ADDRESSES");
+        require(amountOut > 0, "INSUFFICIENT_OUTPUT_AMOUNT");
+        
+        // Sắp xếp token
+        (address tokenA, address tokenB) = tokenIn < tokenOut ? (tokenIn, tokenOut) : (tokenOut, tokenIn);
+        
+        Pool storage pool = pools[tokenA][tokenB];
+        require(pool.reserve0 > 0 && pool.reserve1 > 0, "INSUFFICIENT_LIQUIDITY");
+        
+        amountIn = _getAmountIn(amountOut, tokenIn, tokenOut, pool);
+        require(amountIn > 0, "INSUFFICIENT_INPUT_AMOUNT");
+        
+        return amountIn;
+    }
+    
+    /**
+     * @dev Lấy thông tin chi tiết về một pool
+     * @param token0 Token thứ nhất
+     * @param token1 Token thứ hai
+     * @return reserve0 Số token0 trong pool
+     * @return reserve1 Số token1 trong pool
+     * @return totalSupply Tổng số LP token
+     * @return price0to1 Giá token1 theo token0
+     * @return price1to0 Giá token0 theo token1
+     */
+    function getPoolInfo(address token0, address token1) external view returns (
+        uint256 reserve0,
+        uint256 reserve1,
+        uint256 totalSupply,
+        uint256 price0to1,
+        uint256 price1to0
+    ) {
+        (address tokenA, address tokenB) = token0 < token1 ? (token0, token1) : (token1, token0);
+        Pool storage pool = pools[tokenA][tokenB];
+        
+        reserve0 = pool.reserve0;
+        reserve1 = pool.reserve1;
+        totalSupply = pool.totalSupply;
+        
+        if (reserve0 > 0 && reserve1 > 0) {
+            price0to1 = (reserve1 * 1e18) / reserve0; // Giá token1 theo token0
+            price1to0 = (reserve0 * 1e18) / reserve1; // Giá token0 theo token1
+        } else {
+            price0to1 = 0;
+            price1to0 = 0;
+        }
+    }
+    
     // ============ UTILITY FUNCTIONS ============
     
     /**

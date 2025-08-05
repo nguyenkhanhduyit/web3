@@ -32,8 +32,11 @@ export interface SimpleDEXInterface extends utils.Interface {
     "FEE_DENOMINATOR()": FunctionFragment;
     "SWAP_FEE()": FunctionFragment;
     "addLiquidity(address,address,uint256,uint256)": FunctionFragment;
+    "getAmountIn(address,address,uint256)": FunctionFragment;
+    "getAmountOut(address,address,uint256)": FunctionFragment;
     "getBalance(address,address,address)": FunctionFragment;
     "getLiquidity(address,address)": FunctionFragment;
+    "getPoolInfo(address,address)": FunctionFragment;
     "getPrice(address,address)": FunctionFragment;
     "getReserves(address,address)": FunctionFragment;
     "pools(address,address)": FunctionFragment;
@@ -48,8 +51,11 @@ export interface SimpleDEXInterface extends utils.Interface {
       | "FEE_DENOMINATOR"
       | "SWAP_FEE"
       | "addLiquidity"
+      | "getAmountIn"
+      | "getAmountOut"
       | "getBalance"
       | "getLiquidity"
+      | "getPoolInfo"
       | "getPrice"
       | "getReserves"
       | "pools"
@@ -74,6 +80,22 @@ export interface SimpleDEXInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "getAmountIn",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAmountOut",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getBalance",
     values: [
       PromiseOrValue<string>,
@@ -83,6 +105,10 @@ export interface SimpleDEXInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getLiquidity",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPoolInfo",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -139,9 +165,21 @@ export interface SimpleDEXInterface extends utils.Interface {
     functionFragment: "addLiquidity",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAmountIn",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAmountOut",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPoolInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
@@ -259,6 +297,20 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getAmountIn(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { amountIn: BigNumber }>;
+
+    getAmountOut(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { amountOut: BigNumber }>;
+
     getBalance(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
@@ -271,6 +323,20 @@ export interface SimpleDEX extends BaseContract {
       token1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getPoolInfo(
+      token0: PromiseOrValue<string>,
+      token1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        reserve0: BigNumber;
+        reserve1: BigNumber;
+        totalSupply: BigNumber;
+        price0to1: BigNumber;
+        price1to0: BigNumber;
+      }
+    >;
 
     getPrice(
       token0: PromiseOrValue<string>,
@@ -339,6 +405,20 @@ export interface SimpleDEX extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getAmountIn(
+    tokenIn: PromiseOrValue<string>,
+    tokenOut: PromiseOrValue<string>,
+    amountOut: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getAmountOut(
+    tokenIn: PromiseOrValue<string>,
+    tokenOut: PromiseOrValue<string>,
+    amountIn: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getBalance(
     token0: PromiseOrValue<string>,
     token1: PromiseOrValue<string>,
@@ -351,6 +431,20 @@ export interface SimpleDEX extends BaseContract {
     token1: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getPoolInfo(
+    token0: PromiseOrValue<string>,
+    token1: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      reserve0: BigNumber;
+      reserve1: BigNumber;
+      totalSupply: BigNumber;
+      price0to1: BigNumber;
+      price1to0: BigNumber;
+    }
+  >;
 
   getPrice(
     token0: PromiseOrValue<string>,
@@ -419,6 +513,20 @@ export interface SimpleDEX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getAmountIn(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAmountOut(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBalance(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
@@ -431,6 +539,20 @@ export interface SimpleDEX extends BaseContract {
       token1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getPoolInfo(
+      token0: PromiseOrValue<string>,
+      token1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        reserve0: BigNumber;
+        reserve1: BigNumber;
+        totalSupply: BigNumber;
+        price0to1: BigNumber;
+        price1to0: BigNumber;
+      }
+    >;
 
     getPrice(
       token0: PromiseOrValue<string>,
@@ -553,6 +675,20 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getAmountIn(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAmountOut(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBalance(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
@@ -561,6 +697,12 @@ export interface SimpleDEX extends BaseContract {
     ): Promise<BigNumber>;
 
     getLiquidity(
+      token0: PromiseOrValue<string>,
+      token1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPoolInfo(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -626,6 +768,20 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    getAmountIn(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAmountOut(
+      tokenIn: PromiseOrValue<string>,
+      tokenOut: PromiseOrValue<string>,
+      amountIn: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getBalance(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
@@ -634,6 +790,12 @@ export interface SimpleDEX extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getLiquidity(
+      token0: PromiseOrValue<string>,
+      token1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPoolInfo(
       token0: PromiseOrValue<string>,
       token1: PromiseOrValue<string>,
       overrides?: CallOverrides

@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("🔐 Approving tokens for SimpleDEX...\n");
+  console.log("...Đang approve tokens for SimpleDEX...\n");
 
   // Read deployed addresses
   const tokens = JSON.parse(
@@ -16,15 +16,15 @@ async function main() {
 
   const [deployer] = await ethers.getSigners();
   
-  console.log("📍 Deployer:", deployer.address);
-  console.log("🏦 SimpleDEX:", simpleDexAddress);
+  console.log("Người deploy có địa chỉ ví :", deployer.address);
+  console.log("Địa chỉ SimpleDEX :", simpleDexAddress);
 
   const approvalResults: any = {};
 
   // Approve all tokens for SimpleDEX
   for (const [tokenName, tokenInfo] of Object.entries(tokens)) {
-    console.log(`\n🔐 Approving ${tokenName} (${tokenInfo.symbol})...`);
-    console.log(`Token address: ${tokenInfo.tokenAddress}`);
+    console.log(`\n...Đang approve token có tên : ${tokenName} - (${tokenInfo.symbol})...`);
+    console.log(`Có địa chỉ Token : ${tokenInfo.tokenAddress}`);
     
     const tokenContract = new ethers.Contract(tokenInfo.tokenAddress, [
       "function approve(address,uint256) external returns (bool)",
@@ -38,16 +38,16 @@ async function main() {
       
       if (currentAllowance.isZero()) {
         // Approve tokens for SimpleDEX
-        const approveAmount = ethers.utils.parseUnits("1000000", tokenInfo.decimals); // 1M tokens
-        console.log(`Approving ${ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)} ${tokenInfo.symbol} for SimpleDEX...`);
+        const approveAmount = ethers.utils.parseUnits("100000000", tokenInfo.decimals); // 100M tokens
+        console.log(`...Đang pprove ${ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)} ${tokenInfo.symbol} for SimpleDEX...`);
         
         const approveTx = await tokenContract.approve(simpleDexAddress, approveAmount);
-        console.log("⏳ Transaction sent:", approveTx.hash);
-        console.log("Waiting for confirmation...");
+        console.log("Hash Giao dịch :", approveTx.hash);
+        console.log("...Đang chờ xác nhận...");
         
         const receipt = await approveTx.wait();
-        console.log("✅ Approval successful!");
-        console.log("Gas used:", receipt.gasUsed.toString());
+        console.log("Đã approve thành công");
+        console.log("Gas đã sử dụng :", receipt.gasUsed.toString());
         
         approvalResults[tokenName] = {
           status: "approved",
@@ -57,7 +57,7 @@ async function main() {
           timestamp: new Date().toISOString()
         };
       } else {
-        console.log("✅ Already has sufficient allowance");
+        console.log("Đã có đủ allowance");
         approvalResults[tokenName] = {
           status: "already_approved",
           currentAllowance: ethers.utils.formatUnits(currentAllowance, tokenInfo.decimals),
@@ -66,7 +66,7 @@ async function main() {
       }
       
     } catch (error) {
-      console.log("❌ Approval failed:", error.message);
+      console.log("Approval lỗi :", error.message);
       approvalResults[tokenName] = {
         status: "failed",
         error: error.message,
@@ -83,10 +83,10 @@ async function main() {
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("🎉 TOKEN APPROVALS COMPLETED!");
+  console.log("Tất cả tokens đã được approve");
   console.log("=".repeat(50));
-  console.log("📁 Approval results saved to: info/TokenApprovals.json");
-  console.log("📋 Next step: Run 04-add-initial-liquidity.ts");
+  console.log("Thông tin approve lưu tại: info/TokenApprovals.json");
+  console.log("Bước tiếp theo là thêm thanh khoản :  Run 04-add-initial-liquidity.ts");
 }
 
 main().catch(e => {
