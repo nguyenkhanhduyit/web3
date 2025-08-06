@@ -85,7 +85,7 @@ useEffect(
             ).map((token,index)=>{
               return (
                 <MenuItem className="text-white" value={token.symbol}>
-                  {`${token.symbol} (${token.name})`}
+                  {`${token.symbol}`}
                 </MenuItem>
               )
             })

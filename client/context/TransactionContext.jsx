@@ -3,10 +3,13 @@ import { ethers } from 'ethers'
 import { contractABI, contractAddress } from '../utils/Constants'
 import axios from 'axios'
 import { keccak256, defaultAbiCoder, getAddress, formatUnits } from "ethers/lib/utils";
-import PoolAddress from '../../client/utils/swap/info/PoolAddress.json'
+
 import TokenAddress from '../../client/utils/swap/info/TokenAddress.json'
-import { UNISWAP_V4_ADDRESSES } from "../../client/utils/swap/info/UniswapV4Constants"
-import  QUOTER_ABI  from "../../client/utils/swap/info/QuoterABI.json"
+
+import SimpleDEXAddress from "../../client/utils/swap/info/SimpleDEXAddress.json";
+import SimpleDEX from "../../client/utils/swap/info/SimpleDEX.json";
+import PriceOracleAddress from "../../client/utils/swap/info/PriceOracleAddress.json";
+import PriceOracle from "../../client/utils/swap/info/PriceOracle.json";
 
 export const TransactionContext = React.createContext()
 
@@ -235,391 +238,44 @@ const getTokenBalance = async () => {
 }
 
 
-//ước lượng token out
-// Address zero cho hooks (nếu không sử dụng hooks custom)
-const HOOKS_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-// Hàm tính poolId từ PoolKey
-function computePoolId(token0, token1, fee, tickSpacing, hooks) {
-  //return về pool id
-  return keccak256(
-    defaultAbiCoder.encode(
-      ["address", "address", "uint24", "int24", "address"],
-      [
-        getAddress(token0),
-        getAddress(token1),
-        fee,
-        tickSpacing,
-        getAddress(hooks),
-      ]
-    )
-  );
-}
-
-function findPoolIdFromTokens() {
-  console.log("Finding pool for tokens:", {
-    tokenInAddress,
-    tokenOutAddress
-  });
-  
-  for (const [name, pool] of Object.entries(PoolAddress)) {
-    const tokenA = getAddress(tokenInAddress);
-    const tokenB = getAddress(tokenOutAddress);
-    const token0 = getAddress(pool.token0);
-    const token1 = getAddress(pool.token1);
-    
-    console.log(`Checking pool ${name}:`, {
-      tokenA,
-      tokenB,
-      token0,
-      token1,
-      isMatch: (tokenA === token0 && tokenB === token1) || (tokenA === token1 && tokenB === token0)
-    });
-    
-    if (
-       (tokenA === token0 && tokenB === token1) ||
-      (tokenA === token1 && tokenB === token0)
-    ) {
-
-      const [finalToken0, finalToken1] =
-        tokenA.toLowerCase() < tokenB.toLowerCase()
-          ? [tokenA, tokenB]
-          : [tokenB, tokenA];
-      const fee = pool.fee;
-      const tickSpacing = pool.tickSpacing;
-      const poolId = computePoolId(finalToken0, finalToken1, fee, tickSpacing, HOOKS_ADDRESS);
-
-      console.log("Found matching pool:", {
-        name,
-        poolId,
-        finalToken0,
-        finalToken1,
-        fee,
-        tickSpacing
-      });
-
-      return {
-        name,
-        poolId,
-        info: pool,
-      };
-    }
-  }
-
-  console.log("No matching pool found");
-  return null;
-}
-
-
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-
-
-// Helper function to check if pool has liquidity
-const checkPoolLiquidity = async (poolManager, poolId) => {
+const estimateAmountOutViaQuoter = async (amount) => {
   try {
-    console.log("Checking liquidity for pool:", poolId);
-    
-    // Check pool state slot
-    const poolStateSlot = ethers.utils.keccak256(
-      ethers.utils.defaultAbiCoder.encode(
-        ["bytes32", "uint256"],
-        [poolId, 0] // slot 0 for pool state
-      )
-    );
-    
-    const poolState = await poolManager.extsload(poolStateSlot);
-    console.log("Pool state:", poolState);
-    
-    // If pool state is all zeros, the pool is not initialized
-    if (poolState === "0x0000000000000000000000000000000000000000000000000000000000000000") {
-      console.log("Pool is not initialized (pool state is zero)");
-      return false;
-    }
-    
-    // Check liquidity slot
-    const liquiditySlot = ethers.utils.keccak256(
-      ethers.utils.defaultAbiCoder.encode(
-        ["bytes32", "uint256"],
-        [poolId, 1] // slot 1 for liquidity
-      )
-    );
-    
-    const liquidity = await poolManager.extsload(liquiditySlot);
-    console.log("Pool liquidity:", liquidity);
-    
-    // If liquidity is zero, the pool has no liquidity
-    if (liquidity === "0x0000000000000000000000000000000000000000000000000000000000000000") {
-      console.log("Pool has no liquidity (liquidity is zero)");
-      return false;
-    }
-    
-    // Parse liquidity value (it's stored as a uint128)
-    const liquidityValue = ethers.BigNumber.from(liquidity);
-    console.log("Parsed liquidity value:", liquidityValue.toString());
-    
-    if (liquidityValue.isZero()) {
-      console.log("Pool has zero liquidity");
-      return false;
-    }
-    
-    console.log("Pool has liquidity:", liquidityValue.toString());
-    return true;
-  } catch (error) {
-    console.log("Error checking pool liquidity:", error.message);
-    return false;
-  }
-};
-
-// Helper function to decode Uniswap V4 error messages
-const decodeUniswapV4Error = (errorData) => {
-  if (!errorData) return "Unknown error";
-  
-  // Common Uniswap V4 error signatures
-  const errorSignatures = {
-    "0x6190b2b0": "NotEnoughLiquidity",
-    "0x486aa307": "CustomUniswapV4Error", // This is the one we're seeing
-    "0x4e487b71": "ArithmeticError",
-    "0x4d2301cc": "PoolNotInitialized"
-  };
-  
-  for (const [signature, errorName] of Object.entries(errorSignatures)) {
-    if (errorData.includes(signature)) {
-      return errorName;
-    }
-  }
-  
-  return "Unknown error";
-};
-
-
-
-const estimateAmountOutViaQuoter = async (amountInBigNumber) => {
-  try {
-    if (
-      !tokenInAddress ||
-      !tokenOutAddress ||
-      tokenInAddress.toLowerCase() === tokenOutAddress.toLowerCase()
-    ) {
-      return "0";
-    }
-
-     if (!amountInBigNumber || amountInBigNumber.isZero()) {
-      console.log("Amount is zero or invalid");
-      return "0";
-    }
-
-     // Check if amount is reasonable (less than 1000 ETH)
-    const maxAmount = ethers.utils.parseEther("1000");
-    if (amountInBigNumber.gt(maxAmount)) {
-      console.log("Amount is too large for quote");
-      return "0";
-    }
-
-    // Try different amounts if the initial amount fails
-    const amountsToTry = [
-      amountInBigNumber,
-      amountInBigNumber.div(10),
-      amountInBigNumber.div(100),
-      amountInBigNumber.div(1000)
-    ].filter(amount => amount.gt(0));
-
-    console.log("Estimating amount out for:", {
-      tokenInAddress,
-      tokenOutAddress,
-      amountIn: amountInBigNumber.toString(),
-      amountsToTry: amountsToTry.map(a => a.toString())
-    });
-
     const signer = await getSigner();
-    const tokenIn = getAddress(tokenInAddress);
-    const tokenOut = getAddress(tokenOutAddress);
+    const simpleDEX = await new ethers.Contract(SimpleDEXAddress.address, SimpleDEX.abi, signer)
+    const priceOracle = await new ethers.Contract(PriceOracleAddress.address, PriceOracle.abi, signer)
 
-    // Log token information for debugging
-    console.log("Token information:");
-    for (const [tokenName, tokenInfo] of Object.entries(TokenAddress)) {
-      if (getAddress(tokenInfo.tokenAddress) === tokenIn) {
-        console.log(`Token In: ${tokenName} (${tokenIn})`);
-      }
-      if (getAddress(tokenInfo.tokenAddress) === tokenOut) {
-        console.log(`Token Out: ${tokenName} (${tokenOut})`);
-      }
+    // Lấy địa chỉ USDT để làm base currency
+    const usdtAddress = TokenAddress["Tether USD"].tokenAddress;
+
+    const token_list = Object.values(TokenAddress)
+
+    //lấy ra thông tin in và out
+    const tokenInInfo = token_list.find((token) => token.tokenAddress === tokenInAddress);
+    const tokenOutInfo = token_list.find((token) => token.tokenAddress === tokenOutAddress);
+
+    if (!tokenInInfo || !tokenOutInfo) {
+      console.error("Không tìm thấy thông tin token");
+      return;
     }
 
-    // Check if pool exists and has liquidity
-    const poolManager = new ethers.Contract(
-      UNISWAP_V4_ADDRESSES.PoolManager,
-      ["function extsload(bytes32 slot) view returns (bytes32)"],
-      signer
-    );
+    const tokenInName = tokenInInfo.symbol;
+    const tokenOutName = tokenOutInfo.symbol;
 
-  for (const [, pool] of Object.entries(PoolAddress)) {
-      const token0 = getAddress(pool.token0);
-      const token1 = getAddress(pool.token1);
-      const isMatch =
-        (tokenIn === token0 && tokenOut === token1) ||
-        (tokenIn === token1 && tokenOut === token0);
+    //decimals
+    const tokenInDecimals = tokenInInfo.decimals;
+    const tokenOutDecimals = tokenOutInfo.decimals;
 
-      if (!isMatch) continue;
-
-      console.log("Found matching pool:", pool.name || "Unknown", "with poolId:", pool.poolId);
-
-      // Check if pool has liquidity before attempting to quote
-      const hasLiquidity = await checkPoolLiquidity(poolManager, pool.poolId);
-      if (!hasLiquidity) {
-        console.log("Pool has no liquidity, skipping quote for pool:", pool.poolId);
-        console.log("This pool needs to be initialized with liquidity before swaps can be performed");
-        continue;
-      }
-
-      console.log("Pool has liquidity, proceeding with quote");
-
-      const quoter = new ethers.Contract(
-        UNISWAP_V4_ADDRESSES.Quoter,
-        QUOTER_ABI.abi,
-        signer
-      );
-
-      // Calculate zeroForOne based on the pool's token order
-      // If tokenIn is token0, then zeroForOne is true (token0 -> token1)
-      // If tokenIn is token1, then zeroForOne is false (token1 -> token0)
-      const zeroForOne = tokenIn === token0;
-      const fee = pool.fee;
-      const tickSpacing = pool.tickSpacing;
-
-      console.log("Pool found:", pool);
-      console.log("TokenIn:", tokenIn, "TokenOut:", tokenOut);
-      console.log("Token0:", token0, "Token1:", token1);
-      console.log("ZeroForOne:", zeroForOne);
-
-      // Try different amounts for this pool
-      for (const tryAmount of amountsToTry) {
-        try {
-          const params = {
-            poolKey: {
-              currency0: token0,
-              currency1: token1,
-              fee: fee,
-              tickSpacing: tickSpacing,
-              hooks: ZERO_ADDRESS
-            },
-            zeroForOne: zeroForOne,
-            exactAmount: tryAmount,
-            hookData: "0x"
-          };
-
-          console.log(`Trying quote with amount ${tryAmount.toString()} for pool ${pool.poolId}`);
-
-          const result = await quoter.quoteExactInputSingle(params);
-
-          const amountOut = result.amountOut || result[0]; // fallback cho các provider
-          let decimalsOut = 18;
-
-          for (const tokenName in TokenAddress) {
-            const info = TokenAddress[tokenName];
-            if (getAddress(info.tokenAddress) === tokenOut) {
-              decimalsOut = info.decimals;
-              break;
-            }
-          }
-          
-          console.log("Quote result:", {
-            amountOut: amountOut.toString(),
-            decimalsOut,
-            formattedAmount: formatUnits(amountOut, decimalsOut),
-            usedAmount: tryAmount.toString()
-          });
-
-          return formatUnits(amountOut, decimalsOut);
-        } catch (quoteError) {
-          console.log(`Quote failed for pool ${pool.poolId} with amount ${tryAmount.toString()}:`, quoteError.message);
-          
-          // Check for specific error types
-          if (quoteError.error?.data) {
-            const errorData = quoteError.error.data;
-            const errorType = decodeUniswapV4Error(errorData);
-            console.log("Decoded error type:", errorType);
-            
-            if (errorType === "NotEnoughLiquidity") {
-              console.log("Pool does not have enough liquidity for this swap");
-              break; // Try next amount
-            }
-            if (errorType === "PoolNotInitialized") {
-              console.log("Pool is not initialized");
-              break; // Try next pool
-            }
-            if (errorType === "CustomUniswapV4Error") {
-              console.log("Custom Uniswap V4 error - likely insufficient liquidity or invalid parameters");
-              break; // Try next amount
-            }
-          }
-          
-          // If it's the last amount to try, continue to next pool
-          if (tryAmount === amountsToTry[amountsToTry.length - 1]) {
-            console.log("All amounts failed for this pool, trying next pool");
-            break; // Try next pool
-          }
-          
-          // Otherwise, continue to next amount
-          continue;
-        }
-      }
-    }
-
-    // Check if any pools exist for this token pair
-    let poolsExist = false;
-    for (const [, pool] of Object.entries(PoolAddress)) {
-      const token0 = getAddress(pool.token0);
-      const token1 = getAddress(pool.token1);
-      const isMatch =
-        (tokenIn === token0 && tokenOut === token1) ||
-        (tokenIn === token1 && tokenOut === token0);
-      
-      if (isMatch) {
-        poolsExist = true;
-        break;
-      }
-    }
-    
-    if (!poolsExist) {
-      console.log("No pools exist for this token pair");
-      return "0";
-    } else {
-      console.log("Pools exist but none have liquidity");
-      console.log("To enable swaps, liquidity needs to be added to one of the pools");
-      return "0";
-    }
-  } catch (err) {
-    console.error("Quoter estimate failed:", err);
-    console.error("Error details:", {
-      tokenInAddress,
-      tokenOutAddress,
-      amountInBigNumber: amountInBigNumber?.toString(),
-      error: err.message,
-      errorData: err.error?.data
-    });
-    
-    // Check for specific error types
-    if (err.error?.data) {
-      const errorData = err.error.data;
-      const errorType = decodeUniswapV4Error(errorData);
-      console.error("Decoded error type:", errorType);
-      
-      if (errorType === "NotEnoughLiquidity") {
-        console.error("Pool does not have enough liquidity for this swap");
-        return "0";
-      }
-      if (errorType === "PoolNotInitialized") {
-        console.error("Pool is not initialized");
-        return "0";
-      }
-      if (errorType === "CustomUniswapV4Error") {
-        console.error("Custom Uniswap V4 error - likely insufficient liquidity or invalid parameters");
-        return "0";
-      }
-    }
-    
-    console.error("No valid pools found or all pools failed to quote");
-    return "0";
+    // Lấy giá từ PriceOracle
+    const tokenInPriceInUSDT = ethers.utils.formatUnits(await priceOracle.getPrice(tokenInAddress, usdtAddress),18);
+    const tokenOutPriceInUSDT = ethers.utils.formatUnits(await priceOracle.getPrice(tokenOutAddress, usdtAddress),18);
+    const res = (amount*(tokenInPriceInUSDT/tokenOutPriceInUSDT)) // => vd :btc => eth
+    const arrRes =`${amount} ${tokenInName} (${tokenInPriceInUSDT} USDT)
+       ~= ${res} ${tokenOutName} (${tokenOutPriceInUSDT} USDT) `
+    return {res,arrRes}
+  } catch (error) {
+    console.error("Lỗi khi ước lượng swap:", error);
+    return null;
   }
 };
 
@@ -640,7 +296,7 @@ const estimateAmountOutViaQuoter = async (amountInBigNumber) => {
       getMyTransactionCount,
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
-      findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
+      setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
       ,estimateAmountOutViaQuoter
     }}>
       {children}

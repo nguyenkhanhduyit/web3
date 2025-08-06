@@ -27,13 +27,13 @@ const ModalSwap = ({ theme, onClose }) => {
   const [status, setStatus] = useState('');
   const [eslimateAmount,setEslimateAmount] = useState(0.1)
   const [showList, setShowList] = useState(false)
-  
+  const [arrAmountTo,setArrAmountTo] = useState('')
   const [isSwapIndex, setIsSwapIndex] = useState(false)
   const [error, setError] = useState('')
 
  const { 
-         getTokenBalance,currentAccount,tokenBalance,
-         findPoolIdFromTokens,setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance,
+         getTokenBalance,currentAccount,tokenBalance,setTokenInAddress
+         ,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance,
          estimateAmountOutViaQuoter
      } = useContext(TransactionContext)
 
@@ -44,11 +44,15 @@ useEffect(() => {
         setAmountTo("0");
         return;
       }
-
       const decimals = TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.decimals
-      const parsedAmount = ethers.utils.parseUnits(amountFrom.toString(), decimals);
-      const estimate = await estimateAmountOutViaQuoter(parsedAmount);
-      setAmountTo(estimate);
+      const estimate = await estimateAmountOutViaQuoter(amountFrom);
+      if (estimate) {
+        const fixed = estimate.res
+        setAmountTo(fixed);
+        setArrAmountTo(estimate.arrRes)
+      } else {
+        setAmountTo("0");
+      }
     } catch (err) {
       console.error("Error estimating amountOut:", err);
       setAmountTo("0");
@@ -74,18 +78,6 @@ const handleSwapTokenIndex = async() => {
   setTokenInAddress(tokenOutAddress);
   setTokenOutAddress(temp);
 };
-
-useEffect(() => {
-     if(tokenInAddress && tokenOutAddress){
-         const poolId =  findPoolIdFromTokens()
-        if(poolId === null ) {
-          setError('Couple swap not support')
-        }
-        else{
-          console.log('Pool Id : ',poolId)
-        }
-     }
-}, [tokenInAddress,tokenOutAddress])
 
 
   async function handleSwap() {
@@ -191,6 +183,7 @@ useEffect(() => {
            <button  onClick={handleSwapTokenIndex} className='cursor-pointer'>
              <SwapVertIcon style={{fontSize:'40px'}} />
            </button>
+          
   <div className="flex flex-col w-full sticky top-15 z-20 mt-4">
         <div className="relative bg-[#2d2f36] border-[2px] border-gray-600 w-full h-auto p-4 rounded-2xl flex flex-row justify-between items-center shadow-md">
           <input
@@ -220,9 +213,17 @@ useEffect(() => {
           </Stack> */}
          </>)
          }
+          {
+            arrAmountTo && (
+              <>
+              <p className='text-sm text-gray-400 p-4'>{arrAmountTo}</p>
+              </>
+            )
+           }
             <button onClick={handleSwap} className="bg-blue-500 w-full text-white px-4 py-2 rounded my-[10px]">
               Swap
             </button>
+            
     </div>
 </div>
       ) : (

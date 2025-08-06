@@ -61,6 +61,7 @@ async function main() {
         const ethPriceInUSDT = await priceOracle.getPrice(ethAddress, usdtAddress);
         
         // Tính giá trị USDT của input và output
+        // Giá từ PriceOracle đã có 18 decimals
         const inputValueInUSDT = amountIn.mul(btcPriceInUSDT).div(ethers.utils.parseUnits("1", 18));
         const outputValueInUSDT = amountOut.mul(ethPriceInUSDT).div(ethers.utils.parseUnits("1", 18));
         
