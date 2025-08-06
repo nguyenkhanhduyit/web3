@@ -1,0 +1,66 @@
+{
+  "timestamp": "2025-08-06T15:32:40.406Z",
+  "priceOracleAddress": "0x3CEB2d7B9e16Fe700ea8Dbb656C2CEa6C0F8AA34",
+  "estimations": [
+    {
+      "test": "BTC -> ETH",
+      "input": {
+        "token": "BTC",
+        "amount": "1.0",
+        "valueInUSDT": "123.0"
+      },
+      "output": {
+        "token": "ETH",
+        "amount": "0.996999005991991025",
+        "valueInUSDT": "682.944319104513852125"
+      },
+      "ratio": "0.996999005991991025 ETH/BTC",
+      "valueDifference": "-559.944319104513852125"
+    },
+    {
+      "test": "ETH -> BTC",
+      "input": {
+        "token": "ETH",
+        "amount": "10.0",
+        "valueInUSDT": "6850.0"
+      },
+      "output": {
+        "token": "BTC",
+        "amount": "9.969900600091017092",
+        "valueInUSDT": "1226.297773811195102316"
+      },
+      "ratio": "9.969900600091017092 BTC/10 ETH",
+      "valueDifference": "5623.702226188804897684"
+    },
+    {
+      "test": "ETH -> USDT",
+      "input": {
+        "token": "ETH",
+        "amount": "5.0",
+        "valueInUSDT": "3425.0"
+      },
+      "output": {
+        "token": "USDT",
+        "amount": "4.984975149898877754",
+        "valueInUSDT": "4.984975149898877754"
+      },
+      "ratio": "4.984975149898877754 USDT/5 ETH",
+      "valueDifference": "3420.015024850101122246"
+    },
+    {
+      "test": "USDT -> ETH",
+      "input": {
+        "token": "USDT",
+        "amount": "1000.0",
+        "valueInUSDT": "1000.0"
+      },
+      "output": {
+        "token": "ETH",
+        "amount": "996.006981039903216493",
+        "valueInUSDT": "682264.782012333703297705"
+      },
+      "ratio": "996.006981039903216493 ETH/1000 USDT",
+      "valueDifference": "-681264.782012333703297705"
+    }
+  ]
+}
