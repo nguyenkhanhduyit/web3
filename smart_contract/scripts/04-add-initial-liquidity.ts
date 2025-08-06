@@ -3,6 +3,30 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
+      /**
+     * Reserves :
+     Hiển thị số lượng token đang có trong pool (2 token):
+
+    reserves[0]: số lượng token0 hiện tại trong pool (BigNumber)
+
+    reserves[1]: số lượng token1 hiện tại trong pool (BigNumber)
+     */
+        // Bước 2: Kiểm tra tổng thanh khoản
+    /*
+      Total Liquidity:
+      Tổng thanh khoản của pool – thường là tổng lượng liquidity token được mint khi bạn và người khác thêm thanh khoản vào.
+
+      liquidity là giá trị kiểu BigNumber
+
+      Format về 18 decimals (Uniswap liquidity thường chuẩn 18)
+    */
+       // Bước 3: Kiểm tra thanh khoản của user
+    /*
+      User Liquidity:
+      Số lượng thanh khoản (LP tokens) mà riêng user vừa thêm vào (hoặc đang giữ trong pool).
+
+      Cũng dùng formatUnits(..., 18) vì LP token thường có 18 decimals.
+    */
   console.log("Đang khởi tạo thanh khoản đến SimpleDEX...\n");
 
   const tokens = JSON.parse(
@@ -191,8 +215,8 @@ async function main() {
     // For each pool, add 1 million tokens of each type
     let amount0, amount1;
     //parseUnits('1', 6) → 1000000
-    amount0 = ethers.utils.parseUnits(baseAmount.toString(),token1Info.decimals);
-    amount1 = ethers.utils.parseUnits(baseAmount.toString(),token2Info.decimals);
+    amount0 = ethers.utils.parseUnits(baseAmount.toString(),18);
+    amount1 = ethers.utils.parseUnits(baseAmount.toString(),18);
 
     /*
     // Giả sử bạn nhận được số dư token như sau (kiểu BigNumber):
@@ -204,7 +228,7 @@ const decimals = 8;
 // Format về số dễ đọc
 const formatted = formatUnits(rawBalance, decimals);
 
-console.log(formatted); // 👉 "1.0"
+console.log(formatted); // "1.0"
     */
     console.log(`\nSố lượng thanh khoản ban đầu (1M token mỗi loại):`);
     console.log(`${token1Info.symbol}: ${ethers.utils.formatUnits(amount0,token1Info.decimals)}`);
@@ -213,13 +237,13 @@ console.log(formatted); // 👉 "1.0"
   
     // Check if we have enough tokens
     if (token1Balance.lt(amount0)) {
-      console.log(`❌ Không đủ ${token1Info.symbol}! Cần: ${ethers.utils.formatUnits(amount0, token1Info.decimals)}, Có: ${ethers.utils.formatUnits(token1Balance, token1Info.decimals)}`);
+      console.log(`Không đủ ${token1Info.symbol}! Cần: ${ethers.utils.formatUnits(amount0, token1Info.decimals)}, Có: ${ethers.utils.formatUnits(token1Balance, token1Info.decimals)}`);
       failCount++;
       continue;
     }
     
     if (token2Balance.lt(amount1)) {
-      console.log(`❌ Không đủ ${token2Info.symbol}! Cần: ${ethers.utils.formatUnits(amount1, token2Info.decimals)}, Có: ${ethers.utils.formatUnits(token2Balance, token2Info.decimals)}`);
+      console.log(`Không đủ ${token2Info.symbol}! Cần: ${ethers.utils.formatUnits(amount1, token2Info.decimals)}, Có: ${ethers.utils.formatUnits(token2Balance, token2Info.decimals)}`);
       failCount++;
       continue;
     }

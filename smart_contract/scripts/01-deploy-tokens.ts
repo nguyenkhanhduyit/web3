@@ -9,24 +9,25 @@ async function main() {
   console.log("Người deploy có địa chỉ  :", deployer.address);
 
   // Token configurations
+  //lưu ý token có decimals khác nhưng decimals mặc định của contract là 18
   const tokens = [
     {
       name: "Bitcoin",
       symbol: "BTC",
       decimals: 18,
-      totalSupply: "100000000" // 1.000.000.000
+      totalSupply: "1000000000" // 1.000.000.000
     },
     {
       name: "Ethereum", 
       symbol: "ETH",
       decimals: 18,
-      totalSupply: "100000000" // 1.000.000.000
+      totalSupply: "1000000000" // 1.000.000.000
     },
     {
       name: "Tether USD",
       symbol: "USDT", 
       decimals: 18,
-      totalSupply: "100000000" // 1.000.000.000
+      totalSupply: "1000000000" // 1.000.000.000
     }
   ];
 
@@ -34,7 +35,17 @@ async function main() {
 
   for (const tokenConfig of tokens) {
     console.log(`\nĐang deploy token có thông tin : ${tokenConfig.name} (${tokenConfig.symbol})...`);
-    
+  //Hàm parseUnits() chuyển tổng cung từ dạng hiển thị
+  //  "100000000" (một trăm triệu) sang đơn vị wei dựa trên decimals.
+  /*
+  Ví dụ từng token:
+1. BTC — decimals: 8
+parseUnits("1000000000", 8) = 100000000 * 10^8 = 100,000,000,000,000,000
+  */
+ /*
+ 3. USDT — decimals: 6
+parseUnits("1000000000", 6) = 1000000000 * 10^6 = 1,000,000,000,000,000
+ */
     const Token = await ethers.getContractFactory("Token");
     const token = await Token.deploy(
       tokenConfig.name,
@@ -44,9 +55,19 @@ async function main() {
     );
     
     await token.deployed();
-    
+    /*
+    100.000.000 = 10^7 = 100M
+    10.000.000 = 10^6 = 10M
+    */
+   console.log("-".repeat(50))
     console.log(`Đã deploy token có tên : ${tokenConfig.name} và có địa chỉ : ${token.address}`);
-    console.log(`Với tổng cung : ${tokenConfig.totalSupply} - ${tokenConfig.symbol}`);
+    console.log(`Với tổng cung : 
+      ${(tokenConfig.totalSupply % 10 ** 8 === 0) ?
+      "1B" : (tokenConfig.totalSupply % 10 ** 7 === 0) ? "100M" :
+       (tokenConfig.totalSupply % 10 ** 6 === 0) ? '10M' :
+        (tokenConfig.totalSupply % 10 ** 5 === 0)? "1M": 
+        tokenConfig.totalSupply
+  } - ${tokenConfig.symbol}`);
     
     deployedTokens[tokenConfig.name] = {
       tokenAddress: token.address,

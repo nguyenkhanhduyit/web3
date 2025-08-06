@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("🔮 Deploy Price Oracle...\n");
+  console.log("Deploy Price Oracle...\n");
 
   // Đọc địa chỉ các token đã deploy
   const tokens = JSON.parse(
@@ -13,7 +13,7 @@ async function main() {
   // Lấy thông tin người deploy
   const [deployer] = await ethers.getSigners();
   
-  console.log("📍 Người deploy:", deployer.address);
+  console.log("Người deploy:", deployer.address);
 
   // Lưu kết quả deploy
   const deployResults: any = {
@@ -23,29 +23,29 @@ async function main() {
   };
 
   console.log("\n" + "=".repeat(50));
-  console.log("🔮 DEPLOY PRICE ORACLE");
+  console.log("DEPLOY PRICE ORACLE");
   console.log("=".repeat(50));
 
   try {
     // Bước 1: Deploy Price Oracle contract
-    console.log("🔍 Bước 1: Deploy Price Oracle contract...");
+    console.log("Bước 1: Deploy Price Oracle contract...");
     const PriceOracle = await ethers.getContractFactory("PriceOracle");
     const priceOracle = await PriceOracle.deploy(
       { gasLimit: 3000000 } // Thêm gasLimit rõ ràng để tránh lỗi _hex
     );
     
     await priceOracle.deployed();
-    console.log("✅ Price Oracle đã được deploy thành công!");
-    console.log("📍 Địa chỉ Price Oracle:", priceOracle.address);
+    console.log("Price Oracle đã được deploy thành công!");
+    console.log("Địa chỉ Price Oracle:", priceOracle.address);
 
     // Bước 2: Thiết lập giá ban đầu cho các token
-    console.log("🔍 Bước 2: Thiết lập giá ban đầu cho các token...");
+    console.log("Bước 2: Thiết lập giá ban đầu cho các token...");
     
     const tokenEntries = Object.entries(tokens);
     const priceUpdates: any = {};
 
     for (const [tokenName, tokenInfo] of tokenEntries) {
-      console.log(`💰 Thiết lập giá cho ${tokenName} (${tokenInfo.symbol})...`);
+      console.log(`Thiết lập giá cho ${tokenName} (${tokenInfo.symbol})...`);
       
       // Thiết lập giá mặc định (1 token = 1 USD)
       const defaultPrice = ethers.utils.parseUnits("1", 8); // 8 decimals cho giá

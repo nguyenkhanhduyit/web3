@@ -38,8 +38,11 @@ async function main() {
       
       if (currentAllowance.isZero()) {
         // Approve tokens for SimpleDEX
-        const approveAmount = ethers.utils.parseUnits("10000000", tokenInfo.decimals); // 100M tokens
-        console.log(`Đang approve ${ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)} ${tokenInfo.symbol} for SimpleDEX...`);
+        const approveAmount = ethers.utils.parseUnits("100000000", tokenInfo.decimals); // 100M tokens = 100.000.000
+        console.log(`Đang approve ${(ethers.utils.formatUnits(approveAmount, tokenInfo.decimals) % 10 ** 7 === 0)?
+      "100M": (ethers.utils.formatUnits(approveAmount, tokenInfo.decimals) % 10 ** 6 === 0)?
+      "10M" : ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)
+      } ${tokenInfo.symbol} for SimpleDEX...`);
         
         const approveTx = await tokenContract.approve(simpleDexAddress, approveAmount);
         console.log("Hash Giao dịch :", approveTx.hash);
