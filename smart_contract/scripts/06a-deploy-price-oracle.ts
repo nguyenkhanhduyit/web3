@@ -44,46 +44,72 @@ async function main() {
     const tokenEntries = Object.entries(tokens);
     const priceUpdates: any = {};
 
+    // Lấy địa chỉ USDT để làm base currency
+    const usdtToken = tokens["Tether USD"];
+    const usdtAddress = usdtToken.tokenAddress;
+
     for (const [tokenName, tokenInfo] of tokenEntries) {
+      // Bỏ qua USDT vì nó là base currency
+      if (tokenName === "Tether USD") {
+        console.log(`Bỏ qua ${tokenName} vì đây là base currency`);
+        continue;
+      }
+
       console.log(`Thiết lập giá cho ${tokenName} (${tokenInfo.symbol})...`);
       
-      // Thiết lập giá mặc định (1 token = 1 USD)
-      const defaultPrice = ethers.utils.parseUnits("1", 8); // 8 decimals cho giá
+      // Tạo giá ngẫu nhiên cho mỗi token (1-1000 USDT)
+      const randomPrice = Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
       
-      const setPriceTx = await priceOracle.setPrice(
-        tokenInfo.tokenAddress,
-        defaultPrice,
+      // Thiết lập giá: 1 token = randomPrice USDT
+      // Price được tính theo wei (18 decimals)
+      const priceInWei = ethers.utils.parseUnits(randomPrice.toString(), 18);
+      
+      const updatePriceTx = await priceOracle.updatePrice(
+        tokenInfo.tokenAddress, // token0
+        usdtAddress,           // token1 (USDT)
+        priceInWei,
         { gasLimit: 200000 }
       );
       
-      await setPriceTx.wait();
-      console.log(`✅ Đã thiết lập giá ${tokenName}: 1 ${tokenInfo.symbol} = $1.00`);
+      await updatePriceTx.wait();
+      console.log(`Đã thiết lập giá ${tokenName}: 1 ${tokenInfo.symbol} = ${randomPrice} USDT`);
       
       priceUpdates[tokenName] = {
         tokenAddress: tokenInfo.tokenAddress,
         symbol: tokenInfo.symbol,
-        price: "1.00",
-        priceInWei: defaultPrice.toString(),
-        transactionHash: setPriceTx.hash
+        priceInUSDT: randomPrice.toString(),
+        priceInWei: priceInWei.toString(),
+        transactionHash: updatePriceTx.hash
       };
     }
 
     // Bước 3: Test các hàm của Price Oracle
-    console.log("🔍 Bước 3: Test các hàm của Price Oracle...");
+    console.log("Bước 3: Test các hàm của Price Oracle...");
     
-    // Test getPrice
+    // Test getPrice - lấy giá của token đầu tiên so với USDT
     const [token1Name, token1Info] = tokenEntries[0];
-    const price1 = await priceOracle.getPrice(token1Info.tokenAddress);
-    console.log(`📊 Giá ${token1Name}: ${ethers.utils.formatUnits(price1, 8)} USD`);
+    if (token1Name !== "Tether USD") {
+      const price1 = await priceOracle.getPrice(token1Info.tokenAddress, usdtAddress);
+      console.log(`Giá ${token1Name}: ${ethers.utils.formatUnits(price1, 18)} USDT`);
 
-    // Test getPriceInUSD
-    const amount = ethers.utils.parseUnits("10", token1Info.decimals);
-    const priceInUSD = await priceOracle.getPriceInUSD(token1Info.tokenAddress, amount);
-    console.log(`💰 Giá trị ${ethers.utils.formatUnits(amount, token1Info.decimals)} ${token1Info.symbol} = $${ethers.utils.formatUnits(priceInUSD, 8)}`);
+      // Test getPriceData
+      const priceData = await priceOracle.getPriceData(token1Info.tokenAddress, usdtAddress);
+      console.log(`Dữ liệu giá ${token1Name}:`);
+      console.log(`  - Giá: ${ethers.utils.formatUnits(priceData.price, 18)} USDT`);
+      console.log(`  - Timestamp: ${priceData.timestamp}`);
+      console.log(`  - Block Number: ${priceData.blockNumber}`);
 
-    // Test hasPrice
-    const hasPrice = await priceOracle.hasPrice(token1Info.tokenAddress);
-    console.log(`🔍 ${token1Name} có giá: ${hasPrice}`);
+      // Test calculatePriceFromReserves (simulate với reserves giả)
+      const reserve0 = ethers.utils.parseUnits("1000", token1Info.decimals); // 1000 tokens
+      const reserve1 = ethers.utils.parseUnits("50000", usdtToken.decimals); // 50000 USDT
+      const calculatedPrice = await priceOracle.calculatePriceFromReserves(
+        reserve0,
+        reserve1,
+        token1Info.decimals,
+        usdtToken.decimals
+      );
+      console.log(`Giá tính từ reserves: ${ethers.utils.formatUnits(calculatedPrice, 18)} USDT`);
+    }
 
     // Bước 4: Lưu thông tin deploy
     const oracleInfo = {
@@ -92,9 +118,8 @@ async function main() {
       deployedAt: new Date().toISOString(),
       priceUpdates: priceUpdates,
       testResults: {
-        price1: ethers.utils.formatUnits(price1, 8),
-        priceInUSD: ethers.utils.formatUnits(priceInUSD, 8),
-        hasPrice: hasPrice
+        price1: token1Name !== "Tether USD" ? ethers.utils.formatUnits(await priceOracle.getPrice(token1Info.tokenAddress, usdtAddress), 18) : "N/A",
+        priceData: token1Name !== "Tether USD" ? await priceOracle.getPriceData(token1Info.tokenAddress, usdtAddress) : "N/A"
       }
     };
 
@@ -112,11 +137,11 @@ async function main() {
     deployResults.data = oracleInfo;
     deployResults.status = "success";
 
-    console.log("\n✅ Deploy Price Oracle hoàn thành thành công!");
-    console.log("📁 Thông tin đã lưu vào: info/PriceOracleAddress.json");
+    console.log("\nDeploy Price Oracle hoàn thành thành công!");
+    console.log("Thông tin đã lưu vào: info/PriceOracleAddress.json");
 
   } catch (error) {
-    console.log("❌ Lỗi khi deploy Price Oracle:", error.message);
+    console.log("Lỗi khi deploy Price Oracle:", error.message);
     deployResults.status = "failed";
     deployResults.error = error.message;
   }
@@ -133,8 +158,8 @@ async function main() {
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("📁 Kết quả deploy đã lưu vào: info/06a-deploy-price-oracle.json");
-  console.log("🎯 Bước tiếp theo: Chạy 06b-deploy-liquidity-mining.ts");
+  console.log("Kết quả deploy đã lưu vào: info/06a-deploy-price-oracle.json");
+  console.log("Bước tiếp theo: Chạy 06b-deploy-liquidity-mining.ts");
   console.log("=".repeat(50));
 }
 
