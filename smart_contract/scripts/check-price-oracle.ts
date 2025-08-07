@@ -21,9 +21,8 @@ async function main() {
   console.log("Người deploy:", deployer.address);
   console.log("Price Oracle Address:", priceOracleInfo.address);
 
-  // Lấy địa chỉ USDT để làm base currency
-  const usdtToken = tokens["Tether USD"];
-  const usdtAddress = usdtToken.tokenAddress;
+  // Lấy địa chỉ USD token (sử dụng địa chỉ zero như trong script deploy)
+  const usdTokenAddress = ethers.constants.AddressZero;
 
   console.log("\n" + "=".repeat(50));
   console.log("CHECK PRICE ORACLE");
@@ -35,39 +34,34 @@ async function main() {
     const priceOracle = PriceOracle.attach(priceOracleInfo.address);
 
     console.log("Đã kết nối đến Price Oracle contract");
+    console.log("Base currency: USD");
 
     // Kiểm tra giá của tất cả các token
     const tokenEntries = Object.entries(tokens);
     
     for (const [tokenName, tokenInfo] of tokenEntries) {
-      // Bỏ qua USDT vì nó là base currency
-      if (tokenName === "Tether USD") {
-        console.log(`\n${tokenName} (${tokenInfo.symbol}): Base currency`);
-        continue;
-      }
-
       try {
         // Lấy giá từ PriceOracle
-        const price = await priceOracle.getPrice(tokenInfo.tokenAddress, usdtAddress);
-        const priceInUSDT = ethers.utils.formatUnits(price, 18);
+        const price = await priceOracle.getPrice(tokenInfo.tokenAddress, usdTokenAddress);
+        const priceInUSD = ethers.utils.formatUnits(price, 18);
         
         console.log(`\n${tokenName} (${tokenInfo.symbol}):`);
         console.log(`  - Token Address: ${tokenInfo.tokenAddress}`);
-        console.log(`  - Price: ${priceInUSDT} USDT`);
+        console.log(`  - Price: $${priceInUSD} USD`);
         console.log(`  - Price (wei): ${price.toString()}`);
 
         // Lấy thông tin chi tiết về giá
-        const priceData = await priceOracle.getPriceData(tokenInfo.tokenAddress, usdtAddress);
+        const priceData = await priceOracle.getPriceData(tokenInfo.tokenAddress, usdTokenAddress);
         console.log(`  - Timestamp: ${priceData.timestamp}`);
         console.log(`  - Block Number: ${priceData.blockNumber}`);
 
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Lỗi khi lấy giá ${tokenName}:`, error.message);
       }
     }
 
-  } catch (error) {
-    console.error("Lỗi khi kiểm tra Price Oracle:", error);
+  } catch (error: any) {
+    console.error("Lỗi khi kiểm tra Price Oracle:", error.message);
   }
 }
 

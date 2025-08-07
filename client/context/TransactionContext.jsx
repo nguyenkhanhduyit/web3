@@ -246,7 +246,7 @@ const estimateAmountOutViaQuoter = async (amount) => {
     const priceOracle = await new ethers.Contract(PriceOracleAddress.address, PriceOracle.abi, signer)
 
     // Lấy địa chỉ USDT để làm base currency
-    const usdtAddress = TokenAddress["Tether USD"].tokenAddress;
+    const usdAddress =  ethers.constants.AddressZero;
 
     const token_list = Object.values(TokenAddress)
 
@@ -267,19 +267,17 @@ const estimateAmountOutViaQuoter = async (amount) => {
     const tokenOutDecimals = tokenOutInfo.decimals;
 
     // Lấy giá từ PriceOracle
-    const tokenInPriceInUSDT = ethers.utils.formatUnits(await priceOracle.getPrice(tokenInAddress, usdtAddress),18);
-    const tokenOutPriceInUSDT = ethers.utils.formatUnits(await priceOracle.getPrice(tokenOutAddress, usdtAddress),18);
-    const res = (amount*(tokenInPriceInUSDT/tokenOutPriceInUSDT)) // => vd :btc => eth
-    const arrRes =`${amount} ${tokenInName} (${tokenInPriceInUSDT} USDT)
-       ~= ${res} ${tokenOutName} (${tokenOutPriceInUSDT} USDT) `
+    const tokenInPriceInUSD = ethers.utils.formatUnits(await priceOracle.getPrice(tokenInAddress, usdAddress),18);
+    const tokenOutPriceInUSD = ethers.utils.formatUnits(await priceOracle.getPrice(tokenOutAddress, usdAddress),18);
+    const res = (amount*(tokenInPriceInUSD/tokenOutPriceInUSD)) // => vd :btc => eth
+    const arrRes =`${amount} ${tokenInName} (${tokenInPriceInUSD} USD)
+       ~ ${res} ${tokenOutName} (${tokenOutPriceInUSD} USD) `
     return {res,arrRes}
   } catch (error) {
     console.error("Lỗi khi ước lượng swap:", error);
     return null;
   }
 };
-
-
 
   return (
     <TransactionContext.Provider value={{

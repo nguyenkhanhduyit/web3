@@ -1,37 +1,46 @@
 {
-  "address": "0x3CEB2d7B9e16Fe700ea8Dbb656C2CEa6C0F8AA34",
+  "address": "0x05f16A67B7849e33DCa0441f1921d26F02b565F9",
   "deployer": "0x45f10654522FF65646Ea31Ef7673AE0F02972505",
-  "deployedAt": "2025-08-06T15:12:24.447Z",
+  "deployedAt": "2025-08-07T03:00:00.092Z",
+  "baseCurrency": "USD",
+  "usdTokenAddress": "0x0000000000000000000000000000000000000000",
   "priceUpdates": {
     "Bitcoin": {
       "tokenAddress": "0x7D218db0cc7B0c0B1003E82ff66c5C1cE89f0F55",
       "symbol": "BTC",
-      "priceInUSDT": "123",
-      "priceInWei": "123000000000000000000",
-      "transactionHash": "0xe8a2469a56ea39c7ce11a8a3a16b7049597d187a3fd582ad0017e46367d53dbe"
+      "priceInUSD": "113000",
+      "priceInWei": "113000000000000000000000",
+      "transactionHash": "0x1efb57e03798754f89ba027467a98ad1537f459603464822cf4f746270d4b40f"
     },
     "Ethereum": {
       "tokenAddress": "0xB97AA32FBe81de7B732cEef42B7ca970292A4779",
       "symbol": "ETH",
-      "priceInUSDT": "685",
-      "priceInWei": "685000000000000000000",
-      "transactionHash": "0x3aa9fced85be99eeea86f9dab2dc71fcfc3bb12d70b33b6a076d6d4f9203bcb6"
+      "priceInUSD": "3800",
+      "priceInWei": "3800000000000000000000",
+      "transactionHash": "0xc8bb31c5ca937a91d5038beffd7e6dee587d145a339fc5c8b8b65132b1200584"
+    },
+    "Tether USD": {
+      "tokenAddress": "0x07973F464b731cf40f505Cae566F529011C42d1E",
+      "symbol": "USDT",
+      "priceInUSD": "1",
+      "priceInWei": "1000000000000000000",
+      "transactionHash": "0xcc1fef1bc29283ec80353511c48e2a417f79b0216a9954d476d60397bd1d0034"
     }
   },
   "testResults": {
-    "price1": "123.0",
+    "price1": "113000.0",
     "priceData": [
       {
         "type": "BigNumber",
-        "hex": "0x06aaf7c8516d0c0000"
+        "hex": "0x17edbe05b45744a00000"
       },
       {
         "type": "BigNumber",
-        "hex": "0x689370cc"
+        "hex": "0x68941698"
       },
       {
         "type": "BigNumber",
-        "hex": "0x883379"
+        "hex": "0x88413d"
       }
     ]
   }

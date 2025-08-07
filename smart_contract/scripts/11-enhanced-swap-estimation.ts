@@ -33,8 +33,8 @@ async function main() {
     const simpleDEX = await ethers.getContractAt("SimpleDEX", dexInfo.address);
     const priceOracle = await ethers.getContractAt("PriceOracle", priceOracleInfo.address);
 
-    // Lấy địa chỉ USDT để làm base currency
-    const usdtAddress = tokenInfo["Tether USD"].tokenAddress;
+    // Lấy địa chỉ USD token (sử dụng địa chỉ zero như trong script deploy)
+    const usdTokenAddress = ethers.constants.AddressZero;
 
     console.log("\n" + "=".repeat(60));
     console.log("🧮 ENHANCED SWAP ESTIMATION");
@@ -43,6 +43,7 @@ async function main() {
     const estimationResults: any = {
         timestamp: new Date().toISOString(),
         priceOracleAddress: priceOracleInfo.address,
+        baseCurrency: "USD",
         estimations: []
     };
 
@@ -56,38 +57,38 @@ async function main() {
         // Ước lượng số lượng ETH sẽ nhận được
         const amountOut = await simpleDEX.getAmountOut(btcAddress, ethAddress, amountIn);
         
-        // Lấy giá BTC và ETH so với USDT từ PriceOracle
-        const btcPriceInUSDT = await priceOracle.getPrice(btcAddress, usdtAddress);
-        const ethPriceInUSDT = await priceOracle.getPrice(ethAddress, usdtAddress);
+        // Lấy giá BTC và ETH so với USD từ PriceOracle
+        const btcPriceInUSD = await priceOracle.getPrice(btcAddress, usdTokenAddress);
+        const ethPriceInUSD = await priceOracle.getPrice(ethAddress, usdTokenAddress);
         
-        // Tính giá trị USDT của input và output
+        // Tính giá trị USD của input và output
         // Giá từ PriceOracle đã có 18 decimals
-        const inputValueInUSDT = amountIn.mul(btcPriceInUSDT).div(ethers.utils.parseUnits("1", 18));
-        const outputValueInUSDT = amountOut.mul(ethPriceInUSDT).div(ethers.utils.parseUnits("1", 18));
+        const inputValueInUSD = amountIn.mul(btcPriceInUSD).div(ethers.utils.parseUnits("1", 18));
+        const outputValueInUSD = amountOut.mul(ethPriceInUSD).div(ethers.utils.parseUnits("1", 18));
         
         console.log(`   Input: ${ethers.utils.formatUnits(amountIn, 18)} BTC`);
-        console.log(`   Input Value: $${ethers.utils.formatUnits(inputValueInUSDT, 18)} USDT`);
+        console.log(`   Input Value: $${ethers.utils.formatUnits(inputValueInUSD, 18)} USD`);
         console.log(`   Output: ${ethers.utils.formatUnits(amountOut, 18)} ETH`);
-        console.log(`   Output Value: $${ethers.utils.formatUnits(outputValueInUSDT, 18)} USDT`);
+        console.log(`   Output Value: $${ethers.utils.formatUnits(outputValueInUSD, 18)} USD`);
         console.log(`   Tỷ lệ: 1 BTC = ${ethers.utils.formatUnits(amountOut, 18)} ETH`);
-        console.log(`   Giá trị chênh lệch: $${ethers.utils.formatUnits(inputValueInUSDT.sub(outputValueInUSDT), 18)} USDT`);
+        console.log(`   Giá trị chênh lệch: $${ethers.utils.formatUnits(inputValueInUSD.sub(outputValueInUSD), 18)} USD`);
         
         estimationResults.estimations.push({
             test: "BTC -> ETH",
             input: {
                 token: "BTC",
                 amount: ethers.utils.formatUnits(amountIn, 18),
-                valueInUSDT: ethers.utils.formatUnits(inputValueInUSDT, 18)
+                valueInUSD: ethers.utils.formatUnits(inputValueInUSD, 18)
             },
             output: {
                 token: "ETH",
                 amount: ethers.utils.formatUnits(amountOut, 18),
-                valueInUSDT: ethers.utils.formatUnits(outputValueInUSDT, 18)
+                valueInUSD: ethers.utils.formatUnits(outputValueInUSD, 18)
             },
             ratio: `${ethers.utils.formatUnits(amountOut, 18)} ETH/BTC`,
-            valueDifference: ethers.utils.formatUnits(inputValueInUSDT.sub(outputValueInUSDT), 18)
+            valueDifference: ethers.utils.formatUnits(inputValueInUSD.sub(outputValueInUSD), 18)
         });
-    } catch (error) {
+    } catch (error: any) {
         console.log("   ❌ Không thể ước lượng swap BTC -> ETH:", error.message);
     }
 
@@ -101,37 +102,37 @@ async function main() {
         // Ước lượng số lượng BTC sẽ nhận được
         const amountOut = await simpleDEX.getAmountOut(ethAddress, btcAddress, amountIn);
         
-        // Lấy giá ETH và BTC so với USDT từ PriceOracle
-        const ethPriceInUSDT = await priceOracle.getPrice(ethAddress, usdtAddress);
-        const btcPriceInUSDT = await priceOracle.getPrice(btcAddress, usdtAddress);
+        // Lấy giá ETH và BTC so với USD từ PriceOracle
+        const ethPriceInUSD = await priceOracle.getPrice(ethAddress, usdTokenAddress);
+        const btcPriceInUSD = await priceOracle.getPrice(btcAddress, usdTokenAddress);
         
-        // Tính giá trị USDT của input và output
-        const inputValueInUSDT = amountIn.mul(ethPriceInUSDT).div(ethers.utils.parseUnits("1", 18));
-        const outputValueInUSDT = amountOut.mul(btcPriceInUSDT).div(ethers.utils.parseUnits("1", 18));
+        // Tính giá trị USD của input và output
+        const inputValueInUSD = amountIn.mul(ethPriceInUSD).div(ethers.utils.parseUnits("1", 18));
+        const outputValueInUSD = amountOut.mul(btcPriceInUSD).div(ethers.utils.parseUnits("1", 18));
         
         console.log(`   Input: ${ethers.utils.formatUnits(amountIn, 18)} ETH`);
-        console.log(`   Input Value: $${ethers.utils.formatUnits(inputValueInUSDT, 18)} USDT`);
+        console.log(`   Input Value: $${ethers.utils.formatUnits(inputValueInUSD, 18)} USD`);
         console.log(`   Output: ${ethers.utils.formatUnits(amountOut, 18)} BTC`);
-        console.log(`   Output Value: $${ethers.utils.formatUnits(outputValueInUSDT, 18)} USDT`);
+        console.log(`   Output Value: $${ethers.utils.formatUnits(outputValueInUSD, 18)} USD`);
         console.log(`   Tỷ lệ: 10 ETH = ${ethers.utils.formatUnits(amountOut, 18)} BTC`);
-        console.log(`   Giá trị chênh lệch: $${ethers.utils.formatUnits(inputValueInUSDT.sub(outputValueInUSDT), 18)} USDT`);
+        console.log(`   Giá trị chênh lệch: $${ethers.utils.formatUnits(inputValueInUSD.sub(outputValueInUSD), 18)} USD`);
         
         estimationResults.estimations.push({
             test: "ETH -> BTC",
             input: {
                 token: "ETH",
                 amount: ethers.utils.formatUnits(amountIn, 18),
-                valueInUSDT: ethers.utils.formatUnits(inputValueInUSDT, 18)
+                valueInUSD: ethers.utils.formatUnits(inputValueInUSD, 18)
             },
             output: {
                 token: "BTC",
                 amount: ethers.utils.formatUnits(amountOut, 18),
-                valueInUSDT: ethers.utils.formatUnits(outputValueInUSDT, 18)
+                valueInUSD: ethers.utils.formatUnits(outputValueInUSD, 18)
             },
             ratio: `${ethers.utils.formatUnits(amountOut, 18)} BTC/10 ETH`,
-            valueDifference: ethers.utils.formatUnits(inputValueInUSDT.sub(outputValueInUSDT), 18)
+            valueDifference: ethers.utils.formatUnits(inputValueInUSD.sub(outputValueInUSD), 18)
         });
-    } catch (error) {
+    } catch (error: any) {
         console.log("   ❌ Không thể ước lượng swap ETH -> BTC:", error.message);
     }
 
@@ -140,42 +141,43 @@ async function main() {
     try {
         const ethAddress = tokenInfo["Ethereum"].tokenAddress;
         const usdtToken = tokenInfo["Tether USD"];
+        const usdtAddress = usdtToken.tokenAddress;
         const amountIn = ethers.utils.parseUnits("5", 18); // 5 ETH
 
         // Ước lượng số lượng USDT sẽ nhận được
         const amountOut = await simpleDEX.getAmountOut(ethAddress, usdtAddress, amountIn);
         
-        // Lấy giá ETH so với USDT từ PriceOracle
-        const ethPriceInUSDT = await priceOracle.getPrice(ethAddress, usdtAddress);
+        // Lấy giá ETH so với USD từ PriceOracle
+        const ethPriceInUSD = await priceOracle.getPrice(ethAddress, usdTokenAddress);
         
-        // Tính giá trị USDT của input và output
-        const inputValueInUSDT = amountIn.mul(ethPriceInUSDT).div(ethers.utils.parseUnits("1", 18));
-        const outputValueInUSDT = amountOut; // USDT có 6 decimals, giá trị trực tiếp
+        // Tính giá trị USD của input và output
+        const inputValueInUSD = amountIn.mul(ethPriceInUSD).div(ethers.utils.parseUnits("1", 18));
+        const outputValueInUSD = amountOut; // USDT có 18 decimals, giá trị trực tiếp (1 USDT = 1 USD)
         
         console.log(`   Input: ${ethers.utils.formatUnits(amountIn, 18)} ETH`);
-        console.log(`   Input Value: $${ethers.utils.formatUnits(inputValueInUSDT, 18)} USDT`);
+        console.log(`   Input Value: $${ethers.utils.formatUnits(inputValueInUSD, 18)} USD`);
         console.log(`   Output: ${ethers.utils.formatUnits(amountOut, usdtToken.decimals)} USDT`);
-        console.log(`   Output Value: $${ethers.utils.formatUnits(amountOut, usdtToken.decimals)} USDT`);
+        console.log(`   Output Value: $${ethers.utils.formatUnits(amountOut, usdtToken.decimals)} USD`);
         console.log(`   Tỷ lệ: 5 ETH = ${ethers.utils.formatUnits(amountOut, usdtToken.decimals)} USDT`);
-        const valueDifference = inputValueInUSDT.sub(amountOut);
-        console.log(`   Giá trị chênh lệch: $${ethers.utils.formatUnits(valueDifference, usdtToken.decimals)} USDT`);
+        const valueDifference = inputValueInUSD.sub(amountOut);
+        console.log(`   Giá trị chênh lệch: $${ethers.utils.formatUnits(valueDifference, usdtToken.decimals)} USD`);
         
         estimationResults.estimations.push({
             test: "ETH -> USDT",
             input: {
                 token: "ETH",
                 amount: ethers.utils.formatUnits(amountIn, 18),
-                valueInUSDT: ethers.utils.formatUnits(inputValueInUSDT, 18)
+                valueInUSD: ethers.utils.formatUnits(inputValueInUSD, 18)
             },
             output: {
                 token: "USDT",
                 amount: ethers.utils.formatUnits(amountOut, usdtToken.decimals),
-                valueInUSDT: ethers.utils.formatUnits(amountOut, usdtToken.decimals)
+                valueInUSD: ethers.utils.formatUnits(amountOut, usdtToken.decimals)
             },
             ratio: `${ethers.utils.formatUnits(amountOut, usdtToken.decimals)} USDT/5 ETH`,
             valueDifference: ethers.utils.formatUnits(valueDifference, usdtToken.decimals)
         });
-    } catch (error) {
+    } catch (error: any) {
         console.log("   ❌ Không thể ước lượng swap ETH -> USDT:", error.message);
     }
 
@@ -184,42 +186,43 @@ async function main() {
     try {
         const ethAddress = tokenInfo["Ethereum"].tokenAddress;
         const usdtToken = tokenInfo["Tether USD"];
+        const usdtAddress = usdtToken.tokenAddress;
         const amountIn = ethers.utils.parseUnits("1000", usdtToken.decimals); // 1000 USDT
 
         // Ước lượng số lượng ETH sẽ nhận được
         const amountOut = await simpleDEX.getAmountOut(usdtAddress, ethAddress, amountIn);
         
-        // Lấy giá ETH so với USDT từ PriceOracle
-        const ethPriceInUSDT = await priceOracle.getPrice(ethAddress, usdtAddress);
+        // Lấy giá ETH so với USD từ PriceOracle
+        const ethPriceInUSD = await priceOracle.getPrice(ethAddress, usdTokenAddress);
         
-        // Tính giá trị USDT của input và output
-        const inputValueInUSDT = amountIn; // USDT có 6 decimals
-        const outputValueInUSDT = amountOut.mul(ethPriceInUSDT).div(ethers.utils.parseUnits("1", 18));
+        // Tính giá trị USD của input và output
+        const inputValueInUSD = amountIn; // USDT có 18 decimals, 1 USDT = 1 USD
+        const outputValueInUSD = amountOut.mul(ethPriceInUSD).div(ethers.utils.parseUnits("1", 18));
         
         console.log(`   Input: ${ethers.utils.formatUnits(amountIn, usdtToken.decimals)} USDT`);
-        console.log(`   Input Value: $${ethers.utils.formatUnits(amountIn, usdtToken.decimals)} USDT`);
+        console.log(`   Input Value: $${ethers.utils.formatUnits(amountIn, usdtToken.decimals)} USD`);
         console.log(`   Output: ${ethers.utils.formatUnits(amountOut, 18)} ETH`);
-        console.log(`   Output Value: $${ethers.utils.formatUnits(outputValueInUSDT, 18)} USDT`);
+        console.log(`   Output Value: $${ethers.utils.formatUnits(outputValueInUSD, 18)} USD`);
         console.log(`   Tỷ lệ: 1000 USDT = ${ethers.utils.formatUnits(amountOut, 18)} ETH`);
-        const valueDifference = inputValueInUSDT.sub(outputValueInUSDT);
-        console.log(`   Giá trị chênh lệch: $${ethers.utils.formatUnits(valueDifference, usdtToken.decimals)} USDT`);
+        const valueDifference = inputValueInUSD.sub(outputValueInUSD);
+        console.log(`   Giá trị chênh lệch: $${ethers.utils.formatUnits(valueDifference, usdtToken.decimals)} USD`);
         
         estimationResults.estimations.push({
             test: "USDT -> ETH",
             input: {
                 token: "USDT",
                 amount: ethers.utils.formatUnits(amountIn, usdtToken.decimals),
-                valueInUSDT: ethers.utils.formatUnits(amountIn, usdtToken.decimals)
+                valueInUSD: ethers.utils.formatUnits(amountIn, usdtToken.decimals)
             },
             output: {
                 token: "ETH",
                 amount: ethers.utils.formatUnits(amountOut, 18),
-                valueInUSDT: ethers.utils.formatUnits(outputValueInUSDT, 18)
+                valueInUSD: ethers.utils.formatUnits(outputValueInUSD, 18)
             },
             ratio: `${ethers.utils.formatUnits(amountOut, 18)} ETH/1000 USDT`,
             valueDifference: ethers.utils.formatUnits(valueDifference, usdtToken.decimals)
         });
-    } catch (error) {
+    } catch (error: any) {
         console.log("   ❌ Không thể ước lượng swap USDT -> ETH:", error.message);
     }
 
@@ -237,6 +240,7 @@ async function main() {
     console.log("\n" + "=".repeat(60));
     console.log("✅ ENHANCED SWAP ESTIMATION COMPLETED");
     console.log("📊 Kết quả đã lưu vào: info/enhanced-swap-estimation.json");
+    console.log("💰 Base currency: USD");
     console.log("=".repeat(60));
 }
 
