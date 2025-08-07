@@ -269,9 +269,11 @@ const estimateAmountOutViaQuoter = async (amount) => {
     // Lấy giá từ PriceOracle
     const tokenInPriceInUSD = ethers.utils.formatUnits(await priceOracle.getPrice(tokenInAddress, usdAddress),18);
     const tokenOutPriceInUSD = ethers.utils.formatUnits(await priceOracle.getPrice(tokenOutAddress, usdAddress),18);
+
     const res = (amount*(tokenInPriceInUSD/tokenOutPriceInUSD)) // => vd :btc => eth
     const arrRes =`${amount} ${tokenInName} (${tokenInPriceInUSD} USD)
        ~ ${res} ${tokenOutName} (${tokenOutPriceInUSD} USD) `
+       
     return {res,arrRes}
   } catch (error) {
     console.error("Lỗi khi ước lượng swap:", error);

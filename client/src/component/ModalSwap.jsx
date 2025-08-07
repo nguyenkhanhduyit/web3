@@ -51,11 +51,11 @@ useEffect(() => {
         setAmountTo(fixed);
         setArrAmountTo(estimate.arrRes)
       } else {
-        setAmountTo("0");
+        setAmountTo(0);
       }
     } catch (err) {
       console.error("Error estimating amountOut:", err);
-      setAmountTo("0");
+      setAmountTo(0);
     }
   };
   fetchEstimate();
@@ -100,9 +100,12 @@ const handleSwapTokenIndex = async() => {
   }
 
 const handleInputValue = (e) => {
-  const value = e.target.value;
+  let value = e.target.value;
   // Chỉ cho phép số và dấu chấm
   if (/^[0-9]*[.]?[0-9]*$/.test(value)) {
+  if(value.startsWith('0') && !value.startsWith('0.') && value.length>1){
+      value = value.replace(/^0+/, ''); // Xóa hết các số 0 ở đầu
+  }
     setAmountFrom(value);
   }
 };
@@ -158,11 +161,28 @@ useEffect(() => {
 {/*phần content Modal chứa input*/}
 <div className="flex flex-col w-full items-center">
   <div className="flex flex-col w-full sticky top-15 z-20 my-5">
-    <p className='text-white font-bold text-sm'>
+   
       {
-          TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.symbol
-      } available : {tokenBalance} 
-    </p>
+          tokenInAddress.length > 0 ?(
+            <>
+             <p className='text-white font-bold text-sm mb-2'>
+            {
+              TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.symbol
+            }
+           <span> available : {tokenBalance} </span>
+            </p>
+            </>
+          ) : 
+          (
+          <>
+           <p className='text-white font-bold text-sm mb-2'>
+          No token selecting
+          </p>
+          </>
+          )
+          
+      } 
+
         <div className="flex relative bg-[#2d2f36] border-[2px] border-gray-600 w-full h-auto p-4 rounded-2xl flex-row justify-between items-center shadow-md">
           <input
             name="amountIn"
