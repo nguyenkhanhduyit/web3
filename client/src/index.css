@@ -22,7 +22,7 @@ body {
 }
 
 .light-mode {
-  background-color: #f8f9fb;
+  background-color: #8f8f9300;
   background-image:
     radial-gradient(at 0% 0%, hsla(253, 100%, 95%, 1) 0, transparent 50%),
     radial-gradient(at 50% 0%, hsla(225, 100%, 85%, 1) 0, transparent 50%),
@@ -129,4 +129,12 @@ input[type="number"] {
     radial-gradient(at 0% 100%, rgba(99, 69, 158, 0.962) 0, transparent 50%), 
     radial-gradient(at 0% 50%, rgba(17, 9, 14, 0.621) 0, transparent 70%), 
     radial-gradient(at 100% 0%, rgba(21, 2, 76, 0.762) 0, transparent 80%);
+}
+
+.qr-light-mode-background {
+  background-color : #14d9c9;
+  background-image: 
+    radial-gradient(at 0% 100%, rgba(48, 216, 59, 0.962) 0, transparent 50%), 
+    radial-gradient(at 0% 50%, rgba(7, 210, 233, 0.621) 0, transparent 100%), 
+    radial-gradient(at 100% 0%, rgba(206, 53, 83, 0.762) 0, transparent 150%);
 }

@@ -47,7 +47,7 @@ const QRCard = ({ show, theme, onClose }) => {
       <div
         ref={modalRef}
         className={`p-3 max-h-[370px] max-w-[250px] min-h-[310px] min-w-[250px] rounded-lg shadow-xl
-          ${theme === 'dark-mode' ? 'qr-dark-mode-background text-white' : 'bg-blue-100 text-gray-900'}`}
+          ${theme === 'dark-mode' ? 'qr-dark-mode-background text-white' : 'qr-light-mode-background text-gray-900'}`}
       >
         <div className="flex-col justify-center items-center ">
           <div className="flex justify-end my-2">

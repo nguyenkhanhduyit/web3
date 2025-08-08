@@ -15,12 +15,12 @@ const Welcome = () => {
           currentAccount,
      } = useContext(TransactionContext)
 
-  const commonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm "
+  const commonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm"
   const [showQR, setShowQR] = useState(false);
 
 
   return (
-    <div className='flex w-full justify-center items-center'>
+    <div className='flex w-full justify-center items-center '>
         <div className='flex md:flex-row flex-col items-start justify-between md:p-20 py-12 px-4'>
             <div className='flex flex-1 justify-start flex-col mf:mr-10'>
                 <h1 className={`text-3xl sm:text-5xl py-1 ${theme === 'dark-mode' ? ' text-white text-gradient-dark' : 'text-gray-800' }`}>Send crypto <br /> across the world</h1>
@@ -47,10 +47,10 @@ const Welcome = () => {
                 <div className={`${commonStyles} ${theme === 'dark-mode'? 'font-light text-white':'text-black'}` }>
                     Security
                 </div>
-                 <div className={`rounded-tr-2xl ${commonStyles} ${theme === 'dark-mode'? 'font-light text-white':'text-black'} `}>
+                 <div className={` ${commonStyles} ${theme === 'dark-mode'? 'font-light text-white':'text-black'} `}>
                     Ethereum
                 </div>
-                 <div className={`rounded-bl-2xl ${commonStyles} ${theme === 'dark-mode'? 'font-light text-white':'text-black'}`}>
+                 <div className={` ${commonStyles} ${theme === 'dark-mode'? 'font-light text-white':'text-black'}`}>
                   Web 3.0
                 </div>
                  <div className={` ${commonStyles} ${theme === 'dark-mode'? 'font-light text-white':'text-black'}` }>
@@ -69,7 +69,7 @@ const Welcome = () => {
                                 <div className='w-10 h-10 rounded-full border-2 border-white flex justify-center items-center'>
                                     <SiEthereum fontSize={21} color='#ffff'/>
                                 </div>
-                                  <BsInfoCircle fontSize={17} color='#ffff' className='cursor-pointer' onClick={() => setShowQR(true)} />
+                                  {currentAccount && <BsInfoCircle fontSize={17} color='#ffff' className='cursor-pointer' onClick={() => setShowQR(true)} />}
                                   {showQR &&
                                     <QRCard show={showQR} theme={theme} onClose={() => setShowQR(false)} />}
                           </div>
