@@ -77,7 +77,7 @@ const Welcome = () => {
                                        (<><span>No address yet</span></>)}
                                   </p>
                                    <p className='text-white font-bold text-lg mt-1'>
-                                        Ethereum
+                                        Ethereum 
                                   </p>
                                 </div>
                       </div>
