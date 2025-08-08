@@ -10,7 +10,6 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { ethers } from 'ethers'
 
 import TOKENS  from '../../utils/swap/info/TokenAddress.json';
-import AmountOut from './AmountOut';
 
 const rpcUrl = import.meta.env.ALCHEMY_SEPOLIA_URL
 
@@ -33,7 +32,7 @@ const ModalSwap = ({ theme, onClose }) => {
  const { 
          getTokenBalance,currentAccount,tokenBalance,setTokenInAddress
          ,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance,
-         estimateAmountOut
+         estimateAmountOut,swapToken
      } = useContext(TransactionContext)
 
 useEffect(() => {
@@ -82,16 +81,16 @@ const handleSwapTokenIndex = async() => {
 
   async function handleSwap() {
     try {
-      if (amountFrom < 0.5 || amountFrom > 100 || isNaN(amount)) {
+      if (amountFrom < 0.5 || amountFrom > 100 || isNaN(amountFrom)) {
         setError('Số lượng không hợp lệ');
         return;
       }
 
-      console.log('token in :', tokenIn);
-      console.log('token out :', tokenOut);
+      console.log('token in :', tokenInAddress);
+      console.log('token out :', tokenOutAddress);
       setStatus('Swapping...');
 
-      const receipt = await swapTokens(tokenIn, tokenOut, [], amount.toString(), 0.03);
+      const receipt = await swapToken(amountFrom);
       setStatus(`Success! TX: ${receipt.transactionHash}`);
     } catch (err) {
       console.error(err);

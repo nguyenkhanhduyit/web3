@@ -309,90 +309,95 @@ const estimateAmountOut = async (amount) => {
 };
 
 
-const swapToken = async(amount) =>{
-    
-    const signer = await getSigner();
-    const simpleDEX = await new ethers.Contract(SimpleDEXAddress.address, SimpleDEX.abi, signer)
-    const priceOracle = await new ethers.Contract(PriceOracleAddress.address, PriceOracle.abi, signer)
+const swapToken = async (amount) => {
+  try {
+    // Validate input
+    const numericAmount = Number(amount);
+    if (!isFinite(numericAmount) || numericAmount <= 0) {
+      throw new Error("Số lượng swap phải lớn hơn 0");
+    }
 
-    const tokens = Object.values(tokenInfo);
-    const tokenSwapIn = tokens.find(t => t.tokenAddress === tokenInAddress);
-    const tokenSwapOut = tokens.find(t => t.tokenAddress === tokenOutAddress);
+    const signer = await getSigner();
+    const simpleDEX = new ethers.Contract(SimpleDEXAddress.address, SimpleDEX.abi, signer);
+
+    // Resolve token infos
+    const tokens = Object.values(TokenAddress);
+    const tokenSwapIn = tokens.find((t) => t.tokenAddress === tokenInAddress);
+    const tokenSwapOut = tokens.find((t) => t.tokenAddress === tokenOutAddress);
 
     if (!tokenSwapIn || !tokenSwapOut) {
-        throw new Error("Không tìm thấy đủ token cần thiết để thực hiện giao dịch swap");
+      throw new Error("Không tìm thấy đủ token cần thiết để thực hiện giao dịch swap");
     }
 
-     // Tạo token contract instances
-    const tokenInContract = new ethers.Contract(tokenSwapIn.tokenAddress,TokenABI.abi, deployer);
-    const tokenOutContract = new ethers.Contract(tokenSwapOut.tokenAddress,TokenABI.abi, deployer);
+    // Minimal ERC20 ABI including approve/allowance for write ops
+    const ERC20_WRITE_ABI = [
+      "function balanceOf(address) view returns (uint256)",
+      "function decimals() view returns (uint8)",
+      "function allowance(address,address) view returns (uint256)",
+      "function approve(address,uint256) external returns (bool)"
+    ];
 
-    //kiểm tra số dư trước khi swap
-    const balancesBefore = {
-        BTC: await btcContract.balanceOf(deployer.address),
-        ETH: await ethContract.balanceOf(deployer.address),
-        USDT: await usdtContract.balanceOf(deployer.address)
-    };
+    const tokenInContract = new ethers.Contract(tokenSwapIn.tokenAddress, ERC20_WRITE_ABI, signer);
+    const tokenOutContract = new ethers.Contract(tokenSwapOut.tokenAddress, ERC20_WRITE_ABI, signer);
 
-    console.log("Token balances:");
-    console.log(`${tokenSwapIn.symbol}: ${ethers.formatUnits(
-      tokenSwapIn.symbol === "BTC" ? balancesBefore.BTC : 
-      tokenSwapIn.symbol === "ETH" ? balancesBefore.ETH : 
-      balancesBefore.USDT
-      , tokenSwapIn.decimals)
-    }`);
+    const userAddress = await signer.getAddress();
 
-    console.log(`${tokenSwapOut.symbol}: ${ethers.formatUnits( 
-      tokenSwapOut.symbol === "BTC" ? balancesBefore.BTC : 
-      tokenSwapOut.symbol === "ETH" ? balancesBefore.ETH : 
-      balancesBefore.USDT, 
-      tokenSwapOut.decimals)}`);
+    // Parse amount to smallest units using tokenIn decimals
+    const amountInBN = ethers.utils.parseUnits(numericAmount.toString(), tokenSwapIn.decimals);
 
-    const target =  tokenSwapIn.symbol === "BTC" ? balancesBefore.BTC : 
-      tokenSwapIn.symbol === "ETH" ? balancesBefore.ETH : 
-      balancesBefore.USDT;
-   
-    // Approve tokens cho SimpleDEX
-    console.log("\nApproving tokens cho SimpleDEX...");
-    
-    const approveAmount = ethers.parseUnits(amount.toString(), tokenSwapIn.decimals);
-    
-    if(target < approveAmount){
-      console.log('Số dư không đủ để thực hiện giao dịch swap')
-      return 
+    // Check balances
+    const [balanceInBefore, balanceOutBefore] = await Promise.all([
+      tokenInContract.balanceOf(userAddress),
+      tokenOutContract.balanceOf(userAddress)
+    ]);
+
+    if (balanceInBefore.lt(amountInBN)) {
+      throw new Error(`Số dư ${tokenSwapIn.symbol} không đủ`);
     }
-    await tokenInContract.approve(SimpleDEXAddress.address, approveAmount);
-    
-    console.log("Token in đã được approve cho DEX");
 
-    // Thực hiện swap
-    const swapTx = await simpleDEX.swapExactTokensForTokens(
-        tokenSwapIn.tokenAddress,
-        tokenSwapOut.tokenAddress,
-        approveAmount
+    // Ensure allowance
+    const currentAllowance = await tokenInContract.allowance(userAddress, SimpleDEXAddress.address);
+    if (currentAllowance.lt(amountInBN)) {
+      const approveTx = await tokenInContract.approve(SimpleDEXAddress.address, amountInBN);
+      await approveTx.wait();
+    }
+
+    // Execute swap
+    const tx = await simpleDEX.swapExactTokensForTokens(
+      tokenSwapIn.tokenAddress,
+      tokenSwapOut.tokenAddress,
+      amountInBN
     );
-    await swapTx.wait();
-    
-     //kiểm tra số dư sau khi swap
-    const balancesAfter = {
-        BTC: await btcContract.balanceOf(deployer.address),
-        ETH: await ethContract.balanceOf(deployer.address),
-        USDT: await usdtContract.balanceOf(deployer.address)
+    await tx.wait();
+
+    // Get balances after
+    const [balanceInAfter, balanceOutAfter] = await Promise.all([
+      tokenInContract.balanceOf(userAddress),
+      tokenOutContract.balanceOf(userAddress)
+    ]);
+
+    const receivedOut = balanceOutAfter.sub(balanceOutBefore);
+
+    console.log("Swap thành công!");
+    console.log(
+      `Đã nhận: ${ethers.utils.formatUnits(receivedOut, tokenSwapOut.decimals)} ${tokenSwapOut.symbol}`
+    );
+
+    // Refresh token balance display after successful swap
+    await getTokenBalance();
+
+    return {
+      txHash: tx.hash,
+      amountIn: ethers.utils.formatUnits(amountInBN, tokenSwapIn.decimals),
+      amountOut: ethers.utils.formatUnits(receivedOut, tokenSwapOut.decimals),
+      tokenIn: tokenSwapIn.symbol,
+      tokenOut: tokenSwapOut.symbol
     };
-    
-    console.log(`Swap thành công!`);
-    console.log(`Đã nhận: ${ethers.formatUnits(
-     ( tokenSwapOut === "BTC" ? balancesAfter.BTC : 
-      tokenSwapOut === "ETH" ? balancesAfter.ETH :
-      balancesAfter.USDT) 
-      -
-      (tokenSwapOut === "BTC" ? balancesBefore.BTC : 
-      tokenSwapOut === "ETH" ? balancesBefore.ETH :
-      balancesAfter.USDT)
-      ,
-      tokenSwapOut.decimals
-    )} ${tokenSwapOut.symbol}`);
-}
+  } catch (err) {
+    console.error("Swap lỗi:", err);
+    throw err;
+  }
+};
   return (
     <TransactionContext.Provider value={{
       handleLogin,
@@ -409,7 +414,7 @@ const swapToken = async(amount) =>{
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
       setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
-      ,estimateAmountOut
+      ,estimateAmountOut,swapToken
     }}>
       {children}
     </TransactionContext.Provider>
