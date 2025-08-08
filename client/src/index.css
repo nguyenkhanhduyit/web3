@@ -122,3 +122,11 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.qr-dark-mode-background {
+  background-color : #741d34;
+  background-image: 
+    radial-gradient(at 0% 100%, rgba(99, 69, 158, 0.962) 0, transparent 50%), 
+    radial-gradient(at 0% 50%, rgba(17, 9, 14, 0.621) 0, transparent 70%), 
+    radial-gradient(at 100% 0%, rgba(21, 2, 76, 0.762) 0, transparent 80%);
+}
