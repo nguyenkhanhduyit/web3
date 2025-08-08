@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navbar, Footer, Welcome, Services } from "./component";
 import TransactionHistory from './component/TransactionHistory';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -20,6 +20,11 @@ function App() {
     setTheme(n)
     localStorage.setItem("theme",n)
   }
+
+useEffect(()=>{
+  const checkTheme = localStorage.getItem('theme')
+  if(!checkTheme) localStorage.setItem("theme","dark-mode")
+},[])
 
   return (
     <BrowserRouter>
