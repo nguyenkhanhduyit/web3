@@ -12,7 +12,7 @@ import logo from "../../images/logo.png";
 const NavBarItem = ({ title, to, onClick, classProps }) => (
   <li className={`mx-4 cursor-pointer ${classProps}`} onClick={onClick}>
     {onClick ? (
-      <span>{title}</span> // dùng <span> thay vì <button> để không bị click 2 lần
+      <span>{title}</span> 
     ) : (
       <Link to={to}>{title}</Link>
     )}
@@ -29,6 +29,8 @@ const Navbar = ({ theme, setTheme }) => {
     { title: 'Market', to: '',  onClick: () => {setShowModalMarket(true); setToggleMenu(false) } },
     { title: 'Transaction', to: '',onClick: () => {setShowModalTransaction(true); setToggleMenu(false) } },
     { title: 'Transaction History', to: '/history', onClick:  () => {setToggleMenu(false);window.location.replace('/history')} },
+    { title: 'Faucet', to: '/faucet', onClick:  () => {window.location.replace('/faucet')} },
+    { title: 'Tutorial', to: '/tutorial', onClick:  () => {window.location.replace('/tutorial')} },
   ];
 
   const toggleTheme = () => {

@@ -3,15 +3,15 @@ import { Navbar, Footer, Welcome, Services } from "./component";
 import TransactionHistory from './component/TransactionHistory';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFound from './component/NotFound'; 
+import Faucet from './component/Faucet';
 
 function App() {
 
     const [theme, setTheme] = useState(
       () => {
         const temp = localStorage.getItem("theme");
-        if (temp === "light-mode" || temp === "dark-mode") {
+        if (temp === "light-mode" || temp === "dark-mode") 
             return temp;
-        }
         return "dark-mode"; 
         }
       )
@@ -33,8 +33,14 @@ useEffect(()=>{
         
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<><Welcome /><Services theme={theme}/></>} />
-            <Route path="/history" element={<TransactionHistory />} />
+            <Route path="/" element={
+              <>
+              <Welcome theme={theme}/>
+              <Services theme={theme}/>
+              </>
+            } />
+            <Route path="/history" element={<TransactionHistory theme={theme}/>} />
+            <Route path='/faucet' element={<Faucet theme={theme}/>}/>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

@@ -5,7 +5,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ScheduleSendIcon from '@mui/icons-material/ScheduleSend'
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault'
 
-const TransactionHistory = () => {
+const TransactionHistory = ({theme}) => {
 
   const TransactionCard = ({addressTo,addressFrom, timestamp, state,value}) => {
     return (

@@ -8,8 +8,7 @@ import { TransactionContext } from '../../context/TransactionContext'
 import { shortenAddress } from '../../utils/shortenAddress'
 import QRCard from './QRCard';
 
-const Welcome = () => {
-  const theme = localStorage.getItem('theme')
+const Welcome = ({theme}) => {
   const { 
           handleLogin,handleLogout,
           currentAccount,
