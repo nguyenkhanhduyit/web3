@@ -59,7 +59,7 @@ useEffect(
         <Select
           labelId={`${isTokenOut ? 'to-token-label':'from-token-label'}`}
           id={`${isTokenOut ? 'to-token':'from-token'}`}
-          value={`${isTokenOut ? tokenOut : tokenIn ? tokenIn : '' }`}
+          value={`${isTokenOut ? tokenOut : tokenIn }`}
           autoWidth
           label={`${isTokenOut ? 'To':'From'}`}
           onChange={handleChange}
