@@ -21,8 +21,24 @@ async function main() {
 
   const approvalResults: any = {};
 
+  // Approvals sized to cover planned liquidity across all pools with buffer
+  // Planned liquidity usage (10x larger pools):
+  // - BTC: 19,000 (BTC-USDT) + 19,000 (BTC-ETH) = 38,000
+  // - ETH: 565,000 (BTC-ETH) + 565,000 (ETH-USDT) = 1,130,000
+  // - USDT: 2,147,000,000 (BTC-USDT) + 2,147,000,000 (ETH-USDT) = 4,294,000,000
+  const amounts = {
+    "Bitcoin": "40000",         // buffer above 38,000
+    "Ethereum": "1200000",      // buffer above 1,130,000
+    "Tether USD": "4500000000"  // buffer above 4,294,000,000
+  };
+
   // Approve all tokens for SimpleDEX
   for (const [tokenName, tokenInfo] of Object.entries(tokens)) {
+     const amountToApprove = amounts[tokenName];
+      if (!amountToApprove) {
+        console.warn(`Không tìm thấy amount cho token ${tokenName}, bỏ qua.`);
+        continue;
+      }
     console.log(`\nĐang approve token có tên : ${tokenName} - (${tokenInfo.symbol})...`);
     console.log(`Có địa chỉ Token : ${tokenInfo.tokenAddress}`);
     
@@ -34,16 +50,14 @@ async function main() {
     try {
       // Check current allowance
       const currentAllowance = await tokenContract.allowance(deployer.address, simpleDexAddress);
-      console.log(`Current allowance: ${ethers.utils.formatUnits(currentAllowance, tokenInfo.decimals)} ${tokenInfo.symbol}`);
-      
+      console.log(`Current allowance: ${ethers.utils.formatUnits(currentAllowance, tokenInfo.decimals)}
+       ${tokenInfo.symbol}`);
       if (currentAllowance.isZero()) {
-        // Approve tokens for SimpleDEX
-        const approveAmount = ethers.utils.parseUnits("100000000", tokenInfo.decimals); // 100M tokens = 100.000.000
-        console.log(`Đang approve ${(ethers.utils.formatUnits(approveAmount, tokenInfo.decimals) % 10 ** 7 === 0)?
-      "100M": (ethers.utils.formatUnits(approveAmount, tokenInfo.decimals) % 10 ** 6 === 0)?
-      "10M" : ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)
-      } ${tokenInfo.symbol} for SimpleDEX...`);
         
+        // Approve tokens for SimpleDEX
+        const approveAmount = ethers.utils.parseUnits(amountToApprove, tokenInfo.decimals);
+        console.log(`Đang approve ${ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)} 
+        ${tokenInfo.symbol} for SimpleDEX...`);
         const approveTx = await tokenContract.approve(simpleDexAddress, approveAmount);
         console.log("Hash Giao dịch :", approveTx.hash);
         console.log("Đang chờ xác nhận...");

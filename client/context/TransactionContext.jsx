@@ -238,15 +238,14 @@ const getTokenBalance = async () => {
 }
 
 
-
-const estimateAmountOutViaQuoter = async (amount) => {
+const estimateAmountOut = async (amount) => {
   try {
     const signer = await getSigner();
     const simpleDEX = await new ethers.Contract(SimpleDEXAddress.address, SimpleDEX.abi, signer)
     const priceOracle = await new ethers.Contract(PriceOracleAddress.address, PriceOracle.abi, signer)
 
-    // Lấy địa chỉ USDT để làm base currency
-    const usdAddress =  ethers.constants.AddressZero;
+    // Lấy địa chỉ USD 
+    const usdAddress = ethers.constants.AddressZero;
 
     const token_list = Object.values(TokenAddress)
 
@@ -266,17 +265,45 @@ const estimateAmountOutViaQuoter = async (amount) => {
     const tokenInDecimals = tokenInInfo.decimals;
     const tokenOutDecimals = tokenOutInfo.decimals;
 
-    // Lấy giá từ PriceOracle
-    const tokenInPriceInUSD = ethers.utils.formatUnits(await priceOracle.getPrice(tokenInAddress, usdAddress),18);
-    const tokenOutPriceInUSD = ethers.utils.formatUnits(await priceOracle.getPrice(tokenOutAddress, usdAddress),18);
+    // Lấy giá từ PriceOracle (USD prices, luôn 18 decimals để cho giá là nhất quán)
+    const tokenInPriceInUSD = ethers.utils.formatUnits(
+      await priceOracle.getPrice(tokenInAddress, usdAddress),
+      18
+    );
+    const tokenOutPriceInUSD = ethers.utils.formatUnits(
+      await priceOracle.getPrice(tokenOutAddress, usdAddress),
+      18
+    );
 
-    const res = (amount*(tokenInPriceInUSD/tokenOutPriceInUSD)) // => vd :btc => eth
-    const arrRes =`${amount} ${tokenInName} (${tokenInPriceInUSD} USD)
-       ~ ${res} ${tokenOutName} (${tokenOutPriceInUSD} USD) `
-       
-    return {res,arrRes}
+    // Chuyển đổi amount input sang đơn vị nhỏ nhất
+    const amountInSmallestUnits = ethers.utils.parseUnits(amount.toString(), tokenInDecimals);
+
+    // Ước lượng output dựa trên AMM (dùng hàm trong contract để tránh sai số/overflow)
+    const outBN = await simpleDEX.getAmountOut(
+      tokenInAddress,
+      tokenOutAddress,
+      amountInSmallestUnits
+    );
+    const amountOutFormatted = ethers.utils.formatUnits(outBN, tokenOutDecimals);
+
+    // Tính toán giá từ PriceOracle (USD-based estimation)
+    const oracleEstimate = (parseFloat(amount) * parseFloat(tokenInPriceInUSD)) / parseFloat(tokenOutPriceInUSD);
+
+    const oracleEstimateFormatted = oracleEstimate.toFixed(6);
+
+    const arrRes = `${amount} ${tokenInName} ($${tokenInPriceInUSD})
+       ~ ${amountOutFormatted} ${tokenOutName} ($${tokenOutPriceInUSD} )`;
+
+    return {
+      res: amountOutFormatted,
+      arrRes,
+      ammEstimate: amountOutFormatted,
+      oracleEstimate: oracleEstimateFormatted,
+      tokenInPriceUSD: tokenInPriceInUSD,
+      tokenOutPriceUSD: tokenOutPriceInUSD
+    }
   } catch (error) {
-    console.error("Lỗi khi ước lượng swap:", error);
+    // console.log("Lỗi khi ước lượng swap:", error);
     return null;
   }
 };
@@ -297,7 +324,7 @@ const estimateAmountOutViaQuoter = async (amount) => {
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
       setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
-      ,estimateAmountOutViaQuoter
+      ,estimateAmountOut
     }}>
       {children}
     </TransactionContext.Provider>

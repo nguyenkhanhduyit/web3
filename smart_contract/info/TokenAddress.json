@@ -1,23 +1,23 @@
 {
   "Bitcoin": {
-    "tokenAddress": "0x7D218db0cc7B0c0B1003E82ff66c5C1cE89f0F55",
+    "tokenAddress": "0x828a465308900779D1E8809D1B610E221C5C55fb",
     "symbol": "BTC",
-    "decimals": 18,
-    "totalSupply": "1000000000",
-    "deployedAt": "2025-08-06T14:34:36.973Z"
+    "decimals": 8,
+    "totalSupply": "21000000",
+    "deployedAt": "2025-08-08T08:30:58.166Z"
   },
   "Ethereum": {
-    "tokenAddress": "0xB97AA32FBe81de7B732cEef42B7ca970292A4779",
+    "tokenAddress": "0xFc39dFd14396280052568b11c960C1f192b950C3",
     "symbol": "ETH",
     "decimals": 18,
-    "totalSupply": "1000000000",
-    "deployedAt": "2025-08-06T14:35:10.477Z"
+    "totalSupply": "120000000",
+    "deployedAt": "2025-08-08T08:31:07.725Z"
   },
   "Tether USD": {
-    "tokenAddress": "0x07973F464b731cf40f505Cae566F529011C42d1E",
+    "tokenAddress": "0xFc295C7E648ed6f01212e4661A50bCD21D147D6f",
     "symbol": "USDT",
-    "decimals": 18,
-    "totalSupply": "1000000000",
-    "deployedAt": "2025-08-06T14:35:23.879Z"
+    "decimals": 6,
+    "totalSupply": "100000000000",
+    "deployedAt": "2025-08-08T08:31:21.075Z"
   }
 }

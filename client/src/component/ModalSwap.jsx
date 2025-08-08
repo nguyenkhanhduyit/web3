@@ -3,7 +3,6 @@ import { TransactionContext } from '../../context/TransactionContext'
 import React, { useState,useEffect,useContext} from 'react';
 import ModalTransaction from './ModalTransaction';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import { swapTokens } from '../../utils/swap/excute/excute.js';
 import SelectToken from './SelectToken';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
@@ -34,7 +33,7 @@ const ModalSwap = ({ theme, onClose }) => {
  const { 
          getTokenBalance,currentAccount,tokenBalance,setTokenInAddress
          ,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance,
-         estimateAmountOutViaQuoter
+         estimateAmountOut
      } = useContext(TransactionContext)
 
 useEffect(() => {
@@ -45,7 +44,8 @@ useEffect(() => {
         return;
       }
       const decimals = TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.decimals
-      const estimate = await estimateAmountOutViaQuoter(amountFrom);
+      
+      const estimate = await estimateAmountOut(amountFrom);
       if (estimate) {
         const fixed = estimate.res
         setAmountTo(fixed);
@@ -54,7 +54,7 @@ useEffect(() => {
         setAmountTo(0);
       }
     } catch (err) {
-      console.error("Error estimating amountOut:", err);
+      // console.log("Error estimating amountOut:", err);
       setAmountTo(0);
     }
   };

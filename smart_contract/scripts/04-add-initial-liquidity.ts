@@ -79,6 +79,18 @@ async function main() {
   let successCount = 0;
   let failCount = 0;
 
+  // Set per-token base amounts to achieve target USD prices across pairs (10x larger pools)
+  // Target USD: BTC=$113,000, ETH=$3,800, USDT=$1
+  // Choose shared anchors per pair to match ratios exactly while keeping larger pool size
+  // - BTC-USD: 19,000 BTC vs 2,147,000,000 USDT  => 2,147,000,000 / 19,000 = 113,000 USDT/BTC
+  // - BTC-ETH: 19,000 BTC vs 565,000 ETH         => 565,000 / 19,000 = 29.7368421 ETH/BTC (113k/3.8k)
+  // - ETH-USD: 565,000 ETH vs 2,147,000,000 USDT=> 2,147,000,000 / 565,000 = 3,800 USDT/ETH
+  // Amounts below are per token name, used for each pool side according to the pair:
+  const amounts = {
+    "Bitcoin": "19000",
+    "Ethereum": "565000",
+    "Tether USD": "2147000000"
+  };
   // Add liquidity for each pair
   for (let i = 0; i < tokenPairs.length; i++) {
     const [token1Entry, token2Entry] = tokenPairs[i];
@@ -210,13 +222,12 @@ async function main() {
 
     // Calculate balanced liquidity amounts based on decimals
     // Use 1 million tokens for each token in each pool
-    const baseAmount = 1000000; // 1 million tokens for each pool
+    // const baseAmount = 1000000; // 1 million tokens for each pool
     
-    // For each pool, add 1 million tokens of each type
+    // For each pair, use the named amounts
     let amount0, amount1;
-    //parseUnits('1', 6) → 1000000
-    amount0 = ethers.utils.parseUnits(baseAmount.toString(),18);
-    amount1 = ethers.utils.parseUnits(baseAmount.toString(),18);
+    amount0 = ethers.utils.parseUnits(amounts[token1Name], token1Info.decimals);
+    amount1 = ethers.utils.parseUnits(amounts[token2Name], token2Info.decimals);
 
     /*
     // Giả sử bạn nhận được số dư token như sau (kiểu BigNumber):
@@ -230,7 +241,7 @@ const formatted = formatUnits(rawBalance, decimals);
 
 console.log(formatted); // "1.0"
     */
-    console.log(`\nSố lượng thanh khoản ban đầu (1M token mỗi loại):`);
+    console.log(`\nSố lượng thanh khoản ban đầu :`);
     console.log(`${token1Info.symbol}: ${ethers.utils.formatUnits(amount0,token1Info.decimals)}`);
     console.log(`${token2Info.symbol}: ${ethers.utils.formatUnits(amount1, token2Info.decimals)}`);
     console.log(`Token1 decimals: ${token1Info.decimals}, Token2 decimals: ${token2Info.decimals}`);
@@ -249,7 +260,6 @@ console.log(formatted); // "1.0"
     }
 
     try {
-      // Add initial liquidity
       console.log("\nĐang thêm thanh khoản...");
       const addLiquidityTx = await simpleDex.addLiquidity(
         token1Info.tokenAddress,

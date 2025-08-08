@@ -45,14 +45,13 @@ async function main() {
     const priceUpdates: any = {};
 
     // Tạo USD token ảo (sử dụng địa chỉ zero hoặc một địa chỉ đặc biệt)
-    // Trong thực tế, bạn có thể deploy một USD token thật hoặc sử dụng một stablecoin khác
     const usdTokenAddress = ethers.constants.AddressZero; // Sử dụng địa chỉ zero làm USD token ảo
     
-    // Định nghĩa giá USD cho các token phổ biến (giá thực tế gần đúng)
+    // Định nghĩa giá USD cho các token phổ biến (giá thực tế chính xác)
     const usdPrices: { [key: string]: number } = {
-      "Bitcoin": 113000,      // 1 BTC = $100,000 USD
-      "Ethereum": 3800,      // 1 ETH = $3,800 USD
-      "Tether USD": 1        // 1 USDT = $1 USD
+      "Bitcoin": 113000,      // 1 BTC = $113,000 USD
+      "Ethereum": 3800,       // 1 ETH = $3,800 USD
+      "Tether USD": 1         // 1 USDT = $1 USD
     };
 
     for (const [tokenName, tokenInfo] of tokenEntries) {
@@ -107,8 +106,8 @@ async function main() {
       console.log(`  - Block Number: ${priceData.blockNumber}`);
 
       // Test calculatePriceFromReserves (simulate với reserves giả)
-      const reserve0 = ethers.utils.parseUnits("1000", token1Info.decimals); // 1000 tokens
-      const reserve1 = ethers.utils.parseUnits("45000000", 18); // $45,000,000 USD (cho BTC)
+      const reserve0 = ethers.utils.parseUnits("21000000", token1Info.decimals); // 21000000 tokens
+      const reserve1 = ethers.utils.parseUnits("113000", 18); // $113,000 USD (cho BTC)
       const calculatedPrice = await priceOracle.calculatePriceFromReserves(
         reserve0,
         reserve1,
@@ -163,13 +162,9 @@ async function main() {
     fs.mkdirSync(infoDir, { recursive: true });
   }
 
-  fs.writeFileSync(
-    path.resolve(infoDir, "06a-deploy-price-oracle.json"),
-    JSON.stringify(deployResults, null, 2)
-  );
 
   console.log("\n" + "=".repeat(50));
-  console.log("Kết quả deploy đã lưu vào: info/06a-deploy-price-oracle.json");
+  console.log("Kết quả deploy đã lưu vào: info/PriceOracleAddress.json");
   console.log("Bước tiếp theo: Chạy 06b-deploy-liquidity-mining.ts");
   console.log("=".repeat(50));
 }

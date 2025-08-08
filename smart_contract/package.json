@@ -1,7 +1,7 @@
 {
   "name": "smart_contract",
   "version": "1.0.0",
-  "description": "",
+  "description": "This project implements a decentralized exchange (DEX) with price oracle functionality, liquidity mining, and faucet features.",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "hardhat": "^2.21.0",
+    "hardhat": "^2.26.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
@@ -25,5 +25,8 @@
     "@uniswap/v4-sdk": "^1.21.4",
     "dotenv": "^17.1.0",
     "ethers": "^5.7.2"
+  },
+  "directories": {
+    "doc": "docs"
   }
 }
