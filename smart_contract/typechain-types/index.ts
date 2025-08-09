@@ -20,6 +20,8 @@ export type { IERC20Metadata } from "./@openzeppelin/contracts/token/ERC20/exten
 export { IERC20Metadata__factory } from "./factories/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata__factory";
 export type { IERC20 } from "./@openzeppelin/contracts/token/ERC20/IERC20";
 export { IERC20__factory } from "./factories/@openzeppelin/contracts/token/ERC20/IERC20__factory";
+export type { ReentrancyGuard } from "./@openzeppelin/contracts/utils/ReentrancyGuard";
+export { ReentrancyGuard__factory } from "./factories/@openzeppelin/contracts/utils/ReentrancyGuard__factory";
 export type { Faucet } from "./contracts/Faucet.sol/Faucet";
 export { Faucet__factory } from "./factories/contracts/Faucet.sol/Faucet__factory";
 export type { IERC20Extended } from "./contracts/Faucet.sol/IERC20Extended";
@@ -32,3 +34,5 @@ export type { SimpleDEX } from "./contracts/SimpleDEX";
 export { SimpleDEX__factory } from "./factories/contracts/SimpleDEX__factory";
 export type { Token } from "./contracts/Token";
 export { Token__factory } from "./factories/contracts/Token__factory";
+export type { Transactions } from "./contracts/Transactions";
+export { Transactions__factory } from "./factories/contracts/Transactions__factory";

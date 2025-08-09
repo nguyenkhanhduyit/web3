@@ -7,3 +7,4 @@ export type { LiquidityMining } from "./LiquidityMining";
 export type { PriceOracle } from "./PriceOracle";
 export type { SimpleDEX } from "./SimpleDEX";
 export type { Token } from "./Token";
+export type { Transactions } from "./Transactions";

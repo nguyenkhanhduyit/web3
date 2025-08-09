@@ -1,0 +1,8 @@
+{
+  "faucetAddress": "0xfac61052894C91B5ECD24AD9C0ce19e3eA156dDf",
+  "deployedAt": "2025-08-09T12:27:16.514Z",
+  "blockNumber": 8946756,
+  "deployer": "0x45f10654522FF65646Ea31Ef7673AE0F02972505",
+  "cooldownPeriod": "24 hours",
+  "userFaucetAmount": "0.5 tokens per request"
+}

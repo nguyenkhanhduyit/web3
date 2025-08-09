@@ -30,7 +30,7 @@ import type {
 export interface FaucetInterface extends utils.Interface {
   functions: {
     "FAUCET_COOLDOWN()": FunctionFragment;
-    "addToken(address,uint256)": FunctionFragment;
+    "addToken(address)": FunctionFragment;
     "emergencyWithdraw(address,uint256)": FunctionFragment;
     "faucetAmounts(address)": FunctionFragment;
     "getSupportedTokens()": FunctionFragment;
@@ -73,7 +73,7 @@ export interface FaucetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addToken",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "emergencyWithdraw",
@@ -288,7 +288,6 @@ export interface Faucet extends BaseContract {
 
     addToken(
       token: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -367,7 +366,6 @@ export interface Faucet extends BaseContract {
 
   addToken(
     token: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -446,7 +444,6 @@ export interface Faucet extends BaseContract {
 
     addToken(
       token: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -569,7 +566,6 @@ export interface Faucet extends BaseContract {
 
     addToken(
       token: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -643,7 +639,6 @@ export interface Faucet extends BaseContract {
 
     addToken(
       token: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

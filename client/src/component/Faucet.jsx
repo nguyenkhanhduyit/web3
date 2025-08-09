@@ -43,7 +43,8 @@ const Faucet = ({theme}) => {
                
                 <h1 className="text-3xl text-white">DuyIT Faucet </h1>
                 <p className='text-15px text-left break-words max-w-[500px] w-full'>
-                Get free tokens in Sepolia network sent directly to your wallet. 
+                Get 0.5 free tokens in Sepolia network sent directly to your wallet. 
+                You can request one specific token or all available tokens at once.
                 Brought to you by DIT Web3.
                 </p>
                
@@ -115,11 +116,18 @@ const Faucet = ({theme}) => {
 
                 />
                 </Box>
-                <button className="p-2 text-white 
-                rounded-2xl border-2 border-white hover:bg-white
-                hover:text-black transition duration-300 cursor-pointer text-sm">
-                Receive 0.5 token
-                </button>
+                <div className="flex gap-4">
+                    <button className="flex-1 p-2 text-white 
+                    rounded-2xl border-2 border-white hover:bg-white
+                    hover:text-black transition duration-300 cursor-pointer text-sm">
+                    Receive 0.5 {personName || 'Token'}
+                    </button>
+                    <button className="flex-1 p-2 text-white 
+                    rounded-2xl border-2 border-white hover:bg-white
+                    hover:text-black transition duration-300 cursor-pointer text-sm">
+                    Receive All Tokens (0.5 each)
+                    </button>
+                </div>
                 <p className='text-gray-200'>
                     Note: We securely handle the provided wallet address while processing your request. 
                     This data is not used by any other DIT services.

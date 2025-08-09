@@ -40,13 +40,11 @@ contract Faucet is Ownable {
     constructor() Ownable(msg.sender) {}
     
     /**
-     * @dev Thêm token vào danh sách faucet
+     * @dev Thêm token vào danh sách hỗ trợ faucet
      * @param token Địa chỉ token
-     * @param amount Số lượng token sẽ được faucet
      */
-    function addToken(address token, uint256 amount) external onlyOwner {
+    function addToken(address token) external onlyOwner {
         require(token != address(0), "Invalid token address");
-        require(amount > 0, "Amount must be greater than 0");
         
         // Kiểm tra xem token đã tồn tại chưa
         bool exists = false;
@@ -61,8 +59,9 @@ contract Faucet is Ownable {
             supportedTokens.push(token);
         }
         
-        faucetAmounts[token] = amount;
-        emit TokenAdded(token, amount);
+        // Set số lượng faucet là 0.5 token (với 18 decimals) - cố định cho người dùng
+        faucetAmounts[token] = 5 * 10**17; // 0.5 * 10^18
+        emit TokenAdded(token, 5 * 10**17);
     }
     
     /**
@@ -86,14 +85,14 @@ contract Faucet is Ownable {
     }
     
     /**
-     * @dev Cập nhật số lượng faucet cho token
+     * @dev Cập nhật số lượng faucet cho token (chỉ owner có thể thay đổi)
      * @param token Địa chỉ token
-     * @param newAmount Số lượng mới
+     * @param newAmount Số lượng mới (người dùng sẽ nhận được 0.5 token mỗi lần)
      */
     function updateFaucetAmount(address token, uint256 newAmount) external onlyOwner {
         require(token != address(0), "Invalid token address");
-        require(newAmount > 0, "Amount must be greater than 0");
         require(faucetAmounts[token] > 0, "Token not in faucet list");
+        require(newAmount > 0, "Amount must be greater than 0");
         
         faucetAmounts[token] = newAmount;
         emit FaucetAmountUpdated(token, newAmount);
