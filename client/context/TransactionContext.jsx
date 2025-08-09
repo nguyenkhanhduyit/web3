@@ -398,6 +398,13 @@ const swapToken = async (amount) => {
     throw err;
   }
 };
+
+const faucetToken = async(name) => {
+  
+}
+
+
+
   return (
     <TransactionContext.Provider value={{
       handleLogin,
@@ -414,7 +421,7 @@ const swapToken = async (amount) => {
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
       setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
-      ,estimateAmountOut,swapToken
+      ,estimateAmountOut,swapToken,faucetToken
     }}>
       {children}
     </TransactionContext.Provider>
