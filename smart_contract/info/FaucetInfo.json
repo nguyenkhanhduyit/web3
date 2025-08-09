@@ -1,48 +1,11 @@
 {
-  "faucetAddress": "0xA035a09F8612E4a0A4f00082d3603D768c288A88",
-  "deployedAt": "2025-08-09T13:00:07.525Z",
-  "blockNumber": 8946919,
+  "faucetAddress": "0x4A7215650106b8F3EDe48454CAe08c6dbe250C27",
+  "deployedAt": "2025-08-09T14:56:40.284Z",
+  "blockNumber": 8947495,
   "deployer": "0x45f10654522FF65646Ea31Ef7673AE0F02972505",
-  "supportedTokens": [
-    "Bitcoin",
-    "Ethereum",
-    "Tether USD"
-  ],
-  "userFaucetAmount": "0.5 tokens per request",
-  "deployerAmounts": {
-    "Bitcoin": {
-      "type": "BigNumber",
-      "hex": "0x174876e800"
-    },
-    "Ethereum": {
-      "type": "BigNumber",
-      "hex": "0x152d02c7e14af6800000"
-    },
-    "Tether USD": {
-      "type": "BigNumber",
-      "hex": "0xe8d4a51000"
-    }
-  },
+  "supportedTokens": [],
+  "userFaucetAmount": "0.5 token/request",
   "cooldownPeriod": "24 hours",
-  "addedTokens": [
-    {
-      "name": "Bitcoin",
-      "address": "0x828a465308900779D1E8809D1B610E221C5C55fb",
-      "symbol": "BTC",
-      "decimals": 8
-    },
-    {
-      "name": "Ethereum",
-      "address": "0xFc39dFd14396280052568b11c960C1f192b950C3",
-      "symbol": "ETH",
-      "decimals": 18
-    },
-    {
-      "name": "Tether USD",
-      "address": "0xFc295C7E648ed6f01212e4661A50bCD21D147D6f",
-      "symbol": "USDT",
-      "decimals": 6
-    }
-  ],
-  "tokensAddedAt": "2025-08-09T14:22:50.344Z"
+  "addedTokens": [],
+  "tokensAddedAt": "2025-08-09T15:00:42.221Z"
 }
