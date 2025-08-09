@@ -392,8 +392,8 @@
       ]
     },
     "D:\\Coding\\web3.0\\smart_contract\\contracts\\Faucet.sol": {
-      "lastModificationDate": 1754739314385,
-      "contentHash": "e90c86efea76c472bface743bb3fd73f",
+      "lastModificationDate": 1754754049971,
+      "contentHash": "6e90cb85ec57742ad75a00461a4a3a72",
       "sourceName": "contracts/Faucet.sol",
       "solcConfig": {
         "version": "0.8.28",

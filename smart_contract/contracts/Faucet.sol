@@ -59,9 +59,11 @@ contract Faucet is Ownable {
             supportedTokens.push(token);
         }
         
-        // Set số lượng faucet là 0.5 token (với 18 decimals) - cố định cho người dùng
-        faucetAmounts[token] = 5 * 10**17; // 0.5 * 10^18
-        emit TokenAdded(token, 5 * 10**17);
+        // Set số lượng faucet là 0.5 token với decimals tương ứng của từng token
+        uint8 decimals = IERC20Extended(token).decimals();
+        uint256 faucetAmount = 5 * 10**(decimals - 1); // 0.5 * 10^decimals
+        faucetAmounts[token] = faucetAmount;
+        emit TokenAdded(token, faucetAmount);
     }
     
     /**

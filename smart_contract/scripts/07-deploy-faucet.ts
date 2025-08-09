@@ -140,58 +140,6 @@ async function main() {
 
     console.log("\nĐã Hoàn tất!")
     
-    // // Test faucet functionality
-    // console.log("\nTesting faucet functionality...")
-    
-    // // Tạo một test account khác
-    // const testAccounts = await ethers.getSigners()
-    // const testUser = testAccounts[1] // Sử dụng account thứ 2 để test
-    
-    // console.log(`Test user address: ${testUser.address}`)
-    
-    // // Test nhận tất cả token từ faucet
-    // try {
-    //     console.log("Test user đang nhận tất cả token từ faucet...")
-    //     const requestAllTx = await faucet.connect(testUser).requestAllFaucets()
-    //     await requestAllTx.wait()
-    //     console.log("Test user đã nhận thành công tất cả token từ faucet")
-        
-    //     // Kiểm tra balance của test user
-    //     for (const [tokenName, tokenData] of Object.entries(tokenInfo)) {
-    //         const tokenContract = new ethers.Contract(tokenData.tokenAddress, [
-    //             "function balanceOf(address account) external view returns (uint256)"
-    //         ], testUser)
-            
-    //         const userBalance = await tokenContract.balanceOf(testUser.address)
-    //         console.log(`Test user ${tokenName} 
-    //             balance: ${ethers.formatUnits(userBalance, tokenData.decimals)} ${tokenData.symbol}`)
-    //     }
-        
-    // } catch (error) {
-    //     console.log("Test faucet failed:", error)
-    // }
-    
-    // // Test thời gian chờ
-    // console.log("\nTesting cooldown period...")
-    // try {
-    //     const timeUntilNext = await faucet.getTimeUntilNextFaucet(testUser.address)
-    //     console.log(`Thời gian chờ còn lại: ${timeUntilNext} giây`)
-        
-    //     if (timeUntilNext > 0) {
-    //         const hours = Math.floor(timeUntilNext / 3600)
-    //         const minutes = Math.floor((timeUntilNext % 3600) / 60)
-    //         console.log(`Có thể faucet lại sau: ${hours} giờ ${minutes} phút`)
-    //     }
-    // } catch (error) {
-    //     console.log("Test cooldown failed:", error)
-    // }
-    
-    // console.log("\nFaucet deployment hoàn thành!")
-    // console.log("Tóm tắt:")
-    // console.log(`- Faucet address: ${faucetAddress}`)
-    // console.log(`- Supported tokens: ${Object.keys(tokenInfo).join(", ")}`)
-    // console.log(`- Cooldown period: 24 hours`)
-    // console.log(`- Deployer: ${deployer.address}`)
 }
 
 main()
