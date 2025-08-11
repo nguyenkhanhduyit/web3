@@ -120,7 +120,7 @@ export const TransactionsProvider = ({ children }) => {
         return{state:1,tx:'Receiver address invalid'}
       }
 
-      if (!value || isNaN(value) || Number(value) < 0.005 || Number(value) > 0.01) {
+      if (!value || isNaN(value) || Number(value) < 0.005 || Number(value) > 0.01 || !isFinite(numericAmount) ) {
         return{state:0 ,tx: 'Value must between on 0.005 - 0.01 ETH'}
       }
 
