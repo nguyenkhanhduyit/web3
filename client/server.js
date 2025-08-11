@@ -94,6 +94,10 @@ app.get('/api/token', async (req, res) => {
     })
     const mapData = await mapRes.json()
 
+    console.log('mapData:', mapData)
+    console.log('API_KEY:', API_KEY)
+
+
     const token = mapData.data.find(
       (t) =>
         t.symbol.toLowerCase() === symbolOrName.toLowerCase() ||

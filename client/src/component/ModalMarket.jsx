@@ -21,9 +21,19 @@ export default function ModalMarket({ theme,onClose }) {
       return Number(num).toFixed(2);
     };
 
+  function formatPrice(price) {
+    if (price === null || price === undefined || isNaN(price)) return '-';
+
+    const num = Number(price);
+    const parts = num.toFixed(4).split('.');
+    const intPart = Number(parts[0]).toLocaleString('en-US');
+    return `${intPart}.${parts[1]}`;
+  }
+
+
     const fetchTokenData = async (inputNameOrSymbol) => {
       try {
-        const res = await fetch(`http://localhost:5000/api/token?symbol=${inputNameOrSymbol}`);
+        const res = await fetch(`http://localhost:3001/api/token?symbol=${inputNameOrSymbol}`);
         const data = await res.json();
         if (res.status !== 200 || !data) throw new Error();
         const cache = JSON.parse(localStorage.getItem('tokenCache') || '{}');
@@ -32,7 +42,7 @@ export default function ModalMarket({ theme,onClose }) {
         return {
           name: data.name,
           symbol: data.symbol,
-          price: Number(data.price).toFixed(4),
+          price: formatPrice(data.price),
           icon: data.logo,
           percent_change_24h: Number(data.percent_change_24h).toFixed(2),
           market_cap: formatNumber(data.market_cap),
@@ -74,11 +84,19 @@ export default function ModalMarket({ theme,onClose }) {
         }
     };
 
-    const onSearch = (value) => {
-      setQuery(value);
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => handleSearch(value), 2000);
+      const onSearch = (value) => {
+          setQuery(value);
+          clearTimeout(timeoutRef.current);
+
+          if (!value.trim()) {
+            // Khi search rỗng → load lại token hot
+            loadHotTokens();
+            return;
+          }
+
+          timeoutRef.current = setTimeout(() => handleSearch(value), 2000);
     };
+
 
     const TokenCard = ({ name, symbol, price, icon, market_cap, volume_24h, percent_change_24h }) => {
       const priceColor =
@@ -89,7 +107,7 @@ export default function ModalMarket({ theme,onClose }) {
             : 'text-gray-500';
 
       return (
-        <div className={`mr-10 flex flex-row justify-between items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#373b49]' : 'bg-blue-200'}`}>
+        <div className={`mr-10 flex flex-row justify-between items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-200'}`}>
           <div className='flex flex-row gap-2 items-center'>
             <img src={icon} alt="icon" className='w-8 h-8' />
             <div className='flex flex-col'>
@@ -121,7 +139,7 @@ export default function ModalMarket({ theme,onClose }) {
       return (
         <div
           onClick={onClick}
-          className={`flex flex-row items-center gap-1 px-3 py-1 mt-3 mr-2 cursor-pointer ${theme === 'dark-mode' ? 'bg-gray-700' : 'bg-blue-300'}`}
+          className={`flex flex-row items-center gap-1 px-3 py-1 mt-3 mr-2 cursor-pointer ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-300'}`}
           style={{ borderRadius: '32px' }}
         >
           <img src={icon} alt="." className='w-5 h-5' />
@@ -130,14 +148,16 @@ export default function ModalMarket({ theme,onClose }) {
       );
     };
 
-    useEffect(() => {
-      const loadHotTokens = async () => {
+    const loadHotTokens = async () => {
         const results = await Promise.all(hotToken.map(fetchTokenData));
         const valid = results.filter(Boolean);
         setTokenList(valid);
-      };
+    };
+
+    useEffect(() => {
       loadHotTokens();
     }, []);
+
 
     useEffect(() => {
       const interval = setInterval(() => {
