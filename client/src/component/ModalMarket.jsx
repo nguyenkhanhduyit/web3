@@ -3,6 +3,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
 export default function ModalMarket({ theme,onClose }) {
+
     const [query, setQuery] = useState('');
     const [tokenList, setTokenList] = useState([]);
     const [recentSearches, setRecentSearches] = useState([]);
@@ -159,7 +160,7 @@ export default function ModalMarket({ theme,onClose }) {
 
     const LoadingTokenCard = () => {
       return (
-        <div className={`mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#272a34]' : 'bg-blue-200'}`}>
+        <div className={`mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? ' bg-[#eae6e800]' : ' bg-[#eae6e800]'}`}>
           <div className='flex flex-col'>
             <div className='w-[25px] h-[25px] bg-white rounded-full m-1' />
             <div className='w-[25px] h-[25px] bg-white rounded-full m-1' />
@@ -174,14 +175,14 @@ export default function ModalMarket({ theme,onClose }) {
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#eae6e800]">
-        <div className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh] max-h-[80vh] overflow-y-auto relative ${theme === 'dark-mode' ? 'bg-[#272a34] text-white' : 'bg-blue-100 text-gray-900'}`}>
-          <div className={`sticky -top-6 z-20 flex justify-start items-center mb-4 ${theme === 'dark-mode' ? 'bg-[#272a34]' : 'bg-blue-100'}`}>
+        <div className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh] max-h-[80vh] overflow-y-auto relative ${theme === 'dark-mode' ? 'background-modal-dark-mode text-white' : 'bg-blue-100 text-gray-900'}`}>
+          <div className={`sticky -top-6 z-20 flex justify-start items-center mb-4 ${theme === 'dark-mode' ? ' bg-[#eae6e800]' : 'bg-blue-100'}`}>
             <SearchIcon className={`size-14 flex-none ${theme === 'dark-mode' ? 'text-white' : 'text-indigo-700'}`} style={{ fontSize: '16px' }} />
             <input
               type="text"
               placeholder='What are you looking for?'
               onChange={(e) => onSearch(e.target.value)}
-              className={`size-14 flex-grow ${theme === 'dark-mode' ? 'text-gray-400 placeholder:text-gray-400' : 'text-indigo-700 placeholder:text-indigo-700'} placeholder:text-sm placeholder:font-normal rounded-full border-none text-[14px] pl-2 focus:outline-none`}
+              className={`size-14 flex-grow  ${theme === 'dark-mode' ? 'text-gray-400 placeholder:text-gray-400' : 'text-indigo-700 placeholder:text-indigo-700'} placeholder:text-sm placeholder:font-normal rounded-full border-none text-[14px] pl-2 focus:outline-none`}
             />
             <div className={`flex justify-center items-center h-[17px] w-[17px] rounded-full ${theme === 'dark-mode' ? 'bg-gray-300' : 'bg-indigo-700'}`}>
               <button onClick={onClose} className={`text-[14px] font-bold ${theme === 'dark-mode' ? 'text-black' : 'text-white'}`}>

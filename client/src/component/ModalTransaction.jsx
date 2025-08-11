@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { TransactionContext } from '../../context/TransactionContext';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const ModalTransaction = ({ theme, onClose }) => {
 
@@ -146,6 +147,9 @@ const ModalTransaction = ({ theme, onClose }) => {
           </button>
         )
      }
+     <div className='flex flex-col items-end'>
+      <DescriptionIcon/>
+     </div>
         </div>
       </div>
       
