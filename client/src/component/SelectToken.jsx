@@ -53,7 +53,7 @@ useEffect(
 
   return (
     <div>
-      <FormControl sx={{ m: 1, minWidth: 80 }} className='flex-1'>
+      <FormControl sx={{ m: 1, minWidth: 80 }} className='flex-1 '>
         <InputLabel id={`${isTokenOut ? 'to-token-input-label':'from-token-input-label'}`} style={{color:'white'}}>
         {`${isTokenOut ? 'To':'From'}`}</InputLabel>
         <Select
@@ -66,13 +66,13 @@ useEffect(
           sx={{
               color: 'white',
               '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'white',
+                borderColor: 'white',borderWidth: '3px'
               },
               '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'white',
+                borderColor: 'white',borderWidth: '3px'
               },
               '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'white',
+                borderColor: 'white',borderWidth: '3px'
               },
               '& .MuiSelect-icon': {
                 color: 'white',

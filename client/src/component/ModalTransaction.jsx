@@ -56,11 +56,11 @@ const ModalTransaction = ({ theme, onClose }) => {
       if(tx && typeof tx === 'object' && "state" in tx){
           if(tx.state === 0){
             setIsLoading(false)
-            setErrorMessage('Transaction failed')
+            setErrorMessage(tx.tx)
             return
           }
           setIsLoading(false)
-          setSuccessMessage('Transaction successfully')
+          setSuccessMessage(tx.tx)
 
       }
 

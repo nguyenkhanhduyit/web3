@@ -117,13 +117,11 @@ export const TransactionsProvider = ({ children }) => {
       const parsedValue = ethers.utils.parseEther(value)
 
       if (!ethers.utils.isAddress(addressTo)) {
-        alert('Địa chỉ người nhận không hợp lệ')
-        return
+        return{state:1,tx:'Receiver address invalid'}
       }
 
       if (!value || isNaN(value) || Number(value) < 0.005 || Number(value) > 0.01) {
-        alert('Giá trị phải trong khoảng 0.005 - 0.01 ETH')
-        return
+        return{state:0 ,tx: 'Value must between on 0.005 - 0.01 ETH'}
       }
 
       const contract = await createEthereumContract()
@@ -145,11 +143,11 @@ export const TransactionsProvider = ({ children }) => {
 
       await tx.wait()
       console.log("Transaction Successfully:", tx.hash)
-      return {state: 1, tx: tx}
+      return {state: 1, tx: "Transaction successfully"}
 
     } catch (error) {
-      console.log(`Giao dịch thất bại: ${error.reason || error.message}`)
-      return {state: 0}
+      console.log(`Transaction failed: ${error.reason || error.message}`)
+      return {state: 0,tx:"Transaction failed"}
     }
   }
 
