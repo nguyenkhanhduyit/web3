@@ -308,25 +308,25 @@ const estimateAmountOut = async (amount) => {
 
 const swapToken = async (amount) => {
   try {
-    // Validate input
     const numericAmount = Number(amount);
-    if (!isFinite(numericAmount) || numericAmount <= 0) {
-      throw new Error("Số lượng swap phải lớn hơn 0");
+    if (!isFinite(numericAmount) || numericAmount > 0.5) {
+      return {state:0,tx:"Value must exact than 0.5"}
+    }
+    if (!isFinite(numericAmount) || numericAmount < 0.5) {
+      return {state:0,tx:"Value must exact that 0.5"}
     }
 
     const signer = await getSigner();
     const simpleDEX = new ethers.Contract(SimpleDEXAddress.address, SimpleDEX.abi, signer);
 
-    // Resolve token infos
     const tokens = Object.values(TokenAddress);
     const tokenSwapIn = tokens.find((t) => t.tokenAddress === tokenInAddress);
     const tokenSwapOut = tokens.find((t) => t.tokenAddress === tokenOutAddress);
 
     if (!tokenSwapIn || !tokenSwapOut) {
-      throw new Error("Không tìm thấy đủ token cần thiết để thực hiện giao dịch swap");
+      return {state:0,tx:"Not found token necessary to make swap transaction"}
     }
 
-    // Minimal ERC20 ABI including approve/allowance for write ops
     const ERC20_WRITE_ABI = [
       "function balanceOf(address) view returns (uint256)",
       "function decimals() view returns (uint8)",
@@ -339,27 +339,23 @@ const swapToken = async (amount) => {
 
     const userAddress = await signer.getAddress();
 
-    // Parse amount to smallest units using tokenIn decimals
     const amountInBN = ethers.utils.parseUnits(numericAmount.toString(), tokenSwapIn.decimals);
 
-    // Check balances
     const [balanceInBefore, balanceOutBefore] = await Promise.all([
       tokenInContract.balanceOf(userAddress),
       tokenOutContract.balanceOf(userAddress)
     ]);
 
     if (balanceInBefore.lt(amountInBN)) {
-      throw new Error(`Số dư ${tokenSwapIn.symbol} không đủ`);
+      return {state:0,tx:`Balance ${tokenSwapIn.symbol} not enough`}
     }
 
-    // Ensure allowance
     const currentAllowance = await tokenInContract.allowance(userAddress, SimpleDEXAddress.address);
     if (currentAllowance.lt(amountInBN)) {
       const approveTx = await tokenInContract.approve(SimpleDEXAddress.address, amountInBN);
       await approveTx.wait();
     }
 
-    // Execute swap
     const tx = await simpleDEX.swapExactTokensForTokens(
       tokenSwapIn.tokenAddress,
       tokenSwapOut.tokenAddress,
@@ -367,7 +363,6 @@ const swapToken = async (amount) => {
     );
     await tx.wait();
 
-    // Get balances after
     const [balanceInAfter, balanceOutAfter] = await Promise.all([
       tokenInContract.balanceOf(userAddress),
       tokenOutContract.balanceOf(userAddress)
@@ -375,24 +370,20 @@ const swapToken = async (amount) => {
 
     const receivedOut = balanceOutAfter.sub(balanceOutBefore);
 
-    console.log("Swap thành công!");
-    console.log(
-      `Đã nhận: ${ethers.utils.formatUnits(receivedOut, tokenSwapOut.decimals)} ${tokenSwapOut.symbol}`
-    );
-
-    // Refresh token balance display after successful swap
     await getTokenBalance();
 
     return {
+      state:1,
       txHash: tx.hash,
       amountIn: ethers.utils.formatUnits(amountInBN, tokenSwapIn.decimals),
       amountOut: ethers.utils.formatUnits(receivedOut, tokenSwapOut.decimals),
       tokenIn: tokenSwapIn.symbol,
-      tokenOut: tokenSwapOut.symbol
-    };
+      tokenOut: tokenSwapOut.symbol,
+      tx: 'Swap successfully'
+    }
+
   } catch (err) {
-    console.error("Swap lỗi:", err);
-    throw err;
+    return {state:0,tx:"Swap failed cua TransactionContext"}
   }
 };
 

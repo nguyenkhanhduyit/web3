@@ -9,8 +9,8 @@ import Stack from '@mui/material/Stack';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { ethers } from 'ethers'
 import DescriptionIcon from '@mui/icons-material/Description';
-
 import TOKENS  from '../../utils/swap/info/TokenAddress.json';
+import Loader from './Loader';
 
 const rpcUrl = import.meta.env.ALCHEMY_SEPOLIA_URL
 
@@ -33,6 +33,8 @@ const ModalSwap = ({ theme, onClose }) => {
 
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+
+  const [isLoading, setIsLoading] = useState(false)
 
  const { 
          getTokenBalance,currentAccount,tokenBalance,setTokenInAddress
@@ -89,10 +91,23 @@ async function handleSwap() {
           setErrorMessage('Amount invalid');
           return;
         }
-        const receipt = await swapToken(amountFrom);
-        setSuccessMessage('Swap successfully')
+        setIsLoading(true)
+        const tx = await swapToken(amountFrom);
+        if(tx && typeof tx === 'object' && 'state' in tx){
+              if(tx.state === 0){
+                  setIsLoading(false)
+                  setErrorMessage(tx.tx)
+                
+              }
+              else
+              {
+              setIsLoading(false)
+              setSuccessMessage(tx.tx)
+       
+              }
+        } 
       } catch (err) {
-          console.error(err);
+          setIsLoading(false)
           setErrorMessage('Swap failed');
       }
 }
@@ -230,7 +245,7 @@ useEffect(() => {
          errorMessage && (
           <>
           <Stack spacing={2} margin={'10px'} className='m-auto'>
-            <Alert severity='error'>{error}</Alert>
+            <Alert severity='error'>{errorMessage}</Alert>
           </Stack>
          </>)
          }
@@ -244,10 +259,15 @@ useEffect(() => {
          </>)
          }
 
-            <button onClick={handleSwap}
+           {
+            isLoading ? (<Loader/>) : 
+            (
+               <button onClick={handleSwap}
              className="bg-white w-full text-black rounded-full h-[7vh] cursor-pointer my-3">
                   Swap
             </button>
+            )
+           }
           <div className='flex flex-col items-end'>
           <DescriptionIcon className='cursor-pointer'/>
           </div>
