@@ -1,0 +1,55 @@
+{
+  "faucetAddress": "0x4A7215650106b8F3EDe48454CAe08c6dbe250C27",
+  "deployedAt": "2025-08-09T14:56:40.284Z",
+  "blockNumber": 8947495,
+  "deployer": "0x45f10654522FF65646Ea31Ef7673AE0F02972505",
+  "supportedTokens": [
+    "Bitcoin",
+    "Ethereum",
+    "Tether USD"
+  ],
+  "userFaucetAmount": "0.5 token/request",
+  "cooldownPeriod": "24 hours",
+  "addedTokens": [
+    {
+      "name": "Bitcoin",
+      "address": "0x828a465308900779D1E8809D1B610E221C5C55fb",
+      "symbol": "BTC",
+      "decimals": 8
+    },
+    {
+      "name": "Ethereum",
+      "address": "0xFc39dFd14396280052568b11c960C1f192b950C3",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    {
+      "name": "Tether USD",
+      "address": "0xFc295C7E648ed6f01212e4661A50bCD21D147D6f",
+      "symbol": "USDT",
+      "decimals": 6
+    }
+  ],
+  "tokensAddedAt": "2025-08-09T15:38:27.001Z",
+  "fundingResults": [
+    {
+      "tokenName": "Bitcoin",
+      "symbol": "BTC",
+      "amount": "1000.0",
+      "success": true
+    },
+    {
+      "tokenName": "Ethereum",
+      "symbol": "ETH",
+      "amount": "100000.0",
+      "success": true
+    },
+    {
+      "tokenName": "Tether USD",
+      "symbol": "USDT",
+      "amount": "1000000.0",
+      "success": true
+    }
+  ],
+  "fundedAt": "2025-08-09T15:40:28.848Z"
+}

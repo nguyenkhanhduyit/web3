@@ -29,7 +29,7 @@ const Navbar = ({ theme, setTheme }) => {
     { title: 'Market', to: '',  onClick: () => {setShowModalMarket(true); setToggleMenu(false) } },
     { title: 'Transaction', to: '',onClick: () => {setShowModalTransaction(true); setToggleMenu(false) } },
     { title: 'Enhanced Transactions', to: '/transactions', onClick:  () => {setToggleMenu(false);window.location.replace('/transactions')} },
-    { title: 'Transaction History', to: '/history', onClick:  () => {setToggleMenu(false);window.location.replace('/history')} },
+    // { title: 'Transaction History', to: '/history', onClick:  () => {setToggleMenu(false);window.location.replace('/history')} },
     { title: 'Faucet', to: '/faucet', onClick:  () => {window.location.replace('/faucet')} },
     { title: 'Tutorial', to: '/tutorial', onClick:  () => {window.location.replace('/tutorial')} },
   ];

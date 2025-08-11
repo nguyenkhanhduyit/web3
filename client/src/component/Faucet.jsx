@@ -8,6 +8,8 @@ import Select from '@mui/material/Select';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { TransactionContext } from '../../context/TransactionContext';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 
 const Faucet = ({theme}) => {
@@ -37,6 +39,8 @@ const Faucet = ({theme}) => {
     const [errorSelectMessage, setErrorSelectMessage] = React.useState('')
     const [errorTextFieldMessage, setErrorTextFieldMessage] = React.useState('')
     const [inputAddress, setInputAddress] = React.useState('');
+    const [cooldownRemaining, setCooldownRemaining] = React.useState(false)
+    const [cooldownRemainingMessage, setCooldownRemainingMessage] = React.useState('')
 
     const handleChange = async(event) => {
       const value = event.target.value
@@ -48,13 +52,33 @@ const Faucet = ({theme}) => {
       setInputAddress(value)
     }
 
+const convertToFixedTime = ({ cooldownRemaining }) => {
+
+    const seconds = parseInt(cooldownRemaining, 10);
+    const targetTime = new Date(Date.now() + seconds * 1000);
+
+    const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    };
+    return `Each wallet address gets one drip on DIT every 1 day. Try again after ${targetTime.toLocaleString("en-US", options)}`;
+};
+
+
     const handleFaucet = async() => {
         if(!tokenName || tokenName.length < 0) {setErrorSelectMessage('Token Name invalid'); return}
         if(!inputAddress || inputAddress.length < 0) {setErrorTextFieldMessage('Address invalid'); return}
-        console.log('Đã gọi đến handle Facucet')
-        console.log('Token Name : ',tokenName)
-        console.log('Input Address : ',inputAddress)
-        // const tx = await faucetToken(tokenName)
+        const tx = await faucetToken(tokenName)
+        if (tx && typeof tx === "object" && "cooldownRemaining" in tx) {
+            setCooldownRemaining(true)
+            setCooldownRemainingMessage(convertToFixedTime(tx))
+            return
+        } 
     }
 
     React.useEffect(() => {
@@ -63,10 +87,11 @@ const Faucet = ({theme}) => {
         setErrorSelectMessage('')
      }, 5000);
     }, [errorSelectMessage,errorTextFieldMessage])
+
     
   return (
     <>
-         <div className="flex flex-col gap-10 p-4 shadow-lg text-white lg:max-w-[50vw]  2xl:lg:max-w-[50vw] lg:mx-auto 2xl:mx-auto">
+         <div className="flex flex-col gap-5 p-4 shadow-lg text-white lg:max-w-[50vw]  2xl:lg:max-w-[50vw] lg:mx-auto 2xl:mx-auto">
                
                 <h1 className="text-3xl text-white">DIT Faucet </h1>
                 <p className='text-15px  break-words   w-full'>
@@ -159,14 +184,21 @@ const Faucet = ({theme}) => {
                     }
                 </Box>
                 <div className="flex gap-4">
-                    <button className="flex-1 p-2 text-white 
-                    rounded-2xl border-2 border-white hover:bg-white
-                    hover:text-black transition duration-300 cursor-pointer text-sm"
+                    <button className="flex-1 p-2
+                    rounded-2xl border-1 border-red-300 hover:bg-white bg-white text-black
+                    hover:text-black transition duration-300 cursor-pointer text-sm font-mono"
                     onClick={() => handleFaucet()}
                     >
                     Receive 0.5 {tokenName || 'Token'}
                     </button>
                 </div>
+                    {
+                        cooldownRemaining && (
+                        <Stack spacing={2} margin={'10px'} className='m-auto'>
+                                <Alert severity='error'>{cooldownRemainingMessage}</Alert>
+                        </Stack>
+                        )
+                    }
                 <p className='text-gray-200'>
                     Note: We securely handle the provided wallet address while processing your request. 
                     This data is not used by any other DIT services.
