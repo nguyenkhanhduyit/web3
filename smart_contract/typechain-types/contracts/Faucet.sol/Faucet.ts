@@ -27,15 +27,45 @@ import type {
   PromiseOrValue,
 } from "../../common";
 
+export declare namespace Faucet {
+  export type FaucetHistoryStruct = {
+    user: PromiseOrValue<string>;
+    token: PromiseOrValue<string>;
+    amount: PromiseOrValue<BigNumberish>;
+    timestamp: PromiseOrValue<BigNumberish>;
+    blockNumber: PromiseOrValue<BigNumberish>;
+  };
+
+  export type FaucetHistoryStructOutput = [
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    user: string;
+    token: string;
+    amount: BigNumber;
+    timestamp: BigNumber;
+    blockNumber: BigNumber;
+  };
+}
+
 export interface FaucetInterface extends utils.Interface {
   functions: {
     "FAUCET_COOLDOWN()": FunctionFragment;
     "addToken(address)": FunctionFragment;
     "emergencyWithdraw(address,uint256)": FunctionFragment;
     "faucetAmounts(address)": FunctionFragment;
+    "faucetHistory(uint256)": FunctionFragment;
+    "getAllUserFaucetHistory(address)": FunctionFragment;
+    "getFaucetDetails(uint256)": FunctionFragment;
     "getSupportedTokens()": FunctionFragment;
     "getTimeUntilNextFaucet(address)": FunctionFragment;
     "getTokenInfo(address)": FunctionFragment;
+    "getTotalFaucetCount()": FunctionFragment;
+    "getUserFaucetCount(address)": FunctionFragment;
+    "getUserFaucetHistory(address,uint256,uint256)": FunctionFragment;
     "lastFaucetTime(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "removeToken(address)": FunctionFragment;
@@ -45,6 +75,7 @@ export interface FaucetInterface extends utils.Interface {
     "supportedTokens(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateFaucetAmount(address,uint256)": FunctionFragment;
+    "userFaucetIndices(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -53,9 +84,15 @@ export interface FaucetInterface extends utils.Interface {
       | "addToken"
       | "emergencyWithdraw"
       | "faucetAmounts"
+      | "faucetHistory"
+      | "getAllUserFaucetHistory"
+      | "getFaucetDetails"
       | "getSupportedTokens"
       | "getTimeUntilNextFaucet"
       | "getTokenInfo"
+      | "getTotalFaucetCount"
+      | "getUserFaucetCount"
+      | "getUserFaucetHistory"
       | "lastFaucetTime"
       | "owner"
       | "removeToken"
@@ -65,6 +102,7 @@ export interface FaucetInterface extends utils.Interface {
       | "supportedTokens"
       | "transferOwnership"
       | "updateFaucetAmount"
+      | "userFaucetIndices"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -84,6 +122,18 @@ export interface FaucetInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "faucetHistory",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllUserFaucetHistory",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFaucetDetails",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSupportedTokens",
     values?: undefined
   ): string;
@@ -94,6 +144,22 @@ export interface FaucetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getTokenInfo",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalFaucetCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserFaucetCount",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserFaucetHistory",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "lastFaucetTime",
@@ -128,6 +194,10 @@ export interface FaucetInterface extends utils.Interface {
     functionFragment: "updateFaucetAmount",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "userFaucetIndices",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "FAUCET_COOLDOWN",
@@ -143,6 +213,18 @@ export interface FaucetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "faucetHistory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllUserFaucetHistory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getFaucetDetails",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getSupportedTokens",
     data: BytesLike
   ): Result;
@@ -152,6 +234,18 @@ export interface FaucetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTokenInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalFaucetCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserFaucetCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserFaucetHistory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -185,6 +279,10 @@ export interface FaucetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateFaucetAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userFaucetIndices",
     data: BytesLike
   ): Result;
 
@@ -302,6 +400,29 @@ export interface Faucet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    faucetHistory(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, BigNumber, BigNumber, BigNumber] & {
+        user: string;
+        token: string;
+        amount: BigNumber;
+        timestamp: BigNumber;
+        blockNumber: BigNumber;
+      }
+    >;
+
+    getAllUserFaucetHistory(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[Faucet.FaucetHistoryStructOutput[]]>;
+
+    getFaucetDetails(
+      faucetIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[Faucet.FaucetHistoryStructOutput]>;
+
     getSupportedTokens(overrides?: CallOverrides): Promise<[string[]]>;
 
     getTimeUntilNextFaucet(
@@ -319,6 +440,20 @@ export interface Faucet extends BaseContract {
         name: string;
       }
     >;
+
+    getTotalFaucetCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getUserFaucetCount(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getUserFaucetHistory(
+      user: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      count: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[Faucet.FaucetHistoryStructOutput[]]>;
 
     lastFaucetTime(
       arg0: PromiseOrValue<string>,
@@ -360,6 +495,12 @@ export interface Faucet extends BaseContract {
       newAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    userFaucetIndices(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   FAUCET_COOLDOWN(overrides?: CallOverrides): Promise<BigNumber>;
@@ -380,6 +521,29 @@ export interface Faucet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  faucetHistory(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, BigNumber, BigNumber, BigNumber] & {
+      user: string;
+      token: string;
+      amount: BigNumber;
+      timestamp: BigNumber;
+      blockNumber: BigNumber;
+    }
+  >;
+
+  getAllUserFaucetHistory(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<Faucet.FaucetHistoryStructOutput[]>;
+
+  getFaucetDetails(
+    faucetIndex: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<Faucet.FaucetHistoryStructOutput>;
+
   getSupportedTokens(overrides?: CallOverrides): Promise<string[]>;
 
   getTimeUntilNextFaucet(
@@ -397,6 +561,20 @@ export interface Faucet extends BaseContract {
       name: string;
     }
   >;
+
+  getTotalFaucetCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getUserFaucetCount(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getUserFaucetHistory(
+    user: PromiseOrValue<string>,
+    start: PromiseOrValue<BigNumberish>,
+    count: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<Faucet.FaucetHistoryStructOutput[]>;
 
   lastFaucetTime(
     arg0: PromiseOrValue<string>,
@@ -439,6 +617,12 @@ export interface Faucet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  userFaucetIndices(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   callStatic: {
     FAUCET_COOLDOWN(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -458,6 +642,29 @@ export interface Faucet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    faucetHistory(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, BigNumber, BigNumber, BigNumber] & {
+        user: string;
+        token: string;
+        amount: BigNumber;
+        timestamp: BigNumber;
+        blockNumber: BigNumber;
+      }
+    >;
+
+    getAllUserFaucetHistory(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<Faucet.FaucetHistoryStructOutput[]>;
+
+    getFaucetDetails(
+      faucetIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<Faucet.FaucetHistoryStructOutput>;
+
     getSupportedTokens(overrides?: CallOverrides): Promise<string[]>;
 
     getTimeUntilNextFaucet(
@@ -475,6 +682,20 @@ export interface Faucet extends BaseContract {
         name: string;
       }
     >;
+
+    getTotalFaucetCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserFaucetCount(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserFaucetHistory(
+      user: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      count: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<Faucet.FaucetHistoryStructOutput[]>;
 
     lastFaucetTime(
       arg0: PromiseOrValue<string>,
@@ -512,6 +733,12 @@ export interface Faucet extends BaseContract {
       newAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    userFaucetIndices(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -580,6 +807,21 @@ export interface Faucet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    faucetHistory(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAllUserFaucetHistory(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFaucetDetails(
+      faucetIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getSupportedTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTimeUntilNextFaucet(
@@ -589,6 +831,20 @@ export interface Faucet extends BaseContract {
 
     getTokenInfo(
       token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTotalFaucetCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserFaucetCount(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserFaucetHistory(
+      user: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      count: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -632,6 +888,12 @@ export interface Faucet extends BaseContract {
       newAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    userFaucetIndices(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -653,6 +915,21 @@ export interface Faucet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    faucetHistory(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAllUserFaucetHistory(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFaucetDetails(
+      faucetIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getSupportedTokens(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -664,6 +941,22 @@ export interface Faucet extends BaseContract {
 
     getTokenInfo(
       token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTotalFaucetCount(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserFaucetCount(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserFaucetHistory(
+      user: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      count: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -706,6 +999,12 @@ export interface Faucet extends BaseContract {
       token: PromiseOrValue<string>,
       newAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userFaucetIndices(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

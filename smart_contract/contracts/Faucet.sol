@@ -14,8 +14,24 @@ interface IERC20Extended is IERC20 {
  * @title Faucet
  * @dev Contract để phân phối token miễn phí cho người dùng
  * Mỗi địa chỉ chỉ có thể nhận token mỗi 24 giờ
+ * Lưu trữ lịch sử sử dụng faucet
  */
 contract Faucet is Ownable {
+    // ============ STRUCTS ============
+    
+    /**
+     * @dev Cấu trúc lưu trữ lịch sử faucet
+     */
+    struct FaucetHistory {
+        address user;            // Địa chỉ người dùng
+        address token;           // Địa chỉ token
+        uint256 amount;          // Số lượng token nhận
+        uint256 timestamp;       // Thời gian nhận
+        uint256 blockNumber;     // Số block
+    }
+    
+    // ============ STATE VARIABLES ============
+    
     // Mapping để theo dõi thời gian faucet cuối cùng của mỗi địa chỉ
     mapping(address => uint256) public lastFaucetTime;
     
@@ -28,7 +44,14 @@ contract Faucet is Ownable {
     // Thời gian chờ giữa các lần faucet (24 giờ)
     uint256 public constant FAUCET_COOLDOWN = 24 hours;
     
-    // Events
+    // Lịch sử faucet
+    FaucetHistory[] public faucetHistory;
+    
+    // Mapping để theo dõi các faucet của mỗi user
+    mapping(address => uint256[]) public userFaucetIndices;
+    
+    // ============ EVENTS ============
+    
     event TokenAdded(address indexed token, uint256 amount);
     event TokenRemoved(address indexed token);
     event FaucetUsed(address indexed user, address indexed token, uint256 amount);
@@ -121,6 +144,9 @@ contract Faucet is Ownable {
         uint256 amount = faucetAmounts[token];
         IERC20(token).transfer(msg.sender, amount);
         
+        // Lưu lịch sử faucet
+        _recordFaucetHistory(msg.sender, token, amount);
+        
         emit FaucetUsed(msg.sender, token, amount);
     }
     
@@ -146,7 +172,8 @@ contract Faucet is Ownable {
             
             if (amount > 0) {
                 IERC20(token).transfer(msg.sender, amount);
-                emit FaucetUsed(msg.sender, token, amount);
+                // Lưu lịch sử faucet cho từng token
+                _recordFaucetHistory(msg.sender, token, amount);
             }
         }
     }
@@ -179,6 +206,29 @@ contract Faucet is Ownable {
     }
     
     /**
+     * @dev Lưu lịch sử faucet
+     * @param user Địa chỉ người dùng
+     * @param token Địa chỉ token
+     * @param amount Số lượng token nhận
+     */
+    function _recordFaucetHistory(
+        address user,
+        address token,
+        uint256 amount
+    ) internal {
+        FaucetHistory memory newFaucet = FaucetHistory({
+            user: user,
+            token: token,
+            amount: amount,
+            timestamp: block.timestamp,
+            blockNumber: block.number
+        });
+        
+        faucetHistory.push(newFaucet);
+        userFaucetIndices[user].push(faucetHistory.length - 1);
+    }
+    
+    /**
      * @dev Lấy thông tin chi tiết về token trong faucet
      * @param token Địa chỉ token
      * @return amount Số lượng faucet
@@ -200,6 +250,87 @@ contract Faucet is Ownable {
         } catch {
             name = "Unknown Token";
         }
+    }
+    
+    // ============ FAUCET HISTORY FUNCTIONS ============
+    
+    /**
+     * @dev Lấy tổng số giao dịch faucet
+     * @return Tổng số giao dịch faucet
+     */
+    function getTotalFaucetCount() external view returns (uint256) {
+        return faucetHistory.length;
+    }
+    
+    /**
+     * @dev Lấy số giao dịch faucet của một user
+     * @param user Địa chỉ user
+     * @return Số giao dịch faucet của user
+     */
+    function getUserFaucetCount(address user) external view returns (uint256) {
+        return userFaucetIndices[user].length;
+    }
+    
+    /**
+     * @dev Lấy lịch sử faucet của một user
+     * @param user Địa chỉ user
+     * @param start Index bắt đầu
+     * @param count Số lượng giao dịch muốn lấy
+     * @return Lịch sử faucet của user
+     */
+    function getUserFaucetHistory(
+        address user,
+        uint256 start,
+        uint256 count
+    ) external view returns (FaucetHistory[] memory) {
+        uint256[] storage userIndices = userFaucetIndices[user];
+        uint256 totalUserFaucets = userIndices.length;
+        
+        require(start < totalUserFaucets, "Start index out of bounds");
+        
+        uint256 end = start + count;
+        if (end > totalUserFaucets) {
+            end = totalUserFaucets;
+        }
+        
+        uint256 size = end - start;
+        FaucetHistory[] memory result = new FaucetHistory[](size);
+        
+        for (uint256 i = 0; i < size; i++) {
+            uint256 faucetIndex = userIndices[start + i];
+            result[i] = faucetHistory[faucetIndex];
+        }
+        
+        return result;
+    }
+    
+    /**
+     * @dev Lấy tất cả lịch sử faucet của một user
+     * @param user Địa chỉ user
+     * @return Tất cả lịch sử faucet của user
+     */
+    function getAllUserFaucetHistory(address user) external view returns (FaucetHistory[] memory) {
+        uint256[] storage userIndices = userFaucetIndices[user];
+        uint256 totalUserFaucets = userIndices.length;
+        
+        FaucetHistory[] memory result = new FaucetHistory[](totalUserFaucets);
+        
+        for (uint256 i = 0; i < totalUserFaucets; i++) {
+            uint256 faucetIndex = userIndices[i];
+            result[i] = faucetHistory[faucetIndex];
+        }
+        
+        return result;
+    }
+    
+    /**
+     * @dev Lấy thông tin chi tiết của một giao dịch faucet
+     * @param faucetIndex Index của giao dịch faucet
+     * @return Thông tin chi tiết của giao dịch faucet
+     */
+    function getFaucetDetails(uint256 faucetIndex) external view returns (FaucetHistory memory) {
+        require(faucetIndex < faucetHistory.length, "Faucet index out of bounds");
+        return faucetHistory[faucetIndex];
     }
     
     /**

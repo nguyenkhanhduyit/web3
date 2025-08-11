@@ -27,11 +27,42 @@ import type {
   PromiseOrValue,
 } from "../common";
 
+export declare namespace SimpleDEX {
+  export type SwapHistoryStruct = {
+    tokenIn: PromiseOrValue<string>;
+    tokenOut: PromiseOrValue<string>;
+    amountIn: PromiseOrValue<BigNumberish>;
+    amountOut: PromiseOrValue<BigNumberish>;
+    timestamp: PromiseOrValue<BigNumberish>;
+    trader: PromiseOrValue<string>;
+    blockNumber: PromiseOrValue<BigNumberish>;
+  };
+
+  export type SwapHistoryStructOutput = [
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber
+  ] & {
+    tokenIn: string;
+    tokenOut: string;
+    amountIn: BigNumber;
+    amountOut: BigNumber;
+    timestamp: BigNumber;
+    trader: string;
+    blockNumber: BigNumber;
+  };
+}
+
 export interface SimpleDEXInterface extends utils.Interface {
   functions: {
     "FEE_DENOMINATOR()": FunctionFragment;
     "SWAP_FEE()": FunctionFragment;
     "addLiquidity(address,address,uint256,uint256)": FunctionFragment;
+    "getAllUserSwapHistory(address)": FunctionFragment;
     "getAmountIn(address,address,uint256)": FunctionFragment;
     "getAmountOut(address,address,uint256)": FunctionFragment;
     "getBalance(address,address,address)": FunctionFragment;
@@ -39,11 +70,17 @@ export interface SimpleDEXInterface extends utils.Interface {
     "getPoolInfo(address,address)": FunctionFragment;
     "getPrice(address,address)": FunctionFragment;
     "getReserves(address,address)": FunctionFragment;
+    "getSwapDetails(uint256)": FunctionFragment;
+    "getTotalSwapCount()": FunctionFragment;
+    "getUserSwapCount(address)": FunctionFragment;
+    "getUserSwapHistory(address,uint256,uint256)": FunctionFragment;
     "pools(address,address)": FunctionFragment;
     "removeLiquidity(address,address,uint256)": FunctionFragment;
     "swap(address,address,uint256)": FunctionFragment;
     "swapExactTokensForTokens(address,address,uint256)": FunctionFragment;
+    "swapHistory(uint256)": FunctionFragment;
     "swapTokensForExactTokens(address,address,uint256)": FunctionFragment;
+    "userSwapIndices(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -51,6 +88,7 @@ export interface SimpleDEXInterface extends utils.Interface {
       | "FEE_DENOMINATOR"
       | "SWAP_FEE"
       | "addLiquidity"
+      | "getAllUserSwapHistory"
       | "getAmountIn"
       | "getAmountOut"
       | "getBalance"
@@ -58,11 +96,17 @@ export interface SimpleDEXInterface extends utils.Interface {
       | "getPoolInfo"
       | "getPrice"
       | "getReserves"
+      | "getSwapDetails"
+      | "getTotalSwapCount"
+      | "getUserSwapCount"
+      | "getUserSwapHistory"
       | "pools"
       | "removeLiquidity"
       | "swap"
       | "swapExactTokensForTokens"
+      | "swapHistory"
       | "swapTokensForExactTokens"
+      | "userSwapIndices"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -78,6 +122,10 @@ export interface SimpleDEXInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllUserSwapHistory",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getAmountIn",
@@ -120,6 +168,26 @@ export interface SimpleDEXInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getSwapDetails",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalSwapCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserSwapCount",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserSwapHistory",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "pools",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -148,12 +216,20 @@ export interface SimpleDEXInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "swapHistory",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "swapTokensForExactTokens",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "userSwapIndices",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -163,6 +239,10 @@ export interface SimpleDEXInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "SWAP_FEE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllUserSwapHistory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -187,6 +267,22 @@ export interface SimpleDEXInterface extends utils.Interface {
     functionFragment: "getReserves",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSwapDetails",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalSwapCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserSwapCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserSwapHistory",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pools", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeLiquidity",
@@ -198,7 +294,15 @@ export interface SimpleDEXInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "swapHistory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "swapTokensForExactTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userSwapIndices",
     data: BytesLike
   ): Result;
 
@@ -297,6 +401,11 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getAllUserSwapHistory(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[SimpleDEX.SwapHistoryStructOutput[]]>;
+
     getAmountIn(
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
@@ -352,6 +461,25 @@ export interface SimpleDEX extends BaseContract {
       [BigNumber, BigNumber] & { reserve0: BigNumber; reserve1: BigNumber }
     >;
 
+    getSwapDetails(
+      swapIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[SimpleDEX.SwapHistoryStructOutput]>;
+
+    getTotalSwapCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getUserSwapCount(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getUserSwapHistory(
+      user: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      count: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[SimpleDEX.SwapHistoryStructOutput[]]>;
+
     pools(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -385,12 +513,33 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    swapHistory(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, BigNumber, BigNumber, BigNumber, string, BigNumber] & {
+        tokenIn: string;
+        tokenOut: string;
+        amountIn: BigNumber;
+        amountOut: BigNumber;
+        timestamp: BigNumber;
+        trader: string;
+        blockNumber: BigNumber;
+      }
+    >;
+
     swapTokensForExactTokens(
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
       amountOut: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    userSwapIndices(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   FEE_DENOMINATOR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -404,6 +553,11 @@ export interface SimpleDEX extends BaseContract {
     amount1Desired: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  getAllUserSwapHistory(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<SimpleDEX.SwapHistoryStructOutput[]>;
 
   getAmountIn(
     tokenIn: PromiseOrValue<string>,
@@ -460,6 +614,25 @@ export interface SimpleDEX extends BaseContract {
     [BigNumber, BigNumber] & { reserve0: BigNumber; reserve1: BigNumber }
   >;
 
+  getSwapDetails(
+    swapIndex: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<SimpleDEX.SwapHistoryStructOutput>;
+
+  getTotalSwapCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getUserSwapCount(
+    user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getUserSwapHistory(
+    user: PromiseOrValue<string>,
+    start: PromiseOrValue<BigNumberish>,
+    count: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<SimpleDEX.SwapHistoryStructOutput[]>;
+
   pools(
     arg0: PromiseOrValue<string>,
     arg1: PromiseOrValue<string>,
@@ -493,12 +666,33 @@ export interface SimpleDEX extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  swapHistory(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, BigNumber, BigNumber, BigNumber, string, BigNumber] & {
+      tokenIn: string;
+      tokenOut: string;
+      amountIn: BigNumber;
+      amountOut: BigNumber;
+      timestamp: BigNumber;
+      trader: string;
+      blockNumber: BigNumber;
+    }
+  >;
+
   swapTokensForExactTokens(
     tokenIn: PromiseOrValue<string>,
     tokenOut: PromiseOrValue<string>,
     amountOut: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  userSwapIndices(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   callStatic: {
     FEE_DENOMINATOR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -512,6 +706,11 @@ export interface SimpleDEX extends BaseContract {
       amount1Desired: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getAllUserSwapHistory(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<SimpleDEX.SwapHistoryStructOutput[]>;
 
     getAmountIn(
       tokenIn: PromiseOrValue<string>,
@@ -568,6 +767,25 @@ export interface SimpleDEX extends BaseContract {
       [BigNumber, BigNumber] & { reserve0: BigNumber; reserve1: BigNumber }
     >;
 
+    getSwapDetails(
+      swapIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<SimpleDEX.SwapHistoryStructOutput>;
+
+    getTotalSwapCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserSwapCount(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserSwapHistory(
+      user: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      count: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<SimpleDEX.SwapHistoryStructOutput[]>;
+
     pools(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -603,10 +821,31 @@ export interface SimpleDEX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    swapHistory(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, BigNumber, BigNumber, BigNumber, string, BigNumber] & {
+        tokenIn: string;
+        tokenOut: string;
+        amountIn: BigNumber;
+        amountOut: BigNumber;
+        timestamp: BigNumber;
+        trader: string;
+        blockNumber: BigNumber;
+      }
+    >;
+
     swapTokensForExactTokens(
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
       amountOut: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    userSwapIndices(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -675,6 +914,11 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getAllUserSwapHistory(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getAmountIn(
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
@@ -720,6 +964,25 @@ export interface SimpleDEX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getSwapDetails(
+      swapIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTotalSwapCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getUserSwapCount(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUserSwapHistory(
+      user: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      count: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     pools(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -747,11 +1010,22 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    swapHistory(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     swapTokensForExactTokens(
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
       amountOut: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    userSwapIndices(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -768,6 +1042,11 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    getAllUserSwapHistory(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getAmountIn(
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
@@ -813,6 +1092,25 @@ export interface SimpleDEX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getSwapDetails(
+      swapIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTotalSwapCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getUserSwapCount(
+      user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUserSwapHistory(
+      user: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      count: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     pools(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -840,11 +1138,22 @@ export interface SimpleDEX extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    swapHistory(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     swapTokensForExactTokens(
       tokenIn: PromiseOrValue<string>,
       tokenOut: PromiseOrValue<string>,
       amountOut: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    userSwapIndices(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

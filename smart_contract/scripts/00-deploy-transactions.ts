@@ -6,9 +6,9 @@ async function main() {
   const Transactions = await ethers.getContractFactory("Transactions");
   const transactions = await Transactions.deploy();
 
-  await transactions.waitForDeployment();
+  await transactions.deployed();
 
-  const address = await transactions.getAddress();
+  const address = transactions.address;
   console.log("Transactions deployed to:", address);
 
   // Save the contract address to a JSON file

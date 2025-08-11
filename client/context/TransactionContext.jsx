@@ -19,8 +19,7 @@ export const TransactionContext = React.createContext()
 export const TransactionsProvider = ({ children }) => {
   
   const [currentAccount, setCurrentAccount] = useState('')
-  const [formData, setFormData] = useState({ addressTo: '', value: '' })
-  const [isLoading, setIsLoading] = useState(false)
+
   const [transactions, setTransactions] = useState([])
 
   const [tokenBalance, setTokenBalance] = useState("0")
@@ -113,9 +112,8 @@ export const TransactionsProvider = ({ children }) => {
   }
 
   // ---------------- Giao dịch ----------------
-  const makeTransaction = async () => {
+  const makeTransaction = async (addressTo,value) => {
     try {
-      const { addressTo, value } = formData
       const parsedValue = ethers.utils.parseEther(value)
 
       if (!ethers.utils.isAddress(addressTo)) {
@@ -145,14 +143,13 @@ export const TransactionsProvider = ({ children }) => {
         gasLimit,
       })
 
-      setIsLoading(true)
       await tx.wait()
-      setIsLoading(false)
+      console.log("Transaction Successfully:", tx.hash)
+      return {state: 1, tx: tx}
 
-      console.log("Giao dịch thành công:", tx.hash)
     } catch (error) {
-      console.error("Lỗi giao dịch:", error)
-      alert(`Giao dịch thất bại: ${error.reason || error.message}`)
+      console.log(`Giao dịch thất bại: ${error.reason || error.message}`)
+      return {state: 0}
     }
   }
 
@@ -428,7 +425,6 @@ const faucetToken = async (tokenNameRequestFaucet) => {
     console.log(`${tokenName} (${tokenData.symbol}): ${ethers.utils.formatUnits(balance, tokenData.decimals)}`);
   }
 
-  // Resolve selection like "Bitcoin (BTC)" to token entry
   const resolveSelectedToken = (display) => {
     const match = /^(.+?)\s*\((.+?)\)$/.exec(display);
     const desiredName = match ? match[1] : display;
@@ -466,7 +462,6 @@ const faucetToken = async (tokenNameRequestFaucet) => {
           console.log(`ERROR: Expected ${ethers.utils.formatUnits(expectedIncrease, tokenData.decimals)}, got ${ethers.utils.formatUnits(actualIncrease, tokenData.decimals)}`);
         }
       }
-
       return { txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
     } catch (error) {
       console.log(`Error requesting All: ${error.message}`);
@@ -474,7 +469,6 @@ const faucetToken = async (tokenNameRequestFaucet) => {
     }
   }
 
-  // Single token faucet
   const selected = resolveSelectedToken(tokenNameRequestFaucet);
   if (!selected) {
     console.log(`Không tìm thấy token: ${tokenNameRequestFaucet}`);
@@ -516,17 +510,13 @@ const faucetToken = async (tokenNameRequestFaucet) => {
 }
 
 
-
   return (
     <TransactionContext.Provider value={{
       handleLogin,
       handleLogout,
       currentAccount,
-      formData,
-      setFormData,
       handleFormDataChange,
       makeTransaction,
-      isLoading,
       transactions,
       getMyTransactions,
       getMyTransactionCount,

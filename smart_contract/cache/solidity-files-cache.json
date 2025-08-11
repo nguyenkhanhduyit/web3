@@ -314,8 +314,8 @@
       ]
     },
     "D:\\Coding\\web3.0\\smart_contract\\contracts\\SimpleDEX.sol": {
-      "lastModificationDate": 1754634400252,
-      "contentHash": "582027b1d45cc1c202ff06ce6b95f811",
+      "lastModificationDate": 1754912053443,
+      "contentHash": "f5decfe26522c8643aeb11fe2f3a6bf4",
       "sourceName": "contracts/SimpleDEX.sol",
       "solcConfig": {
         "version": "0.8.28",
@@ -392,8 +392,8 @@
       ]
     },
     "D:\\Coding\\web3.0\\smart_contract\\contracts\\Faucet.sol": {
-      "lastModificationDate": 1754754049971,
-      "contentHash": "6e90cb85ec57742ad75a00461a4a3a72",
+      "lastModificationDate": 1754912053443,
+      "contentHash": "fabf98425470bf5f1383240f5cf1eabd",
       "sourceName": "contracts/Faucet.sol",
       "solcConfig": {
         "version": "0.8.28",

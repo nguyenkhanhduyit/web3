@@ -9,6 +9,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * - Thêm/rút thanh khoản (liquidity)
  * - Swap token
  * - Quản lý pool
+ * - Lưu trữ lịch sử swap
  * 
  * Sử dụng công thức Constant Product (x * y = k) để tính toán giá
  */
@@ -25,6 +26,19 @@ contract SimpleDEX {
         mapping(address => uint256) balance; // Số LP token của mỗi người dùng
     }
     
+    /**
+     * @dev Cấu trúc lưu trữ lịch sử swap
+     */
+    struct SwapHistory {
+        address tokenIn;         // Token được bán
+        address tokenOut;        // Token được mua
+        uint256 amountIn;        // Số lượng token bán
+        uint256 amountOut;       // Số lượng token mua
+        uint256 timestamp;       // Thời gian swap
+        address trader;          // Địa chỉ người swap
+        uint256 blockNumber;     // Số block
+    }
+    
     // ============ STATE VARIABLES ============
     
     // Mapping từ cặp token đến pool tương ứng
@@ -33,6 +47,12 @@ contract SimpleDEX {
     // Fee cho mỗi giao dịch swap (0.3% = 3/1000)
     uint256 public constant SWAP_FEE = 3;
     uint256 public constant FEE_DENOMINATOR = 1000;
+    
+    // Lịch sử swap
+    SwapHistory[] public swapHistory;
+    
+    // Mapping để theo dõi các swap của mỗi user
+    mapping(address => uint256[]) public userSwapIndices;
     
     // ============ EVENTS ============
     
@@ -201,6 +221,9 @@ contract SimpleDEX {
         // Chuyển token cho người dùng
         IERC20(tokenOut).transfer(msg.sender, amountOut);
         
+        // Lưu lịch sử swap
+        _recordSwapHistory(tokenIn, tokenOut, amountIn, amountOut, msg.sender);
+        
         emit Swap(tokenIn, tokenOut, amountIn, amountOut, msg.sender);
     }
     
@@ -237,6 +260,9 @@ contract SimpleDEX {
         
         // Chuyển token cho người dùng
         IERC20(tokenOut).transfer(msg.sender, amountOut);
+        
+        // Lưu lịch sử swap
+        _recordSwapHistory(tokenIn, tokenOut, amountIn, amountOut, msg.sender);
         
         emit Swap(tokenIn, tokenOut, amountIn, amountOut, msg.sender);
     }
@@ -302,6 +328,35 @@ contract SimpleDEX {
             pool.reserve0 -= amountOut;
             pool.reserve1 += amountIn;
         }
+    }
+    
+    /**
+     * @dev Lưu lịch sử swap
+     * @param tokenIn Token được bán
+     * @param tokenOut Token được mua
+     * @param amountIn Số lượng token bán
+     * @param amountOut Số lượng token mua
+     * @param trader Địa chỉ người swap
+     */
+    function _recordSwapHistory(
+        address tokenIn,
+        address tokenOut,
+        uint256 amountIn,
+        uint256 amountOut,
+        address trader
+    ) internal {
+        SwapHistory memory newSwap = SwapHistory({
+            tokenIn: tokenIn,
+            tokenOut: tokenOut,
+            amountIn: amountIn,
+            amountOut: amountOut,
+            timestamp: block.timestamp,
+            trader: trader,
+            blockNumber: block.number
+        });
+        
+        swapHistory.push(newSwap);
+        userSwapIndices[trader].push(swapHistory.length - 1);
     }
     
     // ============ VIEW FUNCTIONS ============
@@ -450,6 +505,87 @@ contract SimpleDEX {
         }
     }
     
+    // ============ SWAP HISTORY FUNCTIONS ============
+    
+    /**
+     * @dev Lấy tổng số giao dịch swap
+     * @return Tổng số giao dịch swap
+     */
+    function getTotalSwapCount() external view returns (uint256) {
+        return swapHistory.length;
+    }
+    
+    /**
+     * @dev Lấy số giao dịch swap của một user
+     * @param user Địa chỉ user
+     * @return Số giao dịch swap của user
+     */
+    function getUserSwapCount(address user) external view returns (uint256) {
+        return userSwapIndices[user].length;
+    }
+    
+    /**
+     * @dev Lấy lịch sử swap của một user
+     * @param user Địa chỉ user
+     * @param start Index bắt đầu
+     * @param count Số lượng giao dịch muốn lấy
+     * @return Lịch sử swap của user
+     */
+    function getUserSwapHistory(
+        address user,
+        uint256 start,
+        uint256 count
+    ) external view returns (SwapHistory[] memory) {
+        uint256[] storage userIndices = userSwapIndices[user];
+        uint256 totalUserSwaps = userIndices.length;
+        
+        require(start < totalUserSwaps, "Start index out of bounds");
+        
+        uint256 end = start + count;
+        if (end > totalUserSwaps) {
+            end = totalUserSwaps;
+        }
+        
+        uint256 size = end - start;
+        SwapHistory[] memory result = new SwapHistory[](size);
+        
+        for (uint256 i = 0; i < size; i++) {
+            uint256 swapIndex = userIndices[start + i];
+            result[i] = swapHistory[swapIndex];
+        }
+        
+        return result;
+    }
+    
+    /**
+     * @dev Lấy tất cả lịch sử swap của một user
+     * @param user Địa chỉ user
+     * @return Tất cả lịch sử swap của user
+     */
+    function getAllUserSwapHistory(address user) external view returns (SwapHistory[] memory) {
+        uint256[] storage userIndices = userSwapIndices[user];
+        uint256 totalUserSwaps = userIndices.length;
+        
+        SwapHistory[] memory result = new SwapHistory[](totalUserSwaps);
+        
+        for (uint256 i = 0; i < totalUserSwaps; i++) {
+            uint256 swapIndex = userIndices[i];
+            result[i] = swapHistory[swapIndex];
+        }
+        
+        return result;
+    }
+    
+    /**
+     * @dev Lấy thông tin chi tiết của một giao dịch swap
+     * @param swapIndex Index của giao dịch swap
+     * @return Thông tin chi tiết của giao dịch swap
+     */
+    function getSwapDetails(uint256 swapIndex) external view returns (SwapHistory memory) {
+        require(swapIndex < swapHistory.length, "Swap index out of bounds");
+        return swapHistory[swapIndex];
+    }
+    
     // ============ UTILITY FUNCTIONS ============
     
     /**
@@ -502,6 +638,9 @@ contract SimpleDEX {
         
         // Chuyển token cho người dùng
         IERC20(tokenOut).transfer(msg.sender, amountOut);
+        
+        // Lưu lịch sử swap
+        _recordSwapHistory(tokenIn, tokenOut, amountIn, amountOut, msg.sender);
         
         emit Swap(tokenIn, tokenOut, amountIn, amountOut, msg.sender);
     }

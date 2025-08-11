@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navbar, Footer, Welcome, Services, EnhancedTransaction } from "./component";
+import { Navbar, Footer, Welcome, Services } from "./component";
 import TransactionHistory from './component/TransactionHistory';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFound from './component/NotFound'; 
@@ -39,8 +39,6 @@ useEffect(()=>{
               <Services theme={theme}/>
               </>
             } />
-            <Route path="/transactions" element={<EnhancedTransaction theme={theme}/>} />
-            {/* <Route path="/history" element={<TransactionHistory theme={theme}/>} /> */}
             <Route path='/faucet' element={<Faucet theme={theme}/>}/>
             <Route path="*" element={<NotFound />} />
           </Routes>
