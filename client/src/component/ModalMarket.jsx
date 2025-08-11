@@ -94,7 +94,7 @@ export default function ModalMarket({ theme,onClose }) {
             return;
           }
 
-          timeoutRef.current = setTimeout(() => handleSearch(value), 2000);
+          timeoutRef.current = setTimeout(() => handleSearch(value), 300);
     };
 
 
