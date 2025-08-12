@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { TransactionContext } from '../../context/TransactionContext'
-import React, { useState,useEffect,useContext} from 'react';
+import React, { useState,useEffect,useContext,useRef} from 'react';
 import ModalTransaction from './ModalTransaction';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import SelectToken from './SelectToken';
@@ -16,31 +16,31 @@ const rpcUrl = import.meta.env.ALCHEMY_SEPOLIA_URL
 
 const TOKEN_LIST = Object.values(TOKENS)
 
-const ModalSwap = ({ theme, onClose }) => {
+const ModalSwap = ({ theme, onClose,isShowSwap,isHiddenModalSwap }) => {
 
-  const [showModalTransaction, setShowModalTransaction] = useState(false);
+const [amountFrom, setAmountFrom] = useState(0);
+const [amountTo, setAmountTo] = useState(0);
 
-  const [amountFrom, setAmountFrom] = useState(0);
-  const [amountTo, setAmountTo] = useState(0);
+const [eslimateAmount,setEslimateAmount] = useState(0.1)
 
-  const [eslimateAmount,setEslimateAmount] = useState(0.1)
+const [showList, setShowList] = useState(false)
 
-  const [showList, setShowList] = useState(false)
+const [arrAmountTo,setArrAmountTo] = useState('')
 
-  const [arrAmountTo,setArrAmountTo] = useState('')
+const [isSwapIndex, setIsSwapIndex] = useState(false)
 
-  const [isSwapIndex, setIsSwapIndex] = useState(false)
+const [errorMessage, setErrorMessage] = useState('')
+const [successMessage, setSuccessMessage] = useState('')
 
-  const [errorMessage, setErrorMessage] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
+const modalRef = useRef(null)
 
-  const [isLoading, setIsLoading] = useState(false)
+const [isLoading, setIsLoading] = useState(false)
 
- const { 
-         getTokenBalance,currentAccount,tokenBalance,setTokenInAddress
-         ,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance,
-         estimateAmountOut,swapToken
-     } = useContext(TransactionContext)
+const { 
+  getTokenBalance,currentAccount,tokenBalance,setTokenInAddress
+  ,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance,
+  estimateAmountOut,swapToken
+} = useContext(TransactionContext)
 
 useEffect(() => {
   const fetchEstimate = async () => {
@@ -66,10 +66,9 @@ useEffect(() => {
   fetchEstimate();
 }, [amountFrom, tokenInAddress, tokenOutAddress]);
 
-
 useEffect(() => {
   if (tokenInAddress && currentAccount && (tokenInAddress !== tokenOutAddress)) 
-      getTokenBalance()
+    getTokenBalance()
   else if(tokenInAddress && currentAccount && (tokenInAddress === tokenOutAddress)){
     setTokenInAddress('')
     setTokenOutAddress('')
@@ -77,39 +76,34 @@ useEffect(() => {
   }
 }, [currentAccount,tokenInAddress,tokenOutAddress,tokenBalance])
 
-
 const handleSwapTokenIndex = async() => {
-      const temp = tokenInAddress
-      setTokenInAddress(tokenOutAddress)
-      setTokenOutAddress(temp)
+  const temp = tokenInAddress
+  setTokenInAddress(tokenOutAddress)
+  setTokenOutAddress(temp)
 }
 
-
 async function handleSwap() {
-      try {
-        if (amountFrom < 0.5 || amountFrom > 100 || isNaN(amountFrom)) {
-          setErrorMessage('Amount invalid');
-          return;
-        }
-        setIsLoading(true)
-        const tx = await swapToken(amountFrom);
-        if(tx && typeof tx === 'object' && 'state' in tx){
-              if(tx.state === 0){
-                  setIsLoading(false)
-                  setErrorMessage(tx.tx)
-                
-              }
-              else
-              {
-              setIsLoading(false)
-              setSuccessMessage(tx.tx)
-       
-              }
-        } 
-      } catch (err) {
-          setIsLoading(false)
-          setErrorMessage('Swap failed');
+  try {
+    if (amountFrom < 0.5 || amountFrom > 100 || isNaN(amountFrom)) {
+      setErrorMessage('Amount invalid');
+      return;
+    }
+    setIsLoading(true)
+    const tx = await swapToken(amountFrom);
+    if(tx && typeof tx === 'object' && 'state' in tx){
+      if(tx.state === 0){
+        setIsLoading(false)
+        setErrorMessage(tx.tx)
       }
+      else{
+        setIsLoading(false)
+        setSuccessMessage(tx.tx)
+       }
+    } 
+  } catch (err) {
+      setIsLoading(false)
+      setErrorMessage('Swap failed');
+  }
 }
 
 const handleInputValue = (e) => {
@@ -136,87 +130,103 @@ useEffect(() => {
   setSuccessMessage('')
   }, 5000);
 }, [errorMessage,successMessage])
+
+useEffect(() => {
+  const handleClickOutSide = (e) => {
+    if(modalRef.current && !modalRef.current.contains(e.target)){
+        onClose()
+    }
+  }
+  document.addEventListener('mousedown',handleClickOutSide)
+
+  return () => {
+    document.addEventListener('mousedown',handleClickOutSide)
+  }
+}, [onClose])
+
       
-  return (
-    <>
-      {!showModalTransaction ? (
+return (
+<>
+  {
+  isShowSwap ? (
 <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#eae6e800]">
-<div
-  className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh] max-h-[80vh] overflow-y-auto relative ${
-    theme === 'dark-mode' ? 'background-modal-dark-mode text-white' : 'bg-blue-100 text-gray-900'
-  }`}
->
+  <div
+    ref={modalRef}
+    className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh]
+      max-h-[80vh] overflow-y-auto relative 
+      ${theme === 'dark-mode' ? 'background-modal-dark-mode text-white' : 'bg-blue-100 text-gray-900'
+    }`}
+  >
     <div className="flex flex-row justify-between">
-          <SwapHorizIcon
-            className="hover:cursor-pointer animate-bounce"
-            style={{ fontSize: '40px' }}
-            onClick={() => {
-              setShowModalTransaction(true);
-            }}
-          />
-          <div
-            className={`flex justify-center items-center h-[17px] w-[17px] rounded-full ${
-              theme === 'dark-mode' ? 'bg-gray-300' : 'bg-indigo-700'
-            }`}
-          >
-            <button
-              onClick={onClose}
-              className={`text-[14px] font-bold ${
-                theme === 'dark-mode' ? 'text-black' : 'text-white'
-              }`}
-            >
-              ✕
-            </button>
-          </div>
+      <SwapHorizIcon
+        className="hover:cursor-pointer animate-bounce"
+        style={{ fontSize: '40px' }}
+        onClick={
+          ()=> isHiddenModalSwap()
+        }
+      />
+      <div
+        className={`flex justify-center items-center h-[17px] w-[17px] rounded-full ${
+          theme === 'dark-mode' ? 'bg-gray-300' : 'bg-indigo-700'
+        }`}
+      >
+        <button
+          onClick={onClose}
+          className={`text-[14px] font-bold ${
+            theme === 'dark-mode' ? 'text-black' : 'text-white'
+          }`}
+        >
+          ✕
+        </button>
+      </div>
     </div>
-<div className="flex flex-col w-full gap-3">
-  
+    <div className="flex flex-col w-full gap-3">
       {
-          tokenInAddress.length > 0 ?(
-         
-             <p className='text-white font-sans text-sm ml-4'>
-                  {
-                      TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.symbol
-                  }
-                  <span> available : {tokenBalance} </span>
-            </p>
-          ) 
-          : 
-          (
-           <p className='text-white font-sans text-sm ml-4 text-left'>
-              No token selecting
+        tokenInAddress.length > 0 ?
+        (
+          <p className='text-white font-sans text-sm ml-4'>
+            {
+                TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.symbol
+            }
+            <span> available : {tokenBalance} </span>
           </p>
-          )
-          
+        ) 
+        : 
+        (
+        <p className='text-white font-sans text-sm ml-4 text-left'>
+            No token selecting
+        </p>
+        )
+              
       } 
 
-  <div className="flex relative  border-[2px] border-white 
-  w-full h-auto p-4 rounded-2xl flex-row justify-between items-center shadow-md">
-    <input
-      name="amountIn"
-      type="text"
-       autoComplete="off"
-      value={amountFrom}
-      onChange={handleInputValue}
-      onBlur={validateAmount}
-      className="bg-transparent text-[20px] font-semibold text-white focus:background-modal-dark-mode
-      focus:outline-none appearance-none grow size-14"
-      placeholder="Min 0.5, Max 100"
-      style={{
-        MozAppearance: 'textfield',
-        WebkitAppearance: 'none',
-      }}
-    />
-    <SelectToken values={TOKEN_LIST} isTokenOut={false}/>
-  </div>
-  
-          <div className='flex flex-col items-center'>
-             <button  onClick={handleSwapTokenIndex} className='cursor-pointer items-center w-[10vw]'>
-             <SwapVertIcon style={{fontSize:'40px'}} />
-           </button>
-          </div>
-          
-  <div className="flex flex-col w-full sticky top-15 z-20 mt-4">
+      <div className="flex relative  border-[2px] border-white 
+      w-full h-auto p-4 rounded-2xl flex-row justify-between items-center shadow-md">
+        <input
+          name="amountIn"
+          type="text"
+          autoComplete="off"
+          value={amountFrom}
+          onChange={handleInputValue}
+          onBlur={validateAmount}
+          className="bg-transparent text-[20px] font-semibold text-white focus:background-modal-dark-mode
+          focus:outline-none appearance-none grow size-14"
+          placeholder="Min 0.5, Max 100"
+          style={{
+            MozAppearance: 'textfield',
+            WebkitAppearance: 'none',
+          }}
+        />
+        <SelectToken values={TOKEN_LIST} isTokenOut={false}/>
+      </div>
+      
+        <div className='flex flex-col items-center'>
+          <button  onClick={handleSwapTokenIndex} className='cursor-pointer items-center w-[10vw]'>
+           <SwapVertIcon style={{fontSize:'40px'}} />
+          </button>
+        </div>
+              
+      <div className="flex flex-col w-full sticky top-15 z-20 mt-4">
         <div className="relative  border-[2px] border-white w-full h-auto p-4 rounded-2xl flex flex-row justify-between items-center shadow-md">
           <input
             name="amountOut"
@@ -229,56 +239,52 @@ useEffect(() => {
               WebkitAppearance: 'none',
             }}
           />
-         <SelectToken values={TOKEN_LIST} isTokenOut={true} />
+            <SelectToken values={TOKEN_LIST} isTokenOut={true} />
         </div>
-  </div>
+      </div>
 
-        {
-            arrAmountTo && (
-              <>
-              <p className='text-sm text-white font-sans p-4'>{arrAmountTo}</p>
-              </>
-            )
-           }
+      {
+        arrAmountTo && (
+          <p className='text-sm text-white font-sans p-4'>{arrAmountTo}</p>
+        )
+      }
 
-         {
-         errorMessage && (
-          <>
-          <Stack spacing={2} margin={'10px'} className='m-auto'>
-            <Alert severity='error'>{errorMessage}</Alert>
-          </Stack>
-         </>)
-         }
+      {
+      errorMessage && (
+        <Stack spacing={2} margin={'10px'} className='m-auto'>
+          <Alert severity='error'>{errorMessage}</Alert>
+        </Stack>
+      )
+      }
 
-         {
-         successMessage && (
-          <>
-          <Stack spacing={2} margin={'10px'} className='m-auto'>
-            <Alert severity='success'>{successMessage}</Alert>
-          </Stack>
-         </>)
-         }
+      {
+      successMessage && (
+        <Stack spacing={2} margin={'10px'} className='m-auto'>
+          <Alert severity='success'>{successMessage}</Alert>
+        </Stack>
+      )
+      }
 
-           {
-            isLoading ? (<Loader/>) : 
-            (
-               <button onClick={handleSwap}
-             className="bg-white w-full text-black rounded-full h-[7vh] cursor-pointer my-3">
+      {
+        isLoading ? (<Loader/>) : 
+        (
+          <button onClick={handleSwap}
+            className="bg-white w-full text-black rounded-full h-[7vh] cursor-pointer my-3">
                   Swap
-            </button>
-            )
-           }
-          <div className='flex flex-col items-end'>
-          <DescriptionIcon className='cursor-pointer'/>
-          </div>
-           
+          </button>
+        )
+      }
+      <div className='flex flex-col items-end'>
+      <DescriptionIcon className='cursor-pointer'/>
+      </div>
+    </div>
   </div>
 </div>
-</div>
-      ) : (
-        <ModalTransaction theme={theme} onClick={() => setShowModalTransaction(false)} />
-      )}
-    </>
+  ) : 
+  (
+    <ModalTransaction theme={theme} onClick={() => setShowModalTransaction(false)} />
+  )}
+</>
   );
 }
 
