@@ -210,7 +210,7 @@ return (
             ) : (
                     <button className="flex-1 p-2
                     rounded-2xl border-1  hover:bg-white bg-white text-black
-                    hover:text-black transition duration-300 cursor-pointer text-sm font-mono"
+                    hover:text-black transition duration-300 cursor-pointer text-sm font-light"
                     onClick={() => handleFaucet()}
                     >
                     Receive 0.5 {tokenName || 'Token'}
