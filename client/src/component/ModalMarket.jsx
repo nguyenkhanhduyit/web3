@@ -159,7 +159,7 @@ const searchTokensInCache = (query) => {
             : 'text-gray-500';
 
       return (
-        <div className={`mr-10 flex flex-row justify-between items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#373b49]' : 'bg-blue-200'}`}>
+        <div className={`mr-10 flex flex-row justify-between items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-200'}`}>
           <div className='flex flex-row gap-2 items-center'>
             <img src={icon} alt="icon" className='w-8 h-8' />
             <div className='flex flex-col'>
@@ -191,7 +191,7 @@ const searchTokensInCache = (query) => {
       return (
         <div
           onClick={onClick}
-          className={`flex flex-row items-center gap-1 px-3 py-1 mt-3 mr-2 cursor-pointer ${theme === 'dark-mode' ? 'bg-gray-700' : 'bg-blue-300'}`}
+          className={`flex flex-row items-center gap-1 px-3 py-1 mt-3 mr-2 cursor-pointer ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-300'}`}
           style={{ borderRadius: '32px' }}
         >
           <img src={icon} alt="." className='w-5 h-5' />
@@ -270,8 +270,8 @@ const searchTokensInCache = (query) => {
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#eae6e800]">
-        <div className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh] max-h-[80vh] overflow-y-auto relative ${theme === 'dark-mode' ? 'bg-[#272a34] text-white' : 'bg-blue-100 text-gray-900'}`}>
-          <div className={`sticky -top-6 z-20 flex justify-start items-center mb-4 ${theme === 'dark-mode' ? 'bg-[#272a34]' : 'bg-blue-100'}`}>
+        <div className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh] max-h-[80vh] overflow-y-auto relative ${theme === 'dark-mode' ? 'background-modal-dark-mode text-white' : 'bg-blue-100 text-gray-900'}`}>
+          <div className={`sticky -top-6 z-20 flex justify-start items-center mb-4 ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-100'}`}>
             <SearchIcon className={`size-14 flex-none ${theme === 'dark-mode' ? 'text-white' : 'text-indigo-700'}`} style={{ fontSize: '16px' }} />
             <input
               type="text"

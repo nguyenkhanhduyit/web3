@@ -106,11 +106,9 @@ app.get('/api/tokens/all', async (req, res) => {
       return res.status(500).json({ error: 'Invalid response from CoinMarketCap', data: listData })
     }
 
-    // Giới hạn số lượng token để tránh URL quá dài (tối đa 50 token để test)
     const limitedTokens = listData.data.slice(0, 50);
     console.log('Processing limited tokens:', limitedTokens.length);
 
-    // Lấy thông tin chi tiết cho token (chia nhỏ để tránh URL quá dài)
     const tokenIds = limitedTokens.map(token => token.id).join(',')
     console.log('Fetching quotes and info for', limitedTokens.length, 'tokens...');
     
@@ -136,7 +134,6 @@ app.get('/api/tokens/all', async (req, res) => {
     const infoData = await infoRes.json()
     console.log('Quotes and info received');
 
-// Không lưu cả name và symbol làm key, chỉ lưu theo id hoặc symbol
 const tokenCache = {};
 
 limitedTokens.forEach(token => {
@@ -161,7 +158,6 @@ limitedTokens.forEach(token => {
   }
 });
 
-
     console.log('Cache created with', Object.keys(tokenCache).length, 'tokens');
 
     res.json({
@@ -177,11 +173,6 @@ limitedTokens.forEach(token => {
   }
 })
 
-
-// Test API để kiểm tra server hoạt động
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Server is running!', timestamp: new Date().toISOString() })
-})
 
 const PORT = 3001
 app.listen(PORT, () => {
