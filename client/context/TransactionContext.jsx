@@ -400,7 +400,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
 
   const timeUntilNext = await faucet.getTimeUntilNextFaucet(userAddress);
   if (!timeUntilNext.eq(0)) 
-    return { cooldownRemaining: timeUntilNext.toString() };
+    return {state:0, cooldownRemaining: timeUntilNext.toString() };
 
   const initialBalances = {};
   for (const [tokenName, tokenData] of Object.entries(TokenAddress)) {
@@ -411,7 +411,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
     );
     const balance = await tokenContract.balanceOf(userAddress);
     initialBalances[tokenName] = balance;
-    console.log(`${tokenName} (${tokenData.symbol}): ${ethers.utils.formatUnits(balance, tokenData.decimals)}`);
+    // console.log(`${tokenName} (${tokenData.symbol}): ${ethers.utils.formatUnits(balance, tokenData.decimals)}`);
   }
 
   const resolveSelectedToken = (display) => {
@@ -426,9 +426,9 @@ const faucetToken = async (tokenNameRequestFaucet) => {
   if (tokenNameRequestFaucet === 'All') {
     try {
       const requestTx = await faucet.requestAllFaucets();
-      console.log(`Transaction hash: ${requestTx.hash}`);
+      // console.log(`Transaction hash: ${requestTx.hash}`);
       const receipt = await requestTx.wait();
-      console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
+      // console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
 
       for (const [tokenName, tokenData] of Object.entries(TokenAddress)) {
         const tokenContract = new ethers.Contract(
@@ -439,22 +439,23 @@ const faucetToken = async (tokenNameRequestFaucet) => {
         const newBalance = await tokenContract.balanceOf(userAddress);
         const faucetAmount = await faucet.faucetAmounts(tokenData.tokenAddress);
 
-        console.log(`Balance before: ${ethers.utils.formatUnits(initialBalances[tokenName], tokenData.decimals)} ${tokenData.symbol}`);
-        console.log(`Balance after: ${ethers.utils.formatUnits(newBalance, tokenData.decimals)} ${tokenData.symbol}`);
-        console.log(`Faucet amount received: ${ethers.utils.formatUnits(faucetAmount, tokenData.decimals)} ${tokenData.symbol}`);
+        // console.log(`Balance before: ${ethers.utils.formatUnits(initialBalances[tokenName], tokenData.decimals)} ${tokenData.symbol}`);
+        // console.log(`Balance after: ${ethers.utils.formatUnits(newBalance, tokenData.decimals)} ${tokenData.symbol}`);
+        // console.log(`Faucet amount received: ${ethers.utils.formatUnits(faucetAmount, tokenData.decimals)} ${tokenData.symbol}`);
 
         const expectedIncrease = faucetAmount;
         const actualIncrease = newBalance.sub(initialBalances[tokenName]);
         if (actualIncrease.eq(expectedIncrease)) {
-          console.log(`SUCCESS: Received correct amount for ${tokenName}`);
+          return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
+          // console.log(`SUCCESS: Received correct amount for ${tokenName}`);
         } else {
-          console.log(`ERROR: Expected ${ethers.utils.formatUnits(expectedIncrease, tokenData.decimals)}, got ${ethers.utils.formatUnits(actualIncrease, tokenData.decimals)}`);
+          return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
+          // console.log(`ERROR: Expected ${ethers.utils.formatUnits(expectedIncrease, tokenData.decimals)}, got ${ethers.utils.formatUnits(actualIncrease, tokenData.decimals)}`);
         }
       }
-      return { txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
+      return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
     } catch (error) {
-      console.log(`Error requesting All: ${error.message}`);
-      throw error;
+      return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
     }
   }
 

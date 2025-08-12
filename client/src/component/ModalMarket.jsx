@@ -246,7 +246,7 @@ const RecentSearch = ({ symbol, icon, onClick }) => {
 
 const LoadingTokenCard = () => {
   return (
-    <div className={`mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#272a34]' : 'bg-blue-200'}`}>
+    <div className={`mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-200'}`}>
       <div className='flex flex-col'>
         <div className='w-[25px] h-[25px] bg-white rounded-full m-1' />
         <div className='w-[25px] h-[25px] bg-white rounded-full m-1' />
