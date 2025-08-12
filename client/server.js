@@ -81,55 +81,71 @@ app.post('/auth/verify', (req, res) => {
   }
 })
 
-app.get('/api/token', async (req, res) => {
-  const symbolOrName = req.query.symbol
-
-  if (!symbolOrName) {
-    return res.status(400).json({ error: 'Missing symbol parameter' })
-  }
-
+app.get('/api/tokens/all', async (req, res) => {
   try {
-    const mapRes = await fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/map?listing_status=active`, {
+    console.log('Fetching tokens from CoinMarketCap...');
+    
+    const listRes = await fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=100&sort=market_cap&sort_dir=desc`, {
       headers: { 'X-CMC_PRO_API_KEY': API_KEY }
     })
-    const mapData = await mapRes.json()
+    
+    if (!listRes.ok) {
+      console.error('CoinMarketCap API error:', listRes.status, listRes.statusText);
+      return res.status(listRes.status).json({ 
+        error: 'CoinMarketCap API error', 
+        status: listRes.status,
+        statusText: listRes.statusText
+      });
+    }
+    
+    const listData = await listRes.json()
+    console.log('List response received, tokens count:', listData.data?.length || 0);
 
-    console.log('mapData:', mapData)
-    console.log('API_KEY:', API_KEY)
-
-
-    const token = mapData.data.find(
-      (t) =>
-        t.symbol.toLowerCase() === symbolOrName.toLowerCase() ||
-        t.name.toLowerCase() === symbolOrName.toLowerCase()
-    )
-
-    if (!token) {
-      return res.status(404).json({ error: 'Token not found' })
+    if (!listData.data || !Array.isArray(listData.data)) {
+      console.error('Invalid list response:', listData);
+      return res.status(500).json({ error: 'Invalid response from CoinMarketCap', data: listData })
     }
 
-    const id = token.id
-    const [quoteRes, infoRes] = await Promise.all([
-      fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${id}`, {
+    // Giới hạn số lượng token để tránh URL quá dài (tối đa 50 token để test)
+    const limitedTokens = listData.data.slice(0, 50);
+    console.log('Processing limited tokens:', limitedTokens.length);
+
+    // Lấy thông tin chi tiết cho token (chia nhỏ để tránh URL quá dài)
+    const tokenIds = limitedTokens.map(token => token.id).join(',')
+    console.log('Fetching quotes and info for', limitedTokens.length, 'tokens...');
+    
+    const [quotesRes, infoRes] = await Promise.all([
+      fetch(`https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${tokenIds}`, {
         headers: { 'X-CMC_PRO_API_KEY': API_KEY }
       }),
-      fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?id=${id}`, {
+      fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?id=${tokenIds}`, {
         headers: { 'X-CMC_PRO_API_KEY': API_KEY }
       })
     ])
 
-    const quoteData = await quoteRes.json()
-    const infoData = await infoRes.json()
-
-    const quote = quoteData?.data?.[id]?.quote?.USD
-    const info = infoData?.data?.[id]
-
-    if (!quote || !info) {
-      return res.status(500).json({ error: 'Missing token data' })
+    if (!quotesRes.ok || !infoRes.ok) {
+      console.error('Quotes/Info API error:', quotesRes.status, infoRes.status);
+      return res.status(500).json({ 
+        error: 'Failed to fetch token details',
+        quotesStatus: quotesRes.status,
+        infoStatus: infoRes.status
+      });
     }
 
-    res.json({
-      id,
+    const quotesData = await quotesRes.json()
+    const infoData = await infoRes.json()
+    console.log('Quotes and info received');
+
+// Không lưu cả name và symbol làm key, chỉ lưu theo id hoặc symbol
+const tokenCache = {};
+
+limitedTokens.forEach(token => {
+  const quote = quotesData?.data?.[token.id]?.quote?.USD;
+  const info = infoData?.data?.[token.id];
+
+  if (quote && info) {
+    tokenCache[token.id] = {
+      id: token.id,
       name: token.name,
       symbol: token.symbol,
       price: quote.price,
@@ -141,12 +157,30 @@ app.get('/api/token', async (req, res) => {
       category: info.category || '',
       date_added: info.date_added || '',
       website: info.urls?.website?.[0] || ''
+    };
+  }
+});
+
+
+    console.log('Cache created with', Object.keys(tokenCache).length, 'tokens');
+
+    res.json({
+      success: true,
+      count: Object.keys(tokenCache).length,
+      timestamp: new Date().toISOString(),
+      data: tokenCache
     })
 
   } catch (err) {
-    console.error('Error:', err)
+    console.error('Error fetching all tokens:', err)
     res.status(500).json({ error: 'Server error', details: err.message })
   }
+})
+
+
+// Test API để kiểm tra server hoạt động
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Server is running!', timestamp: new Date().toISOString() })
 })
 
 const PORT = 3001
