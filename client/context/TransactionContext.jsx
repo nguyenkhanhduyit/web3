@@ -4,15 +4,15 @@ import { contractABI, contractAddress } from '../utils/Constants'
 import axios from 'axios'
 import { keccak256, defaultAbiCoder, getAddress, formatUnits } from "ethers/lib/utils";
 
-import TokenAddress from '../../client/utils/swap/info/TokenAddress.json'
+import TokenAddress from '../../client/utils/swap/info/address/TokenAddress.json'
 import FaucetInfo from '../../client/utils/swap/info/FaucetInfo.json'
-import FaucetABI from '../../client/utils/swap/info/Faucet.json'
+import FaucetABI from '../../client/utils/swap/info/abi/Faucet.json'
 
-import SimpleDEXAddress from "../../client/utils/swap/info/SimpleDEXAddress.json";
-import SimpleDEX from "../../client/utils/swap/info/SimpleDEX.json";
-import PriceOracleAddress from "../../client/utils/swap/info/PriceOracleAddress.json";
-import PriceOracle from "../../client/utils/swap/info/PriceOracle.json";
-import TokenABI from "../../client/utils/swap/info/Token.json"
+import SimpleDEXAddress from "../../client/utils/swap/info/address/SimpleDEXAddress.json";
+import SimpleDEX from "../../client/utils/swap/info/abi/SimpleDEX.json";
+import PriceOracleAddress from "../../client/utils/swap/info/address/PriceOracleAddress.json";
+import PriceOracle from "../../client/utils/swap/info/abi/PriceOracle.json";
+import TokenABI from "../../client/utils/swap/info/abi/Token.json"
 
 export const TransactionContext = React.createContext()
 

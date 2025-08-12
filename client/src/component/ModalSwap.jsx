@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { ethers } from 'ethers'
 import DescriptionIcon from '@mui/icons-material/Description';
-import TOKENS  from '../../utils/swap/info/TokenAddress.json';
+import TOKENS  from '../../utils/swap/info/address/TokenAddress.json';
 import Loader from './Loader';
 
 const rpcUrl = import.meta.env.ALCHEMY_SEPOLIA_URL
