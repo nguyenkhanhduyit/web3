@@ -133,16 +133,24 @@ useEffect(() => {
 
 useEffect(() => {
   const handleClickOutSide = (e) => {
-    if(modalRef.current && !modalRef.current.contains(e.target)){
-        onClose()
+    // Nếu click nằm ngoài modalRef và KHÔNG phải trong menu của MUI Select thì mới đóng modal
+    if (
+      modalRef.current &&
+      !modalRef.current.contains(e.target) &&
+      !e.target.closest('.MuiPopover-root') && // bỏ qua click vào popover menu
+      !e.target.closest('.MuiMenu-root')       // bỏ qua click vào menu
+    ) {
+      onClose();
     }
-  }
-  document.addEventListener('mousedown',handleClickOutSide)
+  };
+
+  document.addEventListener('mousedown', handleClickOutSide);
 
   return () => {
-    document.addEventListener('mousedown',handleClickOutSide)
-  }
-}, [onClose])
+    document.removeEventListener('mousedown', handleClickOutSide); // Gỡ bỏ listener
+  };
+}, [onClose]);
+
 
       
 return (
