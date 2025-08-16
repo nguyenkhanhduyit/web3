@@ -12,7 +12,6 @@ import Alert from '@mui/material/Alert'
 import Stack from '@mui/material/Stack'
 import Loader from './Loader'
 
-
 const Faucet = ({theme}) => {
 
 const {faucetToken} = React.useContext(TransactionContext)
@@ -75,7 +74,9 @@ const options = {
 
 
 const handleFaucet = async() => {
-    if(!tokenName || tokenName.length < 0) {
+
+    try {
+        if(!tokenName || tokenName.length < 0) {
         setErrorSelectMessage('Token Name invalid') 
         return
     }
@@ -83,8 +84,10 @@ const handleFaucet = async() => {
         setErrorTextFieldMessage('Address invalid') 
         return
     }
+
     setIsLoading(true)
     const tx = await faucetToken(tokenName)
+
     if (tx && typeof tx === "object" && "cooldownRemaining" in tx) {
         setCooldownRemaining(true)
         setCooldownRemainingMessage(convertToFixedTime(tx))
@@ -92,19 +95,18 @@ const handleFaucet = async() => {
         return
     } 
     if(tx && typeof tx === 'object' && "state" in tx){
-        if(tx.state === 1){
-            setSuccessMessage("Faucet all token testnet DIT successfully.")
-            setIsLoading(false)
-            return
-        }
         if(tx.state === 0){
-            setErrorMessage("Faucet all token testnet DIT failed.")
+            setErrorMessage("Faucet failed.")
             setIsLoading(false)
             return
         }
     }
+    setSuccessMessage("Faucet successfully.")
     setIsLoading(false)
-    setErrorMessage("Faucet all token testnet DIT failed.")
+    } catch (error) {
+        setErrorMessage('Faucet failed.')
+        setIsLoading(false)
+    }
 }
 
 React.useEffect(() => {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
 import { ethers } from 'ethers'
-import { contractABI, contractAddress } from '../utils/Constants'
 import axios from 'axios'
 import { keccak256, defaultAbiCoder, getAddress, formatUnits } from "ethers/lib/utils";
 
@@ -13,6 +12,9 @@ import SimpleDEX from "../../client/utils/swap/info/abi/SimpleDEX.json";
 import PriceOracleAddress from "../../client/utils/swap/info/address/PriceOracleAddress.json";
 import PriceOracle from "../../client/utils/swap/info/abi/PriceOracle.json";
 import TokenABI from "../../client/utils/swap/info/abi/Token.json"
+
+import TransactionDex from '../utils/swap/info/abi/TransactionDex.json'
+import TransactionDexAddress from '../utils/swap/info/address/TransactionDexAddress.json'
 
 export const TransactionContext = React.createContext()
 
@@ -41,18 +43,17 @@ export const TransactionsProvider = ({ children }) => {
     return provider.getSigner()
   }
 
-  const createEthereumContract = async () => {
+  const createTransactionDexContract = async () => {
     const signer = await getSigner()
-    return new ethers.Contract(contractAddress, contractABI, signer)
+    return new ethers.Contract(TransactionDexAddress.TransactionsAddress, TransactionDex.abi, signer)
   }
 
   // ---------------- Lịch sử giao dịch ----------------
   const getMyTransactions = async (start = 0) => {
     const states = ["Pending", "Success", "Failed"]
     try {
-      const contract = await createEthereumContract()
+      const contract = await createTransactionDexContract()
       const count = await contract.getMyTransactionCount()
-
       if (count.eq(0)) return
 
       const total = count.toNumber()
@@ -64,11 +65,11 @@ export const TransactionsProvider = ({ children }) => {
         addressFrom: tx.sender,
         value: ethers.utils.formatEther(tx.value),
         timestamp: new Date(tx.timestamp.toNumber() * 1000).toLocaleString(),
-        state: states[tx.state.toNumber()],
+        state: states[tx.state],
       }))
       setTransactions(structured)
     } catch (error) {
-      console.error("Lỗi khi lấy lịch sử giao dịch:", error)
+      console.error("Error when get transaction history :", error)
     }
   }
 
@@ -115,17 +116,16 @@ export const TransactionsProvider = ({ children }) => {
   const makeTransaction = async (addressTo,value) => {
     try {
       const parsedValue = ethers.utils.parseEther(value)
-
       if (!ethers.utils.isAddress(addressTo)) {
         return{state:1,tx:'Receiver address invalid'}
       }
 
-      if (!value || isNaN(value) || Number(value) < 0.005 || Number(value) > 0.01 || !isFinite(numericAmount) ) {
+      if (!value || isNaN(value) || Number(value) < 0.005 || Number(value) > 0.01 || !isFinite(value) ) {
         return{state:0 ,tx: 'Value must between on 0.005 - 0.01 ETH'}
       }
 
-      const contract = await createEthereumContract()
-
+      const contract = await createTransactionDexContract()
+      
       let gasLimit
       try {
         const estimated = await contract.estimateGas.makeTransaction(addressTo, parsedValue, {
@@ -154,7 +154,7 @@ export const TransactionsProvider = ({ children }) => {
   // ---------------- Rút tiền khi thất bại ----------------
   const handleWithdrawFailed = async () => {
     try {
-      const contract = await createEthereumContract()
+      const contract = await createTransactionDexContract()
       const tx = await contract.withdrawFailed()
       setIsLoading(true)
       await tx.wait()
@@ -168,7 +168,7 @@ export const TransactionsProvider = ({ children }) => {
 
   // ---------------- Đếm số giao dịch ----------------
   const getMyTransactionCount = async () => {
-    const contract = await createEthereumContract()
+    const contract = await createTransactionDexContract()
     const count = await contract.getMyTransactionCount()
     console.log('Số giao dịch:', count.toNumber())
   }
@@ -468,9 +468,9 @@ const faucetToken = async (tokenNameRequestFaucet) => {
   const [selectedName, selectedData] = selected;
   try {
     const requestTx = await faucet.requestFaucet(selectedData.tokenAddress);
-    console.log(`Transaction hash: ${requestTx.hash}`);
+    // console.log(`Transaction hash: ${requestTx.hash}`);
     const receipt = await requestTx.wait();
-    console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
+    // console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
 
     const tokenContract = new ethers.Contract(
       selectedData.tokenAddress,
@@ -480,22 +480,25 @@ const faucetToken = async (tokenNameRequestFaucet) => {
     const newBalance = await tokenContract.balanceOf(userAddress);
     const faucetAmount = await faucet.faucetAmounts(selectedData.tokenAddress);
 
-    console.log(`Balance before: ${ethers.utils.formatUnits(initialBalances[selectedName], selectedData.decimals)} ${selectedData.symbol}`);
-    console.log(`Balance after: ${ethers.utils.formatUnits(newBalance, selectedData.decimals)} ${selectedData.symbol}`);
-    console.log(`Faucet amount received: ${ethers.utils.formatUnits(faucetAmount, selectedData.decimals)} ${selectedData.symbol}`);
+    // console.log(`Balance before: ${ethers.utils.formatUnits(initialBalances[selectedName], selectedData.decimals)} ${selectedData.symbol}`);
+    // console.log(`Balance after: ${ethers.utils.formatUnits(newBalance, selectedData.decimals)} ${selectedData.symbol}`);
+    // console.log(`Faucet amount received: ${ethers.utils.formatUnits(faucetAmount, selectedData.decimals)} ${selectedData.symbol}`);
 
     const expectedIncrease = faucetAmount;
     const actualIncrease = newBalance.sub(initialBalances[selectedName]);
     if (actualIncrease.eq(expectedIncrease)) {
-      console.log(`SUCCESS: Received correct amount for ${selectedName}`);
+      return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'one' };
+      // console.log(`SUCCESS: Received correct amount for ${selectedName}`);
     } else {
-      console.log(`ERROR: Expected ${ethers.utils.formatUnits(expectedIncrease, selectedData.decimals)}, got ${ethers.utils.formatUnits(actualIncrease, selectedData.decimals)}`);
+      return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'one' };
+      // console.log(`ERROR: Expected ${ethers.utils.formatUnits(expectedIncrease, selectedData.decimals)}, got ${ethers.utils.formatUnits(actualIncrease, selectedData.decimals)}`);
     }
 
-    return { txHash: requestTx.hash, blockNumber: receipt.blockNumber, token: selectedName };
+    // return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'one' };
   } catch (error) {
-    console.log(`Error requesting ${selectedName}: ${error.message}`);
-    throw error;
+    return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'one' };
+    // console.log(`Error requesting ${selectedName}: ${error.message}`);
+    // throw error;
   }
 }
 

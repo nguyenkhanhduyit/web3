@@ -4,6 +4,6 @@
 export * as faucetSol from "./Faucet.sol";
 export { LiquidityMining__factory } from "./LiquidityMining__factory";
 export { PriceOracle__factory } from "./PriceOracle__factory";
-export { SimpleDEX__factory } from "./SimpleDEX__factory";
+export { SwapDex__factory } from "./SwapDex__factory";
 export { Token__factory } from "./Token__factory";
-export { Transactions__factory } from "./Transactions__factory";
+export { TransactionDex__factory } from "./TransactionDex__factory";

@@ -4,7 +4,7 @@ pragma solidity >=0.4.16 <0.9.0;
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Transactions is ReentrancyGuard {
+contract TransactionDex is ReentrancyGuard {
     //các biến trạng thái của giao dịch
     enum TransactionState {Pending, Success, Failed }
 
@@ -85,7 +85,6 @@ contract Transactions is ReentrancyGuard {
     }
     return result;
 }
-
 
     function withdrawFailed() public nonReentrant {
         uint256 amount = pendingWithdrawals[msg.sender];

@@ -13,7 +13,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * 
  * Sử dụng công thức Constant Product (x * y = k) để tính toán giá
  */
-contract SimpleDEX {
+contract SwapDex {
     // ============ STRUCTS ============
     
     /**

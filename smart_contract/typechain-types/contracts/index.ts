@@ -5,6 +5,6 @@ import type * as faucetSol from "./Faucet.sol";
 export type { faucetSol };
 export type { LiquidityMining } from "./LiquidityMining";
 export type { PriceOracle } from "./PriceOracle";
-export type { SimpleDEX } from "./SimpleDEX";
+export type { SwapDex } from "./SwapDex";
 export type { Token } from "./Token";
-export type { Transactions } from "./Transactions";
+export type { TransactionDex } from "./TransactionDex";

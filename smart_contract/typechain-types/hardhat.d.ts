@@ -61,17 +61,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PriceOracle__factory>;
     getContractFactory(
-      name: "SimpleDEX",
+      name: "SwapDex",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SimpleDEX__factory>;
+    ): Promise<Contracts.SwapDex__factory>;
     getContractFactory(
       name: "Token",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Token__factory>;
     getContractFactory(
-      name: "Transactions",
+      name: "TransactionDex",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Transactions__factory>;
+    ): Promise<Contracts.TransactionDex__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -134,20 +134,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PriceOracle>;
     getContractAt(
-      name: "SimpleDEX",
+      name: "SwapDex",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.SimpleDEX>;
+    ): Promise<Contracts.SwapDex>;
     getContractAt(
       name: "Token",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Token>;
     getContractAt(
-      name: "Transactions",
+      name: "TransactionDex",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Transactions>;
+    ): Promise<Contracts.TransactionDex>;
 
     // default types
     getContractFactory(

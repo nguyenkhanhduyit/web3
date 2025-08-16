@@ -3,14 +3,14 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("Đang deploy SimpleDEX...\n");
+  console.log("Đang deploy Swap Dex...\n");
 
   const [deployer] = await ethers.getSigners();
   console.log("Người deploy có địa chỉ ví :", deployer.address);
 
   // Deploy SimpleDEX
   console.log("Đang Deploy SimpleDEX contract...");
-  const SimpleDEX = await ethers.getContractFactory("SimpleDEX");
+  const SimpleDEX = await ethers.getContractFactory("SwapDex");
   const simpleDex = await SimpleDEX.deploy();
   await simpleDex.deployed();
 

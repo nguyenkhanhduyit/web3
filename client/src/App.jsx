@@ -4,6 +4,7 @@ import TransactionHistory from './component/TransactionHistory';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFound from './component/NotFound'; 
 import Faucet from './component/Faucet';
+import SwapHistory from './component/SwapHistory';
 
 function App() {
 
@@ -44,6 +45,7 @@ return (
           </>
         } />
         <Route path='/faucet' element={<Faucet theme={theme}/>}/>
+        <Route path="/transaction-history" element={<TransactionHistory />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </main>

@@ -7,6 +7,7 @@ import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { TransactionContext } from '../../context/TransactionContext';
 import DescriptionIcon from '@mui/icons-material/Description';
+import ModalTransactionHistory from './SwapHistory';
 
 const ModalTransaction = ({ theme, onClose }) => {
 
@@ -23,6 +24,7 @@ const [errorMessage, setErrorMessage] = useState('')
 const {makeTransaction} = useContext(TransactionContext)
 
 const modalRef = useRef(null)
+
 
 useEffect(() => {
     setTimeout(() => {
@@ -54,7 +56,7 @@ const handleAmountChange = async(e) => {
     setAmount(e.target.value)
 }
   
-const handleSend = async(e) => {
+const handleSend = async() => {
   try {
     setIsLoading(true)
     if (!ethers.utils.isAddress(addressReceive)) {
@@ -79,7 +81,8 @@ const handleSend = async(e) => {
         }
         setIsLoading(false)
         setSuccessMessage(tx.tx)
-
+        setAddressReceive('')
+        setAmount('')
     }
 
   } catch (error) {
@@ -88,7 +91,6 @@ const handleSend = async(e) => {
     throw new Error(error.message);
   }
 }
-
 
   return (
         <>
@@ -164,15 +166,16 @@ const handleSend = async(e) => {
         )
      }
      <div className='flex flex-col items-end'>
-      <DescriptionIcon/>
+      <DescriptionIcon onClick={()=>window.location.replace('/transaction-history')} className='cursor-pointer'/>
      </div>
-        </div>
-      </div>
+    </div>
+  </div>
       
     </div>) : (
         <ModalSwap theme={theme} onClose={onClose} isShowSwap={showModalSwap} isHiddenModalSwap={() => setShowModalSwap(false)}/>
     )
             }
+           
         </>
     
   );

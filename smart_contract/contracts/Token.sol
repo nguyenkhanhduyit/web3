@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Token is ERC20, Ownable {
-    uint8 private immutable _customDecimals;
 
+    uint8 private immutable _customDecimals;
+    
     constructor(
         string memory name_,
         string memory symbol_,

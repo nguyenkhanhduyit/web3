@@ -1,17 +1,16 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  console.log("Deploying Transactions contract...");
+  console.log("Deploying Transaction Dex contract...");
 
-  const Transactions = await ethers.getContractFactory("Transactions");
+  const Transactions = await ethers.getContractFactory("TransactionDex");
   const transactions = await Transactions.deploy();
 
   await transactions.deployed();
 
   const address = transactions.address;
-  console.log("Transactions deployed to:", address);
+  console.log("Transaction Dex deployed to:", address);
 
-  // Save the contract address to a JSON file
   const fs = require('fs');
   const path = require('path');
   
@@ -25,11 +24,10 @@ async function main() {
   };
 
   fs.writeFileSync(
-    path.join(infoPath, 'TransactionsAddress.json'),
+    path.join(infoPath, 'TransactionDexAddress.json'),
     JSON.stringify(transactionsAddress, null, 2)
   );
-
-  console.log("Transactions contract address saved to info/TransactionsAddress.json");
+  console.log("Transaction Dex contract address saved to info/TransactionDexAddress.json");
 }
 
 main()

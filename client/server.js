@@ -6,6 +6,8 @@ import { ethers } from 'ethers'
 import fetch from 'node-fetch'
 import cookieParser from 'cookie-parser';
 
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express()
 app.use(cors({
@@ -15,8 +17,8 @@ app.use(cors({
 app.use(bodyParser.json())
 app.use(cookieParser())
 
-const JWT_SECRET = '0RtHZ1161fQHWUeLdLfiT3MYMQTSMfV6PIrEE83p79ZSFafXt9S4eDSTpCjh4PsV'
-const API_KEY = '87711848-a3f3-403a-922a-e1bed045357b'
+const JWT_SECRET = process.env.JWT_SECRET
+const API_KEY = process.env.API_KEY
 
 
 const verifyToken = (req, res, next) => {
