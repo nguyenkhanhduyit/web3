@@ -22,14 +22,14 @@ async function main() {
     console.log("Thông tin token đã deploy:", Object.keys(tokenInfo))
     console.log('='.repeat(50))
 
-    const faucetInfoPath = path.join(__dirname, "../info/FaucetInfo.json")
+    const faucetInfoPath = path.join(__dirname, "../info/FaucetAddress.json")
 
     let faucet
     if (!fs.existsSync(faucetInfoPath)) {
 
         console.log('\n')
         console.log('='.repeat(50))
-        console.log("\nFaucetInfo.json chưa tồn tại -> Deploy faucet mới...")
+        console.log("\FaucetAddress.json chưa tồn tại -> Deploy faucet mới...")
         const Faucet = await ethers.getContractFactory("Faucet")
         faucet = await Faucet.deploy()
         await faucet.deployed()
@@ -52,7 +52,7 @@ async function main() {
     } else {
         console.log('\n')
         console.log('='.repeat(50))
-        console.log("\nFaucetInfo.json đã tồn tại -> Attach contract...")
+        console.log("\FaucetAddress.json đã tồn tại -> Attach contract...")
         const faucetInfo = JSON.parse(fs.readFileSync(faucetInfoPath, "utf8"))
         const Faucet = await ethers.getContractFactory("Faucet")
         faucet = Faucet.attach(faucetInfo.faucetAddress)

@@ -11,15 +11,15 @@ async function main() {
   );
   
   // Đọc địa chỉ SimpleDEX đã deploy
-  const simpleDexAddress = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../info/SimpleDEXAddress.json"), "utf8")
+  const swapDexAddress = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, "../info/SwapDexAddress.json"), "utf8")
   ).address;
 
   // Lấy thông tin người deploy
   const [deployer] = await ethers.getSigners();
   
   console.log("Người deploy:", deployer.address);
-  console.log("SimpleDEX:", simpleDexAddress);
+  console.log("SimpleDEX:", swapDexAddress);
 
   // Lấy thông tin 2 token đầu tiên để test
   const tokenEntries = Object.entries(tokens);
@@ -28,8 +28,8 @@ async function main() {
 
   console.log(`\nSử dụng cặp token: ${token1Name} (${token1Info.symbol}) & ${token2Name} (${token2Info.symbol})`);
 
-  // Lấy contract SimpleDEX
-  const simpleDex = await ethers.getContractAt("SimpleDEX", simpleDexAddress);
+  // Lấy contract SwapDex
+  const swapDex = await ethers.getContractAt("SwapDex", swapDexAddress);
 
   // Lấy contract của 2 token
   const token1Contract = new ethers.Contract(token1Info.tokenAddress, [
@@ -64,7 +64,7 @@ async function main() {
      */
     // Bước 1: Kiểm tra reserves của pool
     console.log("Bước 1: Kiểm tra reserves của pool...");
-    const reserves = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
+    const reserves = await swapDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
     console.log(`Reserves: ${ethers.utils.formatUnits(reserves[0], token1Info.decimals)} ${token1Info.symbol}, ${ethers.utils.formatUnits(reserves[1], token2Info.decimals)} ${token2Info.symbol}`);
 
     // Bước 2: Kiểm tra tổng thanh khoản
@@ -77,7 +77,7 @@ async function main() {
       Format về 18 decimals (Uniswap liquidity thường chuẩn 18)
     */
     console.log("Bước 2: Kiểm tra tổng thanh khoản...");
-    const liquidity = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
+    const liquidity = await swapDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
     console.log(`Tổng thanh khoản: ${ethers.utils.formatUnits(liquidity, 18)} LP tokens`);
 
     // Bước 3: Kiểm tra thanh khoản của user
@@ -88,7 +88,7 @@ async function main() {
       Cũng dùng formatUnits(..., 18) vì LP token thường có 18 decimals.
     */
     console.log("Bước 3: Kiểm tra thanh khoản của user...");
-    const userLiquidity = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
+    const userLiquidity = await swapDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
     console.log(`Thanh khoản của user: ${ethers.utils.formatUnits(userLiquidity, 18)} LP tokens`);
 
     // Bước 4: Kiểm tra số dư token của user
@@ -100,7 +100,7 @@ async function main() {
 
     // Bước 5: Kiểm tra thông tin pool
     console.log("Bước 5: Kiểm tra thông tin pool...");
-    const poolInfo = await simpleDex.getPoolInfo(token1Info.tokenAddress, token2Info.tokenAddress);
+    const poolInfo = await swapDex.getPoolInfo(token1Info.tokenAddress, token2Info.tokenAddress);
     console.log(`Thông tin pool:`);
     console.log(`- Token0: ${token1Info.symbol}`);
     console.log(`- Token1: ${token2Info.symbol}`);

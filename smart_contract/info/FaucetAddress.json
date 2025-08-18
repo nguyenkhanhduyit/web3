@@ -1,0 +1,34 @@
+{
+  "faucetAddress": "0x261D51EDF113505d4155739Ed3b7477003F4D03e",
+  "deployedAt": "2025-08-18T11:42:50.996Z",
+  "blockNumber": 9010846,
+  "deployer": "0x45f10654522FF65646Ea31Ef7673AE0F02972505",
+  "supportedTokens": [
+    "Bitcoin",
+    "Ethereum",
+    "Tether USD"
+  ],
+  "userFaucetAmount": "0.5 token/request",
+  "cooldownPeriod": "24 hours",
+  "addedTokens": [
+    {
+      "name": "Bitcoin",
+      "address": "0xaA8368f4De7fa31FD5549Dcd26864Abe3222291D",
+      "symbol": "BTC",
+      "decimals": 8
+    },
+    {
+      "name": "Ethereum",
+      "address": "0x12122Be55eF26A093593158C6367fd1396193BF2",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    {
+      "name": "Tether USD",
+      "address": "0xE17e32EFAd933Cb681651B1dfdc763d2A4De792a",
+      "symbol": "USDT",
+      "decimals": 6
+    }
+  ],
+  "tokensAddedAt": "2025-08-18T11:44:35.849Z"
+}

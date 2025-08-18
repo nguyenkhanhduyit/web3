@@ -4,17 +4,21 @@ import axios from 'axios'
 import { keccak256, defaultAbiCoder, getAddress, formatUnits } from "ethers/lib/utils";
 
 import TokenAddress from '../../client/utils/swap/info/address/TokenAddress.json'
-import FaucetInfo from '../../client/utils/swap/info/FaucetInfo.json'
-import FaucetABI from '../../client/utils/swap/info/abi/Faucet.json'
-
-import SimpleDEXAddress from "../../client/utils/swap/info/address/SimpleDEXAddress.json";
-import SimpleDEX from "../../client/utils/swap/info/abi/SimpleDEX.json";
-import PriceOracleAddress from "../../client/utils/swap/info/address/PriceOracleAddress.json";
-import PriceOracle from "../../client/utils/swap/info/abi/PriceOracle.json";
-import TokenABI from "../../client/utils/swap/info/abi/Token.json"
+import FaucetAddress from '../../client/utils/swap/info/address/FaucetAddress.json'
+import Faucet from '../../client/utils/swap/info/abi/Faucet.json'
 
 import TransactionDex from '../utils/swap/info/abi/TransactionDex.json'
 import TransactionDexAddress from '../utils/swap/info/address/TransactionDexAddress.json'
+
+import SwapDexAddress from "../../client/utils/swap/info/address/SwapDexAddress.json";
+import SwapDex from "../../client/utils/swap/info/abi/SwapDex.json";
+
+import PriceOracleAddress from "../../client/utils/swap/info/address/PriceOracleAddress.json";
+import PriceOracle from "../../client/utils/swap/info/abi/PriceOracle.json";
+
+import TokenABI from "../../client/utils/swap/info/abi/Token.json"
+
+
 
 export const TransactionContext = React.createContext()
 
@@ -29,7 +33,6 @@ export const TransactionsProvider = ({ children }) => {
   const [tokenInAddress, setTokenInAddress] = useState('')
   const [tokenOutAddress, setTokenOutAddress] = useState('')
 
-  // ---------------- Utils ----------------
   const getEthereumProvider = () => {
     const { ethereum } = window
     if (!ethereum)
@@ -48,7 +51,12 @@ export const TransactionsProvider = ({ children }) => {
     return new ethers.Contract(TransactionDexAddress.TransactionsAddress, TransactionDex.abi, signer)
   }
 
-  // ---------------- Lịch sử giao dịch ----------------
+  const getMyTransactionCount = async () => {
+    const contract = await createTransactionDexContract()
+    const count = await contract.getMyTransactionCount()
+    console.log('Số giao dịch:', count.toNumber())
+  }
+
   const getMyTransactions = async (start = 0) => {
     const states = ["Pending", "Success", "Failed"]
     try {
@@ -73,7 +81,13 @@ export const TransactionsProvider = ({ children }) => {
     }
   }
 
-  // ---------------- Đăng nhập ----------------
+  const getMySwapCount = async () => {
+      const signer = await getSigner()
+      const contract = new ethers.Contract(SwapDexAddress.address,SwapDex.abi,signer)
+      const count = await contract.getUserSwapCount(currentAccount)
+      console.log("swap history count : ",count)
+  }
+
   const handleLogin = async () => {
     try {
       const signer = await getSigner()
@@ -97,7 +111,6 @@ export const TransactionsProvider = ({ children }) => {
     }
   }
 
-  // ---------------- Đăng xuất ----------------
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:3001/auth/logout', {}, {
@@ -111,7 +124,6 @@ export const TransactionsProvider = ({ children }) => {
     }
   }
 
-  // ---------------- Giao dịch ----------------
   const makeTransaction = async (addressTo,value) => {
     try {
       if(!currentAccount) return{state:0,tx:'Please login first.'}
@@ -151,7 +163,6 @@ export const TransactionsProvider = ({ children }) => {
     }
   }
 
-  // ---------------- Rút tiền khi thất bại ----------------
   const handleWithdrawFailed = async () => {
     try {
       const contract = await createTransactionDexContract()
@@ -166,19 +177,11 @@ export const TransactionsProvider = ({ children }) => {
     }
   }
 
-  // ---------------- Đếm số giao dịch ----------------
-  const getMyTransactionCount = async () => {
-    const contract = await createTransactionDexContract()
-    const count = await contract.getMyTransactionCount()
-    console.log('Số giao dịch:', count.toNumber())
-  }
-
-  // ---------------- Xử lý form ----------------
   const handleFormDataChange = (e, name) => {
     setFormData((prev) => ({ ...prev, [name]: e.target.value }))
   }
 
-  // ---------------- Check login từ cookie ----------------
+
   useEffect(() => {
     const checkLogin = async () => {
       try {
@@ -194,8 +197,6 @@ export const TransactionsProvider = ({ children }) => {
   }, [])
 
 
-  
-// ERC20 ABI tối giản
 const ERC20_ABI = [
   "function balanceOf(address) view returns (uint256)",
   "function decimals() view returns (uint8)"
@@ -238,7 +239,7 @@ const getTokenBalance = async () => {
 const estimateAmountOut = async (amount) => {
   try {
     const signer = await getSigner();
-    const simpleDEX = await new ethers.Contract(SimpleDEXAddress.address, SimpleDEX.abi, signer)
+    const SwapDex = await new ethers.Contract(SwapDexAddress.address, SwapDex.abi, signer)
     const priceOracle = await new ethers.Contract(PriceOracleAddress.address, PriceOracle.abi, signer)
 
     // Lấy địa chỉ USD 
@@ -276,7 +277,7 @@ const estimateAmountOut = async (amount) => {
     const amountInSmallestUnits = ethers.utils.parseUnits(amount.toString(), tokenInDecimals);
 
     // Ước lượng output dựa trên AMM (dùng hàm trong contract để tránh sai số/overflow)
-    const outBN = await simpleDEX.getAmountOut(
+    const outBN = await SwapDex.getAmountOut(
       tokenInAddress,
       tokenOutAddress,
       amountInSmallestUnits
@@ -319,7 +320,7 @@ const swapToken = async (amount) => {
     }
 
     const signer = await getSigner();
-    const simpleDEX = new ethers.Contract(SimpleDEXAddress.address, SimpleDEX.abi, signer);
+    const SwapDex = new ethers.Contract(SwapDexAddress.address, SwapDex.abi, signer);
 
     const tokens = Object.values(TokenAddress);
     const tokenSwapIn = tokens.find((t) => t.tokenAddress === tokenInAddress);
@@ -352,13 +353,13 @@ const swapToken = async (amount) => {
       return {state:0,tx:`Balance ${tokenSwapIn.symbol} not enough`}
     }
 
-    const currentAllowance = await tokenInContract.allowance(userAddress, SimpleDEXAddress.address);
+    const currentAllowance = await tokenInContract.allowance(userAddress, SwapDexAddress.address);
     if (currentAllowance.lt(amountInBN)) {
-      const approveTx = await tokenInContract.approve(SimpleDEXAddress.address, amountInBN);
+      const approveTx = await tokenInContract.approve(SwapDexAddress.address, amountInBN);
       await approveTx.wait();
     }
 
-    const tx = await simpleDEX.swapExactTokensForTokens(
+    const tx = await SwapDex.swapExactTokensForTokens(
       tokenSwapIn.tokenAddress,
       tokenSwapOut.tokenAddress,
       amountInBN
@@ -392,7 +393,7 @@ const swapToken = async (amount) => {
 const faucetToken = async (tokenNameRequestFaucet) => {
   
   const signer = await getSigner();
-  const faucet = new ethers.Contract(FaucetInfo.faucetAddress, FaucetABI.abi, signer);
+  const faucet = new ethers.Contract(FaucetAddress.faucetAddress, Faucet.abi, signer);
   const userAddress = await signer.getAddress();
 
   if (!tokenNameRequestFaucet || tokenNameRequestFaucet.length === 0) {
@@ -518,7 +519,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
       setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
-      ,estimateAmountOut,swapToken,faucetToken
+      ,estimateAmountOut,swapToken,faucetToken,getMySwapCount,
     }}>
       {children}
     </TransactionContext.Provider>

@@ -1,8 +1,16 @@
-import React,{useContext} from 'react'
+import React,{useContext,useEffect} from 'react'
 import { TransactionContext } from '../../context/TransactionContext';
 
-const ModalTransactionHistory = ({theme}) => {
-const {makeTransaction,getMyTransactions} = useContext(TransactionContext)
+const SwapHistory = ({theme}) => {
+const {makeTransaction,getMySwapCount} = useContext(TransactionContext)
+
+useEffect(() => {
+  const getSwapCount = async () => {
+      const count = await getMySwapCount()
+      await count
+  }
+  getSwapCount()
+}, [])
 
   return (
     <div className='text-white'>
@@ -11,4 +19,4 @@ const {makeTransaction,getMyTransactions} = useContext(TransactionContext)
   )
 }
 
-export default ModalTransactionHistory
+export default SwapHistory

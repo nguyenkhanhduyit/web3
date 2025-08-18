@@ -9,9 +9,9 @@ async function main() {
   console.log("Người deploy có địa chỉ ví :", deployer.address);
 
   // Deploy SimpleDEX
-  console.log("Đang Deploy Swap DEX contract...");
-  const SwapDEX = await ethers.getContractFactory("SwapDex");
-  const swapDex = await SwapDEX.deploy();
+  console.log("Đang Deploy Swap Dex contract...");
+  const SwapDex = await ethers.getContractFactory("SwapDex");
+  const swapDex = await SwapDex.deploy();
   await swapDex.deployed();
 
   console.log("Đã deploy Swap Dex có địa chỉ là :", swapDex.address);
@@ -30,14 +30,14 @@ async function main() {
   };
 
   fs.writeFileSync(
-    path.resolve(infoDir, "SwapDEXAddress.json"),
+    path.resolve(infoDir, "SwapDexAddress.json"),
     JSON.stringify(swapDexInfo, null, 2)
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("Đã Deploy SwapDEX thành công");
+  console.log("Đã Deploy SwapDex thành công");
   console.log("=".repeat(50));
-  console.log("Thông tin về SwapDEX lưu tại : info/SwapDEXAddress.json");
+  console.log("Thông tin về SwapDEX lưu tại : info/SwapDexAddress.json");
   console.log("Bước tiếp theo là approve tokens : 03-approve-tokens.ts");
 }
 

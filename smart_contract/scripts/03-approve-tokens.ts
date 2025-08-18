@@ -3,21 +3,21 @@ import fs from "fs";
 import path from "path";
 
 async function main() {
-  console.log("Đang approve tokens for SimpleDEX...\n");
+  console.log("Đang approve tokens for SwapDex...\n");
 
   // Read deployed addresses
   const tokens = JSON.parse(
     fs.readFileSync(path.resolve(__dirname, "../info/TokenAddress.json"), "utf8")
   );
   
-  const simpleDexAddress = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../info/SimpleDEXAddress.json"), "utf8")
+  const swapDexAddress = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, "../info/SwapDexAddress.json"), "utf8")
   ).address;
 
   const [deployer] = await ethers.getSigners();
   
   console.log("Người deploy có địa chỉ ví :", deployer.address);
-  console.log("Địa chỉ SimpleDEX :", simpleDexAddress);
+  console.log("Địa chỉ SimpleDEX :", swapDexAddress);
 
   const approvalResults: any = {};
 
@@ -32,7 +32,7 @@ async function main() {
     "Tether USD": "4500000000"  // buffer above 4,294,000,000
   };
 
-  // Approve all tokens for SimpleDEX
+  // Approve all tokens for SwapDex
   for (const [tokenName, tokenInfo] of Object.entries(tokens)) {
      const amountToApprove = amounts[tokenName];
       if (!amountToApprove) {
@@ -41,7 +41,19 @@ async function main() {
       }
     console.log(`\nĐang approve token có tên : ${tokenName} - (${tokenInfo.symbol})...`);
     console.log(`Có địa chỉ Token : ${tokenInfo.tokenAddress}`);
-    
+    /*
+ethers.Contract là cách ethers.js tạo một đối tượng để tương tác với smart contract đã deploy trên blockchain.
+
+tokenInfo.tokenAddress là địa chỉ token ERC20 mà bạn đã deploy trước đó ( BTC, ETH, USDT ).
+
+ABI được truyền vào chỉ gồm hai hàm của chuẩn ERC20:
+
+approve(address spender, uint256 amount) -> cho phép spender tiêu số lượng token nhất định.
+
+allowance(address owner, address spender) -> kiểm tra hiện tại spender được phép tiêu bao nhiêu token của owner.
+
+=>một phần ABI theo chuẩn ERC20 – trích ra 2 hàm approve và allowance cần dùng .
+    */
     const tokenContract = new ethers.Contract(tokenInfo.tokenAddress, [
       "function approve(address,uint256) external returns (bool)",
       "function allowance(address,address) external view returns (uint256)"
@@ -49,16 +61,16 @@ async function main() {
 
     try {
       // Check current allowance
-      const currentAllowance = await tokenContract.allowance(deployer.address, simpleDexAddress);
+      const currentAllowance = await tokenContract.allowance(deployer.address, swapDexAddress);
       console.log(`Current allowance: ${ethers.utils.formatUnits(currentAllowance, tokenInfo.decimals)}
        ${tokenInfo.symbol}`);
       if (currentAllowance.isZero()) {
         
-        // Approve tokens for SimpleDEX
+        // Approve tokens for SwapDEX
         const approveAmount = ethers.utils.parseUnits(amountToApprove, tokenInfo.decimals);
         console.log(`Đang approve ${ethers.utils.formatUnits(approveAmount, tokenInfo.decimals)} 
         ${tokenInfo.symbol} for SimpleDEX...`);
-        const approveTx = await tokenContract.approve(simpleDexAddress, approveAmount);
+        const approveTx = await tokenContract.approve(swapDexAddress, approveAmount);
         console.log("Hash Giao dịch :", approveTx.hash);
         console.log("Đang chờ xác nhận...");
         

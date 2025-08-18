@@ -27,23 +27,23 @@ async function main() {
 
       Cũng dùng formatUnits(..., 18) vì LP token thường có 18 decimals.
     */
-  console.log("Đang khởi tạo thanh khoản đến SimpleDEX...\n");
+  console.log("Đang khởi tạo thanh khoản đến SwapDEX...\n");
 
   const tokens = JSON.parse(
     fs.readFileSync(path.resolve(__dirname, "../info/TokenAddress.json"), "utf8")
   );
   
-  const simpleDexAddress = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../info/SimpleDEXAddress.json"), "utf8")
+  const swapDexAddress = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, "../info/SwapDexAddress.json"), "utf8")
   ).address;
 
   const [deployer] = await ethers.getSigners();
   
   console.log("Người deploy có địa chỉ ví :", deployer.address);
-  console.log("SimpleDEX có địa chỉ :", simpleDexAddress);
+  console.log("SimpleDEX có địa chỉ :", swapDexAddress);
 
   // Get SimpleDEX contract
-  const simpleDex = await ethers.getContractAt("SimpleDEX", simpleDexAddress);
+  const swapDex = await ethers.getContractAt("SwapDex", swapDexAddress);
 
   // Check token balances before adding liquidity
   console.log("\n" + "=".repeat(60));
@@ -113,9 +113,9 @@ async function main() {
     console.log(`${token2Info.symbol}: ${ethers.utils.formatUnits(token2Balance, token2Info.decimals)}`);
 
     // Kiểm tra xem pool đã có thanh khoản chưa
-    const existingReserves = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
-    const existingLiquidity = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
-    const userLiquidity = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
+    const existingReserves = await swapDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
+    const existingLiquidity = await swapDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
+    const userLiquidity = await swapDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
     
     if (existingLiquidity.gt(0)) {
       console.log(`\nPool ${token1Name}-${token2Name} đã có thanh khoản:`);
@@ -127,7 +127,7 @@ async function main() {
       if (userLiquidity.gt(0)) {
         console.log(`Đang xóa thanh khoản cũ để thêm thanh khoản cân bằng...`);
         try {
-          const removeLiquidityTx = await simpleDex.removeLiquidity(
+          const removeLiquidityTx = await swapDex.removeLiquidity(
             token1Info.tokenAddress,
             token2Info.tokenAddress,
             userLiquidity,
@@ -261,7 +261,7 @@ console.log(formatted); // "1.0"
 
     try {
       console.log("\nĐang thêm thanh khoản...");
-      const addLiquidityTx = await simpleDex.addLiquidity(
+      const addLiquidityTx = await swapDex.addLiquidity(
         token1Info.tokenAddress,
         token2Info.tokenAddress,
         amount0,
@@ -277,9 +277,9 @@ console.log(formatted); // "1.0"
       console.log("Gas đã sử dụng :", receipt.gasUsed.toString());
 
       // Get pool information after adding liquidity
-      const reserves = await simpleDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
-      const liquidity = await simpleDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
-      const userLiquidity = await simpleDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
+      const reserves = await swapDex.getReserves(token1Info.tokenAddress, token2Info.tokenAddress);
+      const liquidity = await swapDex.getLiquidity(token1Info.tokenAddress, token2Info.tokenAddress);
+      const userLiquidity = await swapDex.getBalance(token1Info.tokenAddress, token2Info.tokenAddress, deployer.address);
 
       // Xác định thứ tự canonical của token (theo địa chỉ)
       const token0Address = token1Info.tokenAddress < token2Info.tokenAddress ? token1Info.tokenAddress : token2Info.tokenAddress;

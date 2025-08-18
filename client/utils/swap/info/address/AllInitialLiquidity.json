@@ -1,0 +1,95 @@
+{
+  "totalPairs": 3,
+  "successCount": 3,
+  "failCount": 0,
+  "pools": [
+    {
+      "poolName": "Bitcoin-Ethereum",
+      "token0": {
+        "name": "Bitcoin",
+        "address": "0xaA8368f4De7fa31FD5549Dcd26864Abe3222291D",
+        "symbol": "BTC",
+        "decimals": 8,
+        "amount": "19000.0"
+      },
+      "token1": {
+        "name": "Ethereum",
+        "address": "0x12122Be55eF26A093593158C6367fd1396193BF2",
+        "symbol": "ETH",
+        "decimals": 18,
+        "amount": "565000.0"
+      },
+      "reserves": {
+        "reserve0": "565000.0",
+        "reserve1": "19000.0"
+      },
+      "liquidity": {
+        "total": "1.036098450920567683",
+        "user": "1.036098450920567683"
+      },
+      "transactionHash": "0x4d7c71d5784f93335054413fbb5c638ee8a62771cabee69b254ba22c0f45bd4e",
+      "gasUsed": "202054",
+      "status": "success",
+      "createdAt": "2025-08-18T03:24:51.283Z"
+    },
+    {
+      "poolName": "Bitcoin-Tether USD",
+      "token0": {
+        "name": "Bitcoin",
+        "address": "0xaA8368f4De7fa31FD5549Dcd26864Abe3222291D",
+        "symbol": "BTC",
+        "decimals": 8,
+        "amount": "19000.0"
+      },
+      "token1": {
+        "name": "Tether USD",
+        "address": "0xE17e32EFAd933Cb681651B1dfdc763d2A4De792a",
+        "symbol": "USDT",
+        "decimals": 6,
+        "amount": "2147000000.0"
+      },
+      "reserves": {
+        "reserve0": "1900000.0",
+        "reserve1": "21470000.0"
+      },
+      "liquidity": {
+        "total": "0.000063869397993092",
+        "user": "0.000063869397993092"
+      },
+      "transactionHash": "0x57e4535b7494f677896e7f1f467220966d4229487e8de065fc1ec40e46fececb",
+      "gasUsed": "182362",
+      "status": "success",
+      "createdAt": "2025-08-18T03:25:03.878Z"
+    },
+    {
+      "poolName": "Ethereum-Tether USD",
+      "token0": {
+        "name": "Ethereum",
+        "address": "0x12122Be55eF26A093593158C6367fd1396193BF2",
+        "symbol": "ETH",
+        "decimals": 18,
+        "amount": "565000.0"
+      },
+      "token1": {
+        "name": "Tether USD",
+        "address": "0xE17e32EFAd933Cb681651B1dfdc763d2A4De792a",
+        "symbol": "USDT",
+        "decimals": 6,
+        "amount": "2147000000.0"
+      },
+      "reserves": {
+        "reserve0": "565000.0",
+        "reserve1": "2147000000.0"
+      },
+      "liquidity": {
+        "total": "34.828939116774716943",
+        "user": "34.828939116774716943"
+      },
+      "transactionHash": "0x13b668b6aac6297db8e936f8b5b42aee51c81e9d691358c608124bed39c09a99",
+      "gasUsed": "168698",
+      "status": "success",
+      "createdAt": "2025-08-18T03:26:29.248Z"
+    }
+  ],
+  "createdAt": "2025-08-18T03:26:30.477Z"
+}
