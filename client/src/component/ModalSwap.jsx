@@ -12,7 +12,6 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import TOKENS  from '../../utils/swap/info/address/TokenAddress.json';
 import Loader from './Loader';
 
-const rpcUrl = import.meta.env.ALCHEMY_SEPOLIA_URL
 
 const TOKEN_LIST = Object.values(TOKENS)
 
@@ -86,13 +85,14 @@ const handleSwapTokenIndex = async() => {
 }
 
 async function handleSwap() {
-  try {
-    if (amountFrom < 0.5 || amountFrom > 100 || isNaN(amountFrom)) {
+  // try {
+    if (amountFrom != 0.5 || isNaN(amountFrom)) {
       setErrorMessage('Amount invalid');
       return;
     }
     setIsLoading(true)
     const tx = await swapToken(amountFrom);
+    await tx
     if(tx && typeof tx === 'object' && 'state' in tx){
       if(tx.state === 0){
         setIsLoading(false)
@@ -103,10 +103,10 @@ async function handleSwap() {
         setSuccessMessage(tx.tx)
        }
     } 
-  } catch (err) {
-      setIsLoading(false)
-      setErrorMessage('Swap failed');
-  }
+  // } catch (err) {
+  //     setIsLoading(false)
+  //     setErrorMessage('Swap failed');
+  // }
 }
 
 const handleInputValue = (e) => {
@@ -122,8 +122,7 @@ const handleInputValue = (e) => {
 const validateAmount = () => {
       let parsed = parseFloat(amountFrom)
       if (isNaN(parsed)) parsed = 0.5
-      if (parsed < 0.5) parsed = 0.5
-      if (parsed > 100) parsed = 100
+      if (parsed !== 0.5) parsed = 0.5
       setAmountFrom(parsed.toString())
 };
 

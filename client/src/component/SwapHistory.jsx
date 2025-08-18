@@ -13,7 +13,7 @@ useEffect(() => {
 }, [])
 
   return (
-    <div className='text-white'>
+    <div className='text-white text-center min-h-screen'>
        {
         swapHistory ? (<></>) : (<><h1>No have swap history yet.</h1></>)
        }

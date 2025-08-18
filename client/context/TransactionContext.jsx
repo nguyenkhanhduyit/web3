@@ -114,8 +114,20 @@ export const TransactionsProvider = ({ children }) => {
       start,
       total
     );
-await history
    console.log("Swap History : ",history)
+   
+    const tokens = Object.values(TokenAddress);
+    
+   const structured = history.map((history) => ({
+        tokenIn: history.tokenIn,
+        tokenOut: history.tokenOut,
+        amountIn: ethers.utils.formatUnits(history.amountIn,tokens.find((t) => t.tokenAddress === history.tokenIn).decimals),
+        amountOut: ethers.utils.formatUnits(history.amountOut,tokens.find((t) => t.tokenAddress === history.tokenOut).decimals),
+        timestamp: new Date(history.timestamp.toNumber() * 1000).toLocaleString(),
+        trader: history.trader,
+        blockNumber: history.blockNumber.toNumber(),
+      }))
+    console.log("Swap history structured: ",structured)
   } catch (error) {
     console.error("Error when get swap history:", error);
   }
@@ -370,9 +382,10 @@ const swapToken = async (amount) => {
     }
 
     const signer = await getSigner();
-    const SwapDex = new ethers.Contract(SwapDexAddress.address, SwapDex.abi, signer);
+    const swapDex = new ethers.Contract(SwapDexAddress.address, SwapDex.abi, signer);
 
     const tokens = Object.values(TokenAddress);
+    
     const tokenSwapIn = tokens.find((t) => t.tokenAddress === tokenInAddress);
     const tokenSwapOut = tokens.find((t) => t.tokenAddress === tokenOutAddress);
 
@@ -409,7 +422,7 @@ const swapToken = async (amount) => {
       await approveTx.wait();
     }
 
-    const tx = await SwapDex.swapExactTokensForTokens(
+    const tx = await swapDex.swapExactTokensForTokens(
       tokenSwapIn.tokenAddress,
       tokenSwapOut.tokenAddress,
       amountInBN
