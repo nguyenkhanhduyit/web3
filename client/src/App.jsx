@@ -46,6 +46,7 @@ return (
         } />
         <Route path='/faucet' element={<Faucet theme={theme}/>}/>
         <Route path="/transaction-history" element={<TransactionHistory />} />
+         <Route path="/swap-history" element={<SwapHistory />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </main>

@@ -5,7 +5,7 @@ const ModalTransactionHistory = ({theme}) => {
 const {makeTransaction,getMyTransactions} = useContext(TransactionContext)
 
   return (
-    <div>
+    <div className='text-white'>
        Hihi
     </div>
   )

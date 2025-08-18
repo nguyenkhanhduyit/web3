@@ -133,12 +133,11 @@ useEffect(() => {
 
 useEffect(() => {
   const handleClickOutSide = (e) => {
-    // Nếu click nằm ngoài modalRef và KHÔNG phải trong menu của MUI Select thì mới đóng modal
     if (
       modalRef.current &&
       !modalRef.current.contains(e.target) &&
-      !e.target.closest('.MuiPopover-root') && // bỏ qua click vào popover menu
-      !e.target.closest('.MuiMenu-root')       // bỏ qua click vào menu
+      !e.target.closest('.MuiPopover-root') && 
+      !e.target.closest('.MuiMenu-root')   
     ) {
       onClose();
     }
@@ -147,7 +146,7 @@ useEffect(() => {
   document.addEventListener('mousedown', handleClickOutSide);
 
   return () => {
-    document.removeEventListener('mousedown', handleClickOutSide); // Gỡ bỏ listener
+    document.removeEventListener('mousedown', handleClickOutSide); 
   };
 }, [onClose]);
 
@@ -283,7 +282,7 @@ return (
         )
       }
       <div className='flex flex-col items-end'>
-      <DescriptionIcon className='cursor-pointer'/>
+        <DescriptionIcon className='cursor-pointer' onClick={()=>window.location.replace('/swap-history')}/>
       </div>
     </div>
   </div>

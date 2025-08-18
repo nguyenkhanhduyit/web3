@@ -27,7 +27,7 @@ async function main() {
       name: "Tether USD",
       symbol: "USDT", 
       decimals: 6,
-      totalSupply: "100000000000" // 100,000,000,000 USDT (100 billion USDT)
+      totalSupply: "100000000000" // 100,000,000,000 USDT 
     }
   ];
 

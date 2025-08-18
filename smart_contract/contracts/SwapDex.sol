@@ -6,7 +6,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /**
  * @title SimpleDEX
  * @dev Một Decentralized Exchange đơn giản với các tính năng cơ bản:
- * - Thêm/rút thanh khoản (liquidity)
+ * - Thêm/rút thanh khoản 
  * - Swap token
  * - Quản lý pool
  * - Lưu trữ lịch sử swap

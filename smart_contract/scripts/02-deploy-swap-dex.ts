@@ -9,12 +9,12 @@ async function main() {
   console.log("Người deploy có địa chỉ ví :", deployer.address);
 
   // Deploy SimpleDEX
-  console.log("Đang Deploy SimpleDEX contract...");
-  const SimpleDEX = await ethers.getContractFactory("SwapDex");
-  const simpleDex = await SimpleDEX.deploy();
-  await simpleDex.deployed();
+  console.log("Đang Deploy Swap DEX contract...");
+  const SwapDEX = await ethers.getContractFactory("SwapDex");
+  const swapDex = await SwapDEX.deploy();
+  await swapDex.deployed();
 
-  console.log("Đã deploy SimleDex có địa chỉ là :", simpleDex.address);
+  console.log("Đã deploy Swap Dex có địa chỉ là :", swapDex.address);
 
   // Lưu lại thông tin SimpleDEX
   const infoDir = path.resolve(__dirname, "../info");
@@ -22,22 +22,22 @@ async function main() {
     fs.mkdirSync(infoDir, { recursive: true });
   }
 
-  const simpleDexInfo = {
-    address: simpleDex.address,
+  const swapDexInfo = {
+    address: swapDex.address,
     deployer: deployer.address,
     deployedAt: new Date().toISOString(),
     network: "sepolia"
   };
 
   fs.writeFileSync(
-    path.resolve(infoDir, "SimpleDEXAddress.json"),
-    JSON.stringify(simpleDexInfo, null, 2)
+    path.resolve(infoDir, "SwapDEXAddress.json"),
+    JSON.stringify(swapDexInfo, null, 2)
   );
 
   console.log("\n" + "=".repeat(50));
-  console.log("Đã Deploy SimpleDEX thành công");
+  console.log("Đã Deploy SwapDEX thành công");
   console.log("=".repeat(50));
-  console.log("Thông tin về SimpleDEX lưu tại : info/SimpleDEXAddress.json");
+  console.log("Thông tin về SwapDEX lưu tại : info/SwapDEXAddress.json");
   console.log("Bước tiếp theo là approve tokens : 03-approve-tokens.ts");
 }
 

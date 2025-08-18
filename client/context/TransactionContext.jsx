@@ -93,8 +93,7 @@ export const TransactionsProvider = ({ children }) => {
 
       setCurrentAccount(address)
     } catch (err) {
-      console.error("Đăng nhập lỗi:", err)
-      alert(err.message || "Lỗi đăng nhập")
+      alert("User refused login request.");
     }
   }
 
@@ -108,13 +107,14 @@ export const TransactionsProvider = ({ children }) => {
       setTransactions([])
       window.location.reload()
     } catch (err) {
-      console.error('Lỗi đăng xuất:', err)
+      alert("Error when logout.");
     }
   }
 
   // ---------------- Giao dịch ----------------
   const makeTransaction = async (addressTo,value) => {
     try {
+      if(!currentAccount) return{state:0,tx:'Please login first.'}
       const parsedValue = ethers.utils.parseEther(value)
       if (!ethers.utils.isAddress(addressTo)) {
         return{state:1,tx:'Receiver address invalid'}
@@ -307,7 +307,9 @@ const estimateAmountOut = async (amount) => {
 
 
 const swapToken = async (amount) => {
+
   try {
+    if(!currentAccount) return{state:0,tx:'Please login first.'}
     const numericAmount = Number(amount);
     if (!isFinite(numericAmount) || numericAmount > 0.5) {
       return {state:0,tx:"Value must exact than 0.5"}
@@ -383,7 +385,7 @@ const swapToken = async (amount) => {
     }
 
   } catch (err) {
-    return {state:0,tx:"Swap failed cua TransactionContext"}
+    return {state:0,tx:"Swap failed."}
   }
 };
 
