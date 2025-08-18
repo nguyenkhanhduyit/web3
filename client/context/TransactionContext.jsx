@@ -51,6 +51,11 @@ export const TransactionsProvider = ({ children }) => {
     return new ethers.Contract(TransactionDexAddress.TransactionsAddress, TransactionDex.abi, signer)
   }
 
+    const createSwapDexContract = async () => {
+    const signer = await getSigner()
+    return new ethers.Contract(SwapDexAddress.address,SwapDex.abi,signer)
+  }
+
   const getMyTransactionCount = async () => {
     const contract = await createTransactionDexContract()
     const count = await contract.getMyTransactionCount()
@@ -83,10 +88,40 @@ export const TransactionsProvider = ({ children }) => {
 
   const getMySwapCount = async () => {
       const signer = await getSigner()
-      const contract = new ethers.Contract(SwapDexAddress.address,SwapDex.abi,signer)
-      const count = await contract.getUserSwapCount(currentAccount)
-      console.log("swap history count : ",count)
+      const contract = await createSwapDexContract()
+      const count = await contract.getUserSwapCount(signer.getAddress())
+      return count
   }
+
+ const getMySwapHistory = async (start = 0) => {
+  try {
+    const signer = await getSigner();
+    const userAddress = await signer.getAddress();
+    const contract = await createSwapDexContract();
+    // lấy số lượng swap đã thực hiện
+    const count = await getMySwapCount();
+    console.log("Swap History Count:", count.toString());
+
+    // nếu chưa có swap nào thì dừng
+    if (count.eq(0)) return;
+
+    const total = count.toNumber();
+    if (start >= total) return;
+
+    // lấy danh sách swap từ start -> total
+    const history = await contract.getUserSwapHistory(
+      userAddress,
+      start,
+      total
+    );
+await history
+   console.log("Swap History : ",history)
+  } catch (error) {
+    console.error("Error when get swap history:", error);
+  }
+};
+
+
 
   const handleLogin = async () => {
     try {
@@ -237,9 +272,10 @@ const getTokenBalance = async () => {
 
 
 const estimateAmountOut = async (amount) => {
-  try {
+  // try {
+    console.log("Amount ",amount)
     const signer = await getSigner();
-    const SwapDex = await new ethers.Contract(SwapDexAddress.address, SwapDex.abi, signer)
+    const swapDex = await new ethers.Contract(SwapDexAddress.address, SwapDex.abi, signer)
     const priceOracle = await new ethers.Contract(PriceOracleAddress.address, PriceOracle.abi, signer)
 
     // Lấy địa chỉ USD 
@@ -254,6 +290,12 @@ const estimateAmountOut = async (amount) => {
     if (!tokenInInfo || !tokenOutInfo) {
       console.error("Không tìm thấy thông tin token");
       return;
+    }
+
+    const [reserveIn, reserveOut] = await swapDex.getReserves(tokenInAddress, tokenOutAddress);
+    if (reserveIn.eq(0) || reserveOut.eq(0)) {
+      console.error("Pool chưa có thanh khoản");
+      return null;
     }
 
     const tokenInName = tokenInInfo.symbol;
@@ -275,9 +317,11 @@ const estimateAmountOut = async (amount) => {
 
     // Chuyển đổi amount input sang đơn vị nhỏ nhất
     const amountInSmallestUnits = ethers.utils.parseUnits(amount.toString(), tokenInDecimals);
-
+console.log( tokenInAddress,
+      tokenOutAddress,
+      amountInSmallestUnits)
     // Ước lượng output dựa trên AMM (dùng hàm trong contract để tránh sai số/overflow)
-    const outBN = await SwapDex.getAmountOut(
+    const outBN = await swapDex.getAmountOut(
       tokenInAddress,
       tokenOutAddress,
       amountInSmallestUnits
@@ -300,10 +344,10 @@ const estimateAmountOut = async (amount) => {
       tokenInPriceUSD: tokenInPriceInUSD,
       tokenOutPriceUSD: tokenOutPriceInUSD
     }
-  } catch (error) {
-    // console.log("Lỗi khi ước lượng swap:", error);
-    return null;
-  }
+  // } catch (error) {
+  //   console.log("Lỗi khi ước lượng swap:", error);
+  //   return null;
+  // }
 };
 
 
@@ -519,7 +563,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
       setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
-      ,estimateAmountOut,swapToken,faucetToken,getMySwapCount,
+      ,estimateAmountOut,swapToken,faucetToken,getMySwapHistory,
     }}>
       {children}
     </TransactionContext.Provider>

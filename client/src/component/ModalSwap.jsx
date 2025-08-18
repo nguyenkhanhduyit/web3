@@ -50,8 +50,9 @@ useEffect(() => {
         return;
       }
       const decimals = TOKEN_LIST.find((token)=> token.tokenAddress === tokenInAddress)?.decimals
-      
+      console.log("gọi tới ước lượng swap")
       const estimate = await estimateAmountOut(amountFrom);
+      console.log(eslimate)
       if (estimate) {
         const fixed = estimate.res
         setAmountTo(fixed);

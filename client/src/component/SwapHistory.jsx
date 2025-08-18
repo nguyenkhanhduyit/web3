@@ -1,20 +1,22 @@
-import React,{useContext,useEffect} from 'react'
+import React,{useContext,useEffect,useState} from 'react'
 import { TransactionContext } from '../../context/TransactionContext';
 
 const SwapHistory = ({theme}) => {
-const {makeTransaction,getMySwapCount} = useContext(TransactionContext)
-
+const {makeTransaction,getMySwapHistory,currentAccount} = useContext(TransactionContext)
+const [swapHistory, setSwapHistory] = useState([])
 useEffect(() => {
-  const getSwapCount = async () => {
-      const count = await getMySwapCount()
-      await count
+  const getSwapHistory = async () => {
+      if(currentAccount) alert("Current Account = ''")
+      setSwapHistory(await getMySwapHistory())
   }
-  getSwapCount()
+  getSwapHistory()
 }, [])
 
   return (
     <div className='text-white'>
-       Hihi
+       {
+        swapHistory ? (<></>) : (<><h1>No have swap history yet.</h1></>)
+       }
     </div>
   )
 }
