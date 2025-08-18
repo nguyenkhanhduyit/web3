@@ -1,30 +1,30 @@
 {
-  "address": "0xA3D8B18ad951e8B60C0B0912D12a9b4852D8BaA5",
+  "address": "0x2e2B5D7778C0ecb28da60507dC92068f6A617801",
   "deployer": "0x45f10654522FF65646Ea31Ef7673AE0F02972505",
-  "deployedAt": "2025-08-18T15:15:39.174Z",
+  "deployedAt": "2025-08-18T15:33:49.948Z",
   "baseCurrency": "USD",
   "usdTokenAddress": "0x0000000000000000000000000000000000000000",
   "priceUpdates": {
     "Bitcoin": {
-      "tokenAddress": "0x46262678f8C8084e97f7204cb40176148D4A9a3c",
+      "tokenAddress": "0x235AE061F8A0b3924bD3272c2118A2E14bf584A9",
       "symbol": "BTC",
       "priceInUSD": "113000",
       "priceInWei": "113000000000000000000000",
-      "transactionHash": "0x5a80a82434aec157bb3978cdfeccbf241e188d04016038592b0f097f6526588b"
+      "transactionHash": "0x7290b5d5af5deb6ed727e9f4d96707776ea3a1391349b0f21ae54523384a2cce"
     },
     "Ethereum": {
-      "tokenAddress": "0x31431f32b2ef9b9dA2dC77aA2B0094626EC71867",
+      "tokenAddress": "0xF482a0D68D298729d554e7C5C2160564B131875e",
       "symbol": "ETH",
       "priceInUSD": "3800",
       "priceInWei": "3800000000000000000000",
-      "transactionHash": "0xe371a961f9a9d6627e39e9972f7a49aa477053c0f71304b08a94f15ebce36e8e"
+      "transactionHash": "0x33976eda7e551d2f8df95e82effd7b6af6c045190fb3c93bb56284688d846fd8"
     },
     "Tether USD": {
-      "tokenAddress": "0xdC6DC74877C0c06bD9E3B8F8bDf991De2Ce0938C",
+      "tokenAddress": "0x7a39FA885B86a8a4997Cd233B5301910E9f09b80",
       "symbol": "USDT",
       "priceInUSD": "1",
       "priceInWei": "1000000000000000000",
-      "transactionHash": "0x5d83f2e4c79eff4f50211efbd0593085d77e4539df0b9cbb387f664d36c0e240"
+      "transactionHash": "0x4cfb02bac548e403854d84d38305580db00c942cc0996ba830d7863c6b7edc33"
     }
   },
   "testResults": {
@@ -36,11 +36,11 @@
       },
       {
         "type": "BigNumber",
-        "hex": "0x68a34380"
+        "hex": "0x68a347c4"
       },
       {
         "type": "BigNumber",
-        "hex": "0x8982c0"
+        "hex": "0x89831b"
       }
     ]
   }

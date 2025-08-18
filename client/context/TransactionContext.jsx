@@ -272,8 +272,8 @@ const getTokenBalance = async () => {
 
 
 const estimateAmountOut = async (amount) => {
-  // try {
-    console.log("Amount ",amount)
+  try {
+
     const signer = await getSigner();
     const swapDex = await new ethers.Contract(SwapDexAddress.address, SwapDex.abi, signer)
     const priceOracle = await new ethers.Contract(PriceOracleAddress.address, PriceOracle.abi, signer)
@@ -291,12 +291,8 @@ const estimateAmountOut = async (amount) => {
       console.error("Không tìm thấy thông tin token");
       return;
     }
+    if ((tokenInAddress || '').toLowerCase() === (tokenOutAddress || '').toLowerCase()) return null;
 
-    const [reserveIn, reserveOut] = await swapDex.getReserves(tokenInAddress, tokenOutAddress);
-    if (reserveIn.eq(0) || reserveOut.eq(0)) {
-      console.error("Pool chưa có thanh khoản");
-      return null;
-    }
 
     const tokenInName = tokenInInfo.symbol;
     const tokenOutName = tokenOutInfo.symbol;
@@ -315,17 +311,28 @@ const estimateAmountOut = async (amount) => {
       18
     );
 
-    // Chuyển đổi amount input sang đơn vị nhỏ nhất
-    const amountInSmallestUnits = ethers.utils.parseUnits(amount.toString(), tokenInDecimals);
-console.log( tokenInAddress,
-      tokenOutAddress,
-      amountInSmallestUnits)
+    // Chuyển đổi amount input sang đơn vị nhỏ nhất, bỏ qua khi người dùng đang gõ dở (ví dụ: "0.") hoặc amount = 0
+    const amountStr = (amount ?? '').toString().trim();
+    if (!amountStr || amountStr === '.' || amountStr.endsWith('.')) return null;
+    let amountInSmallestUnits;
+    try {
+      amountInSmallestUnits = ethers.utils.parseUnits(amountStr, tokenInDecimals);
+    } catch (_) {
+      return null;
+    }
+    if (amountInSmallestUnits.isZero()) return null;
+
     // Ước lượng output dựa trên AMM (dùng hàm trong contract để tránh sai số/overflow)
-    const outBN = await swapDex.getAmountOut(
-      tokenInAddress,
-      tokenOutAddress,
-      amountInSmallestUnits
-    );
+    let outBN;
+    try {
+      outBN = await swapDex.getAmountOut(
+        tokenInAddress,
+        tokenOutAddress,
+        amountInSmallestUnits
+      );
+    } catch (_) {
+      return null;
+    }
     const amountOutFormatted = ethers.utils.formatUnits(outBN, tokenOutDecimals);
 
     // Tính toán giá từ PriceOracle (USD-based estimation)
@@ -344,10 +351,9 @@ console.log( tokenInAddress,
       tokenInPriceUSD: tokenInPriceInUSD,
       tokenOutPriceUSD: tokenOutPriceInUSD
     }
-  // } catch (error) {
-  //   console.log("Lỗi khi ước lượng swap:", error);
-  //   return null;
-  // }
+  } catch (error) {
+    return null;
+  }
 };
 
 
