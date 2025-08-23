@@ -28,6 +28,9 @@ export const TransactionsProvider = ({ children }) => {
 
   const [transactions, setTransactions] = useState([])
 
+  const [swaps, setSwaps] = useState([])
+  const [swapCount, setSwapCount] = useState(0)
+
   const [tokenBalance, setTokenBalance] = useState("0")
 
   const [tokenInAddress, setTokenInAddress] = useState('')
@@ -100,7 +103,7 @@ export const TransactionsProvider = ({ children }) => {
     const contract = await createSwapDexContract();
     // lấy số lượng swap đã thực hiện
     const count = await getMySwapCount();
-    console.log("Swap History Count:", count.toString());
+    // console.log("Swap History Count:", count.toString());
 
     // nếu chưa có swap nào thì dừng
     if (count.eq(0)) return;
@@ -114,22 +117,26 @@ export const TransactionsProvider = ({ children }) => {
       start,
       total
     );
-   console.log("Swap History : ",history)
+  //  console.log("Swap History : ",history)
    
     const tokens = Object.values(TokenAddress);
     
    const structured = history.map((history) => ({
-        tokenIn: history.tokenIn,
-        tokenOut: history.tokenOut,
+        tokenIn: tokens.find((t) => t.tokenAddress === history.tokenIn).symbol,
+        tokenOut: tokens.find((t) => t.tokenAddress === history.tokenOut).symbol,
         amountIn: ethers.utils.formatUnits(history.amountIn,tokens.find((t) => t.tokenAddress === history.tokenIn).decimals),
         amountOut: ethers.utils.formatUnits(history.amountOut,tokens.find((t) => t.tokenAddress === history.tokenOut).decimals),
         timestamp: new Date(history.timestamp.toNumber() * 1000).toLocaleString(),
         trader: history.trader,
         blockNumber: history.blockNumber.toNumber(),
       }))
-    console.log("Swap history structured: ",structured)
+      setSwaps(structured)
+      setSwapCount(count)
+    // console.log("Swap history structured: ",structured)
+    // return {status:1 ,swapHistory: structured,count: count}
   } catch (error) {
-    console.error("Error when get swap history:", error);
+    //  return {status:0 ,swapHistory: [],count: 0}
+    return
   }
 };
 
@@ -582,7 +589,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
       setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
-      ,estimateAmountOut,swapToken,faucetToken,getMySwapHistory,
+      ,estimateAmountOut,swapToken,faucetToken,getMySwapHistory,swaps,swapCount
     }}>
       {children}
     </TransactionContext.Provider>
