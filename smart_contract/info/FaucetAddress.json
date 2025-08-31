@@ -1,7 +1,7 @@
 {
-  "faucetAddress": "0x4F8B0c8faCf9Eb465e998967908f4ad0aBDFd648",
-  "deployedAt": "2025-08-18T15:30:13.836Z",
-  "blockNumber": 9011979,
+  "faucetAddress": "0xc93948B5874d5E1700B9755Ff77e823bBD6a695C",
+  "deployedAt": "2025-08-31T14:10:02.576Z",
+  "blockNumber": 9104002,
   "deployer": "0x45f10654522FF65646Ea31Ef7673AE0F02972505",
   "supportedTokens": [
     "Bitcoin",
@@ -30,5 +30,5 @@
       "decimals": 6
     }
   ],
-  "tokensAddedAt": "2025-08-18T15:31:26.199Z"
+  "tokensAddedAt": "2025-08-31T14:17:52.162Z"
 }

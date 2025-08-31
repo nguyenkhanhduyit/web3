@@ -3,20 +3,20 @@ import { ethers } from 'ethers'
 import axios from 'axios'
 import { keccak256, defaultAbiCoder, getAddress, formatUnits } from "ethers/lib/utils";
 
-import TokenAddress from '../../client/utils/swap/info/address/TokenAddress.json'
-import FaucetAddress from '../../client/utils/swap/info/address/FaucetAddress.json'
-import Faucet from '../../client/utils/swap/info/abi/Faucet.json'
+import TokenAddress from '../utils/swap/info/address/TokenAddress.json'
+import FaucetAddress from '../utils/swap/info/address/FaucetAddress.json'
+import Faucet from '../utils/swap/info/abi/Faucet.json'
 
 import TransactionDex from '../utils/swap/info/abi/TransactionDex.json'
 import TransactionDexAddress from '../utils/swap/info/address/TransactionDexAddress.json'
 
-import SwapDexAddress from "../../client/utils/swap/info/address/SwapDexAddress.json";
-import SwapDex from "../../client/utils/swap/info/abi/SwapDex.json";
+import SwapDexAddress from "../utils/swap/info/address/SwapDexAddress.json";
+import SwapDex from "../utils/swap/info/abi/SwapDex.json";
 
-import PriceOracleAddress from "../../client/utils/swap/info/address/PriceOracleAddress.json";
-import PriceOracle from "../../client/utils/swap/info/abi/PriceOracle.json";
+import PriceOracleAddress from "../utils/swap/info/address/PriceOracleAddress.json";
+import PriceOracle from "../utils/swap/info/abi/PriceOracle.json";
 
-import TokenABI from "../../client/utils/swap/info/abi/Token.json"
+import TokenABI from "../utils/swap/info/abi/Token.json"
 
 
 
@@ -38,15 +38,48 @@ export const TransactionsProvider = ({ children }) => {
 
   const getEthereumProvider = () => {
     const { ethereum } = window
-    if (!ethereum)
-      throw new Error('MetaMask chưa được cài đặt.')
-   return new ethers.providers.Web3Provider(ethereum)
+    if (!ethereum){
+      alert('MetaMask uninstalled yet.')
+      return null
+    }
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    return provider
+  }
+
+  const checkEthBalance = async (address) => {
+    try {
+      const provider = getEthereumProvider()
+      if (!provider) return false;
+      
+      const balance = await provider.getBalance(address)
+      // console.log('ETH balance for', address, ':', ethers.utils.formatEther(balance));
+      
+      // Check if balance is sufficient for gas (at least 0.001 ETH)
+      const minBalance = ethers.utils.parseEther('0.001')
+      if (balance.lt(minBalance)) {
+        // console.warn('Insufficient ETH balance for gas fees');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      // console.error('Error checking ETH balance:', error);
+      return false;
+    }
   }
 
   const getSigner = async () => {
-    const provider = getEthereumProvider()
-    await provider.send("eth_requestAccounts", [])
-    return provider.getSigner()
+    try {
+      const provider = getEthereumProvider()
+      if (!provider) {
+        throw new Error('No Ethereum provider available');
+      }
+      const account = await provider.send("eth_requestAccounts", [])
+      // console.log('Connected account:', account[0]);
+      return provider.getSigner();
+    } catch (error) {
+      console.error('Error getting signer:', error);
+      throw error;
+    }
   }
 
   const createTransactionDexContract = async () => {
@@ -54,10 +87,88 @@ export const TransactionsProvider = ({ children }) => {
     return new ethers.Contract(TransactionDexAddress.TransactionsAddress, TransactionDex.abi, signer)
   }
 
-    const createSwapDexContract = async () => {
+  const createSwapDexContract = async () => {
     const signer = await getSigner()
     return new ethers.Contract(SwapDexAddress.address,SwapDex.abi,signer)
   }
+
+   const createFaucetContract = async () => {
+    try {
+      const signer = await getSigner()
+      // console.log('Creating faucet contract with address:', FaucetAddress.faucetAddress);
+      const contract = new ethers.Contract(FaucetAddress.faucetAddress, Faucet.abi, signer);
+      // console.log('Faucet contract created successfully');
+      return contract;
+    } catch (error) {
+      // console.error('Error creating faucet contract:', error);
+      throw error;
+    }
+  }
+
+  const handleLogin = async () => {
+    try {
+      const signer = await getSigner()
+      const address = await signer.getAddress()
+
+      const { data } = await axios.post('http://localhost:3001/auth/message', {
+        accountAddress: address,
+      })
+
+      const signature = await signer.signMessage(data.message)
+
+      await axios.post('http://localhost:3001/auth/verify', {
+        address,
+        message: data.message,
+        signature,
+      }, { withCredentials: true })
+
+      setCurrentAccount(address)
+    } catch (err) {
+      console.error("Login error:", err);
+      alert(err.response?.data?.error || "User refused login request.");
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:3001/auth/logout', {}, {
+        withCredentials: true,
+      })
+      setCurrentAccount('')
+      setTransactions([])
+      window.location.reload()
+    } catch (err) {
+      console.error("Logout error:", err);
+      alert(err.response?.data?.error || "Error when logout.");
+    }
+  }
+  
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      try {
+        const res = await axios.get('http://localhost:3001/auth/me', {
+          withCredentials: true,
+        })
+        setCurrentAccount(res.data.address)
+      } catch (err) {
+        console.log(err.response?.data?.error || err.message)
+      }
+    }
+    checkLogin()
+  }, [])
+
+    useEffect(() => {
+      if (window.ethereum) {
+        window.ethereum.on("accountsChanged", (accounts) => {
+          setCurrentAccount(accounts[0] || "");
+        });
+        window.ethereum.on("chainChanged", () => {
+          window.location.reload();
+        });
+      }
+    }, []);
+
 
   const getMyTransactionCount = async () => {
     const contract = await createTransactionDexContract()
@@ -142,42 +253,6 @@ export const TransactionsProvider = ({ children }) => {
 
 
 
-  const handleLogin = async () => {
-    try {
-      const signer = await getSigner()
-      const address = await signer.getAddress()
-
-      const { data } = await axios.post('http://localhost:3001/auth/message', {
-        accountAddress: address,
-      })
-
-      const signature = await signer.signMessage(data.message)
-
-      await axios.post('http://localhost:3001/auth/verify', {
-        address,
-        message: data.message,
-        signature,
-      }, { withCredentials: true })
-
-      setCurrentAccount(address)
-    } catch (err) {
-      alert("User refused login request.");
-    }
-  }
-
-  const handleLogout = async () => {
-    try {
-      await axios.post('http://localhost:3001/auth/logout', {}, {
-        withCredentials: true,
-      })
-      setCurrentAccount('')
-      setTransactions([])
-      window.location.reload()
-    } catch (err) {
-      alert("Error when logout.");
-    }
-  }
-
   const makeTransaction = async (addressTo,value) => {
     try {
       if(!currentAccount) return{state:0,tx:'Please login first.'}
@@ -236,19 +311,7 @@ export const TransactionsProvider = ({ children }) => {
   }
 
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      try {
-        const res = await axios.get('http://localhost:3001/auth/me', {
-          withCredentials: true,
-        })
-        setCurrentAccount(res.data.address)
-      } catch (err) {
-        console.log(err.response?.data?.error || err.message)
-      }
-    }
-    checkLogin()
-  }, [])
+
 
 
 const ERC20_ABI = [
@@ -461,21 +524,51 @@ const swapToken = async (amount) => {
 };
 
 const faucetToken = async (tokenNameRequestFaucet) => {
-  
-  const signer = await getSigner();
-  const faucet = new ethers.Contract(FaucetAddress.faucetAddress, Faucet.abi, signer);
-  const userAddress = await signer.getAddress();
+  try {
 
-  if (!tokenNameRequestFaucet || tokenNameRequestFaucet.length === 0) {
-    console.log('Name token to faucet invalid');
-    return null;
-  }
+    const signer = await getSigner();
+    const userAddress = await signer.getAddress();
+    
+    // Check if user has enough ETH for gas
+    const hasEnoughEth = await checkEthBalance(userAddress);
+    if (!hasEnoughEth) {
+      return {state: 0, tx: 'Insufficient ETH balance for gas fees. Please add some ETH to your wallet.'};
+    }
+    
+    const faucet = await createFaucetContract()
 
-  const timeUntilNext = await faucet.getTimeUntilNextFaucet(userAddress);
-  if (!timeUntilNext.eq(0)) 
-    return {state:0, cooldownRemaining: timeUntilNext.toString() };
+    if (!tokenNameRequestFaucet || tokenNameRequestFaucet.length === 0) {
+      return {state: 0, tx: 'Name token to faucet invalid'};
+    }
+
+    // Check if faucet contract is properly connected
+    if (!faucet) {
+      console.error('Failed to create faucet contract');
+      return {state: 0, tx: 'Failed to connect to faucet contract'};
+    }
+
+    // Check if user address is valid
+    if (!userAddress || !ethers.utils.isAddress(userAddress)) {
+      // console.error('Invalid user address:', userAddress);
+      return {state: 0, tx: 'Invalid user address'};
+    }
+    
+    let timeUntilNext;
+    try {
+      timeUntilNext = await faucet.getTimeUntilNextFaucet(userAddress);
+      // console.log('Time until next faucet:', timeUntilNext.toString());
+    } catch (error) {
+      // console.error('Error calling getTimeUntilNextFaucet:', error);
+      return {state: 0, tx: 'Error checking faucet cooldown: ' + error.message};
+    }
+ 
+    if (!timeUntilNext.eq(0)) {
+      return {state:0, cooldownRemaining: timeUntilNext.toString() };
+    }
 
   const initialBalances = {};
+
+
   for (const [tokenName, tokenData] of Object.entries(TokenAddress)) {
     const tokenContract = new ethers.Contract(
       tokenData.tokenAddress,
@@ -484,7 +577,6 @@ const faucetToken = async (tokenNameRequestFaucet) => {
     );
     const balance = await tokenContract.balanceOf(userAddress);
     initialBalances[tokenName] = balance;
-    // console.log(`${tokenName} (${tokenData.symbol}): ${ethers.utils.formatUnits(balance, tokenData.decimals)}`);
   }
 
   const resolveSelectedToken = (display) => {
@@ -498,6 +590,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
 
   if (tokenNameRequestFaucet === 'All') {
     try {
+      console.log('Vao ham all')
       const requestTx = await faucet.requestAllFaucets();
       // console.log(`Transaction hash: ${requestTx.hash}`);
       const receipt = await requestTx.wait();
@@ -512,34 +605,31 @@ const faucetToken = async (tokenNameRequestFaucet) => {
         const newBalance = await tokenContract.balanceOf(userAddress);
         const faucetAmount = await faucet.faucetAmounts(tokenData.tokenAddress);
 
-        // console.log(`Balance before: ${ethers.utils.formatUnits(initialBalances[tokenName], tokenData.decimals)} ${tokenData.symbol}`);
-        // console.log(`Balance after: ${ethers.utils.formatUnits(newBalance, tokenData.decimals)} ${tokenData.symbol}`);
-        // console.log(`Faucet amount received: ${ethers.utils.formatUnits(faucetAmount, tokenData.decimals)} ${tokenData.symbol}`);
-
         const expectedIncrease = faucetAmount;
         const actualIncrease = newBalance.sub(initialBalances[tokenName]);
         if (actualIncrease.eq(expectedIncrease)) {
-          return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
-          // console.log(`SUCCESS: Received correct amount for ${tokenName}`);
+          return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
+
         } else {
           return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
-          // console.log(`ERROR: Expected ${ethers.utils.formatUnits(expectedIncrease, tokenData.decimals)}, got ${ethers.utils.formatUnits(actualIncrease, tokenData.decimals)}`);
         }
       }
       return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
     } catch (error) {
-      return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
+      // console.error('Error in requestAllFaucets:', error);
+      return {state:0, tx: 'Error requesting all faucets: ' + error.message};
     }
   }
 
   const selected = resolveSelectedToken(tokenNameRequestFaucet);
   if (!selected) {
-    console.log(`Không tìm thấy token: ${tokenNameRequestFaucet}`);
-    return null;
+    // console.log(`Không tìm thấy token: ${tokenNameRequestFaucet}`);
+    return {state: 0, tx: `Token not found: ${tokenNameRequestFaucet}`};
   }
 
   const [selectedName, selectedData] = selected;
   try {
+    // console.log(`Requesting faucet for token: ${selectedName} (${selectedData.tokenAddress})`);
     const requestTx = await faucet.requestFaucet(selectedData.tokenAddress);
     // console.log(`Transaction hash: ${requestTx.hash}`);
     const receipt = await requestTx.wait();
@@ -552,26 +642,24 @@ const faucetToken = async (tokenNameRequestFaucet) => {
     );
     const newBalance = await tokenContract.balanceOf(userAddress);
     const faucetAmount = await faucet.faucetAmounts(selectedData.tokenAddress);
-
-    // console.log(`Balance before: ${ethers.utils.formatUnits(initialBalances[selectedName], selectedData.decimals)} ${selectedData.symbol}`);
-    // console.log(`Balance after: ${ethers.utils.formatUnits(newBalance, selectedData.decimals)} ${selectedData.symbol}`);
-    // console.log(`Faucet amount received: ${ethers.utils.formatUnits(faucetAmount, selectedData.decimals)} ${selectedData.symbol}`);
-
+    
     const expectedIncrease = faucetAmount;
     const actualIncrease = newBalance.sub(initialBalances[selectedName]);
     if (actualIncrease.eq(expectedIncrease)) {
       return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'one' };
-      // console.log(`SUCCESS: Received correct amount for ${selectedName}`);
+     
     } else {
       return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'one' };
-      // console.log(`ERROR: Expected ${ethers.utils.formatUnits(expectedIncrease, selectedData.decimals)}, got ${ethers.utils.formatUnits(actualIncrease, selectedData.decimals)}`);
+     
     }
 
-    // return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'one' };
   } catch (error) {
-    return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'one' };
-    // console.log(`Error requesting ${selectedName}: ${error.message}`);
-    // throw error;
+    // console.error(`Error requesting ${selectedName}:`, error);
+    return {state:0, tx: `Error requesting faucet: ${error.message}`};
+  }
+  } catch (error) {
+    // console.error('Error in faucetToken function:', error);
+    return {state: 0, tx: 'Faucet error: ' + error.message};
   }
 }
 
@@ -589,7 +677,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
       handleWithdrawFailed,
       getTokenBalance,tokenBalance,
       setTokenInAddress,setTokenOutAddress,tokenInAddress,tokenOutAddress,setTokenBalance
-      ,estimateAmountOut,swapToken,faucetToken,getMySwapHistory,swaps,swapCount
+      ,estimateAmountOut,swapToken,faucetToken,getMySwapHistory,swaps,swapCount,checkEthBalance,
     }}>
       {children}
     </TransactionContext.Provider>

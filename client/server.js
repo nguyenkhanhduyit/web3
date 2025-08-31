@@ -55,12 +55,21 @@ app.post('/auth/logout', (req, res) => {
 
 
 app.post('/auth/message', (req, res) => {
-  const { address } = req.body
-  const timestamp = new Date().toISOString()
-  const nonce = Math.floor(Math.random() * 1000000)
-  const message = `Login to Web3 App\nAddress: ${address}\nTime: ${timestamp}\nNonce: ${nonce}`
-  res.json({ message })
-})
+  const address  = req.body.accountAddress;
+
+  const timestamp = new Date().toLocaleString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    hour12: false
+  });
+
+  const nonce = Math.floor(Math.random() * 1000000);
+  const message = `Login to DIT Web3 App 
+with Address: ${address} 
+Time: ${timestamp} 
+Nonce: ${nonce}`;
+  res.json({ message });
+});
+
 
 app.post('/auth/verify', (req, res) => {
   console.log("Incoming request body:", req.body);

@@ -14,7 +14,7 @@ import Loader from './Loader'
 
 const Faucet = ({theme}) => {
 
-const {faucetToken} = React.useContext(TransactionContext)
+const {faucetToken,currentAccount,testFaucetConnection} = React.useContext(TransactionContext)
 
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -37,23 +37,21 @@ const names = [
 
 const [tokenName, setTokenName] = React.useState('')
 const [errorSelectMessage, setErrorSelectMessage] = React.useState('')
-const [errorTextFieldMessage, setErrorTextFieldMessage] = React.useState('')
-const [inputAddress, setInputAddress] = React.useState('')
+
 const [cooldownRemaining, setCooldownRemaining] = React.useState(false)
 const [cooldownRemainingMessage, setCooldownRemainingMessage] = React.useState('')
+
 const [successMessage, setSuccessMessage] = React.useState('')
 const [errorMessage, setErrorMessage] = React.useState('')
+
 const [isLoading, setIsLoading] = React.useState(false)
+const [testResult, setTestResult] = React.useState('')
 
 const handleChange = async(event) => {
     const value = event.target.value
     setTokenName(value)
 }
 
-const handleInputChange = async(event) => {
-    const value = event.target.value
-    setInputAddress(value)
-}
 
 const convertToFixedTime = ({ cooldownRemaining }) => {
 
@@ -76,17 +74,19 @@ const options = {
 const handleFaucet = async() => {
 
     try {
+        if(!currentAccount) {
+            setErrorMessage('Please connect your wallet first')
+            return
+        }
+        
         if(!tokenName || tokenName.length < 0) {
         setErrorSelectMessage('Token Name invalid') 
-        return
-    }
-    if(!inputAddress || inputAddress.length < 0) {
-        setErrorTextFieldMessage('Address invalid') 
         return
     }
 
     setIsLoading(true)
     const tx = await faucetToken(tokenName)
+
 
     if (tx && typeof tx === "object" && "cooldownRemaining" in tx) {
         setCooldownRemaining(true)
@@ -96,32 +96,85 @@ const handleFaucet = async() => {
     } 
     if(tx && typeof tx === 'object' && "state" in tx){
         if(tx.state === 0){
-            setErrorMessage("Faucet failed.")
+            setErrorMessage(tx.tx || "Faucet failed.")
+            setIsLoading(false)
+            return
+        }
+        if(tx.state === 1){
+            setSuccessMessage("Faucet successfully.")
             setIsLoading(false)
             return
         }
     }
+    if(tx === null || tx === undefined){
+        setErrorMessage("Faucet failed - no response from contract.")
+        setIsLoading(false)
+        return
+    }
     setSuccessMessage("Faucet successfully.")
     setIsLoading(false)
     } catch (error) {
-        setErrorMessage('Faucet failed.')
+        console.error('Error in handleFaucet:', error);
+        setErrorMessage('Faucet failed: ' + (error.message || 'Unknown error'))
+        setIsLoading(false)
+    }
+}
+
+const handleTestConnection = async () => {
+    try {
+        setIsLoading(true)
+        const result = await testFaucetConnection()
+        console.log('Test result:', result)
+        if (result.success) {
+            setTestResult('Connection successful! Supported tokens: ' + result.supportedTokens.length)
+        } else {
+            setTestResult('Connection failed: ' + result.error)
+        }
+    } catch (error) {
+        console.error('Error testing connection:', error)
+        setTestResult('Test error: ' + error.message)
+    } finally {
         setIsLoading(false)
     }
 }
 
 React.useEffect(() => {
     setTimeout(() => {
-    setErrorTextFieldMessage('')
     setErrorSelectMessage('')
     }, 5000)
-}, [errorSelectMessage,errorTextFieldMessage])
+}, [errorSelectMessage])
+
+React.useEffect(() => {
+    setTimeout(() => {
+    setErrorMessage('')
+    }, 5000)
+}, [errorMessage])
+
+React.useEffect(() => {
+    setTimeout(() => {
+    setSuccessMessage('')
+    }, 5000)
+}, [successMessage])
+
+React.useEffect(() => {
+    setTimeout(() => {
+    setCooldownRemainingMessage('')
+    setCooldownRemaining(false)
+    }, 10000)
+}, [cooldownRemainingMessage])
+
+React.useEffect(() => {
+    setTimeout(() => {
+    setTestResult('')
+    }, 8000)
+}, [testResult])
 
     
 return (
 <div className="flex flex-col gap-5 p-4 shadow-lg text-white lg:max-w-[50vw]  2xl:lg:max-w-[50vw] lg:mx-auto 2xl:mx-auto">
         
     <h1 className="text-3xl text-white">DIT Faucet</h1>
-    <p className='text-15px  break-words   w-full'>
+    <p className='text-15px  break-words  w-full'>
     Get 0.5 free tokens in Sepolia network sent directly to your wallet. 
     You can request one specific token or all available tokens at once.
     Brought to you by DIT Web3.
@@ -164,12 +217,13 @@ return (
             errorSelectMessage && (<p className='text-red-600 text-sm'>{errorSelectMessage}</p>)
         }
         </FormControl>
-    <Box component="form" sx={{ }} autoComplete="off">
+    {/* <Box component="form" sx={{ }} autoComplete="off">
         <TextField
             fullWidth
             id="amount"
             label="Wallet address"
-            value={inputAddress}
+            value={currentAccount}
+            disabled
             onChange={handleInputChange}
             placeholder="Wallet address"
             sx={{
@@ -204,21 +258,30 @@ return (
                     </p>
                 )
             }
-        </Box>
+        </Box> */}
        
-            {
-                isLoading ? (
-                    <Loader/>
-            ) : (
-                    <button className="flex-1 p-2
-                    rounded-2xl border-1  hover:bg-white bg-white text-black
-                    hover:text-black transition duration-300 cursor-pointer text-sm font-light"
-                    onClick={() => handleFaucet()}
-                    >
-                    Receive 0.5 {tokenName || 'Token'}
-                    </button>
-                )
-            }
+            <div className="flex gap-2">
+                {
+                    isLoading ? (
+                        <Loader/>
+                ) : (
+                        <button className="flex-1 p-2
+                        rounded-2xl border-1  hover:bg-white bg-white text-black
+                        hover:text-black transition duration-300 cursor-pointer text-sm font-light"
+                        onClick={() => handleFaucet()}
+                        >
+                        Receive 0.5 {tokenName || 'Token'}
+                        </button>
+                    )
+                }
+                <button 
+                    className="p-2 rounded-2xl border-1 border-white text-white hover:bg-white hover:text-black transition duration-300 cursor-pointer text-sm font-light"
+                    onClick={() => handleTestConnection()}
+                    disabled={isLoading}
+                >
+                    Test Connection
+                </button>
+            </div>
      
             {
                 cooldownRemaining && (
@@ -238,6 +301,13 @@ return (
                 errorMessage && (
                 <Stack spacing={2} margin={'10px'} className='m-auto'>
                         <Alert severity='error'>{errorMessage}</Alert>
+                </Stack>
+                )
+            }
+            {
+                testResult && (
+                <Stack spacing={2} margin={'10px'} className='m-auto'>
+                        <Alert severity={testResult.includes('successful') ? 'success' : 'info'}>{testResult}</Alert>
                 </Stack>
                 )
             }
