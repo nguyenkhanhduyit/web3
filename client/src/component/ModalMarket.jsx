@@ -203,7 +203,7 @@ const TokenCard = ({ name, symbol, price, icon, market_cap, volume_24h, percent_
 
     return (
     <div className={`mr-10 flex flex-row justify-between items-center w-full h-auto rounded-[7px] 
-    m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-200'}`}>
+    m-2 overflow-auto p-1 'bg-[#eae6e800]'`}>
       <div className='flex flex-row gap-2 items-center'>
         <img src={icon} alt="icon" className='w-8 h-8' />
         <div className='flex flex-col'>

@@ -45,7 +45,6 @@ const [successMessage, setSuccessMessage] = React.useState('')
 const [errorMessage, setErrorMessage] = React.useState('')
 
 const [isLoading, setIsLoading] = React.useState(false)
-const [testResult, setTestResult] = React.useState('')
 
 const handleChange = async(event) => {
     const value = event.target.value
@@ -120,23 +119,6 @@ const handleFaucet = async() => {
     }
 }
 
-const handleTestConnection = async () => {
-    try {
-        setIsLoading(true)
-        const result = await testFaucetConnection()
-        console.log('Test result:', result)
-        if (result.success) {
-            setTestResult('Connection successful! Supported tokens: ' + result.supportedTokens.length)
-        } else {
-            setTestResult('Connection failed: ' + result.error)
-        }
-    } catch (error) {
-        console.error('Error testing connection:', error)
-        setTestResult('Test error: ' + error.message)
-    } finally {
-        setIsLoading(false)
-    }
-}
 
 React.useEffect(() => {
     setTimeout(() => {
@@ -163,11 +145,7 @@ React.useEffect(() => {
     }, 10000)
 }, [cooldownRemainingMessage])
 
-React.useEffect(() => {
-    setTimeout(() => {
-    setTestResult('')
-    }, 8000)
-}, [testResult])
+
 
     
 return (
@@ -274,13 +252,7 @@ return (
                         </button>
                     )
                 }
-                <button 
-                    className="p-2 rounded-2xl border-1 border-white text-white hover:bg-white hover:text-black transition duration-300 cursor-pointer text-sm font-light"
-                    onClick={() => handleTestConnection()}
-                    disabled={isLoading}
-                >
-                    Test Connection
-                </button>
+              
             </div>
      
             {
@@ -304,13 +276,7 @@ return (
                 </Stack>
                 )
             }
-            {
-                testResult && (
-                <Stack spacing={2} margin={'10px'} className='m-auto'>
-                        <Alert severity={testResult.includes('successful') ? 'success' : 'info'}>{testResult}</Alert>
-                </Stack>
-                )
-            }
+          
         <p className='text-gray-200'>
             Note: We securely handle the provided wallet address while processing your request. 
             This data is not used by any other DIT services.
