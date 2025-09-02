@@ -590,12 +590,8 @@ const faucetToken = async (tokenNameRequestFaucet) => {
 
   if (tokenNameRequestFaucet === 'All') {
     try {
-      console.log('Vao ham all')
       const requestTx = await faucet.requestAllFaucets();
-      // console.log(`Transaction hash: ${requestTx.hash}`);
       const receipt = await requestTx.wait();
-      // console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
-
       for (const [tokenName, tokenData] of Object.entries(TokenAddress)) {
         const tokenContract = new ethers.Contract(
           tokenData.tokenAddress,
@@ -604,19 +600,15 @@ const faucetToken = async (tokenNameRequestFaucet) => {
         );
         const newBalance = await tokenContract.balanceOf(userAddress);
         const faucetAmount = await faucet.faucetAmounts(tokenData.tokenAddress);
-
         const expectedIncrease = faucetAmount;
         const actualIncrease = newBalance.sub(initialBalances[tokenName]);
-        if (actualIncrease.eq(expectedIncrease)) {
+        if (actualIncrease.eq(expectedIncrease)) 
           return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
-
-        } else {
+        else 
           return {state:0, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
-        }
       }
       return {state:1, txHash: requestTx.hash, blockNumber: receipt.blockNumber, mode: 'all' };
     } catch (error) {
-      // console.error('Error in requestAllFaucets:', error);
       return {state:0, tx: 'Error requesting all faucets: ' + error.message};
     }
   }

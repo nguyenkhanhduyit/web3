@@ -50,29 +50,29 @@ const TransactionHistory = ({theme}) => {
 
   const TransactionCard = ({transaction}) => {
     return (
-      <div className='flex flex-col items-center w-full mt-3 border border-white rounded-lg shadow-md'>
+      <div className={`${theme === 'dark-mode'? 'text-white border-white':'text-gray-700 border-gray-700'} flex flex-col items-center w-full mt-3 border rounded-lg shadow-md`}>
         <div className='justify-start w-full mb-6 p-2'>
           <a href={`https://sepolia.etherscan.io/address/${transaction.addressTo}`} 
             target='_blank' rel='noopener noreferrer'>
-            <p className='text-white text-base hover:text-yellow-300'>
-              <span className='text-[#37c7da] font-bold'>To </span> {shortenAddress(transaction.addressTo)}
+            <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}>
+              <span className={`${theme === 'dark-mode'? 'text-[#37c7da]':'text-black'} font-bold`}>To </span> {shortenAddress(transaction.addressTo)}
             </p>
           </a>
 
           <a href={`https://sepolia.etherscan.io/address/${transaction.addressFrom}`} 
             target='_blank' rel='noopener noreferrer'>
-            <p className='text-white text-base hover:text-indigo-500'>
-              <span className='text-[#37c7da] font-bold'>From </span> {shortenAddress(transaction.addressFrom)}
+            <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}>
+              <span className={`${theme === 'dark-mode'? 'text-[#37c7da]':'text-black'} font-bold`}>From </span> {shortenAddress(transaction.addressFrom)}
             </p>
           </a>
 
-          <p className='text-white text-base'>
-            <span className='text-[#37c7da] font-bold'>Value </span> {transaction.value} ETH
+          <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}>
+            <span className={`${theme === 'dark-mode'? 'text-[#37c7da]':'text-black'} font-bold`}>Value </span> {transaction.value} ETH
           </p>
-          <p className='text-white text-base'>
-            <span className='text-[#37c7da] font-bold'>Date </span> {transaction.timestamp}
+          <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}>
+            <span className={`${theme === 'dark-mode'? 'text-[#37c7da]':'text-black'} font-bold`}>Date </span> {transaction.timestamp}
           </p>
-          <p className='text-white text-base'> 
+          <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}> 
             {
               transaction.state === 'Success' ? (
                 <>
@@ -109,14 +109,14 @@ const TransactionHistory = ({theme}) => {
   const totalPages = Math.ceil(transactions.length / transactionsPerPage);
 
   return (
-    <div className={`flex flex-col items-center justify-center gap-5
-     ${windowSize.width < 1500 ? 'min-h-[60vh]' : 'min-h-[50vh]'}`}>
+    <div className={` flex flex-col items-center justify-center gap-5
+     ${windowSize.width < 1500 ? 'min-h-[60vh]' : 'min-h-[50vh] m-auto'} `}>
       
       {
         currentAccount && !isLoading ? 
         (
           <>
-          <p className='text-white text-2xl'>Transaction History</p>
+          <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Transaction History</p>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
               {currentTransactions.map((transaction, i) => (
                 <TransactionCard key={i} transaction={transaction}/>
@@ -126,15 +126,15 @@ const TransactionHistory = ({theme}) => {
             {transactions.length > transactionsPerPage && (
               <div className="flex items-center justify-center gap-4 mt-6">
                 <button 
-                  className="px-3 py-1 border-1 border-white text-white rounded disabled:opacity-50"
+                  className={`${theme==='dark-mode'? 'border-white text-white': 'border-black text-black'} px-3 py-1 border-1 rounded disabled:opacity-50`}
                   onClick={() => setCurrentPage(prev => prev - 1)}
                   disabled={currentPage === 1}
                 >
                   Previous Page
                 </button>
-                <span className="text-white">{currentPage} / {totalPages}</span>
+                <span className={`${theme==='dark-mode'? ' text-white': ' text-black'}`}>{currentPage} / {totalPages}</span>
                 <button 
-                  className="px-3 py-1 border-1 border-white text-white rounded disabled:opacity-50"
+                  className={`${theme==='dark-mode'? 'border-white text-white': 'border-black text-black'} px-3 py-1 border-1 rounded disabled:opacity-50 cursor-pointer`}
                   onClick={() => setCurrentPage(prev => prev + 1)}
                   disabled={currentPage === totalPages}
                 >
@@ -145,7 +145,7 @@ const TransactionHistory = ({theme}) => {
           </>
         ) : !currentAccount && !isLoading ?
         (
-          <p className='text-white text-2xl'>Please connect your wallet to get transaction history.</p>
+          <p className={`text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Please connect your wallet to get transaction history.</p>
         ):(<Loader/>)
       }
     </div>

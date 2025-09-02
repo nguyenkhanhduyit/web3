@@ -51,7 +51,6 @@ const handleChange = async(event) => {
     setTokenName(value)
 }
 
-
 const convertToFixedTime = ({ cooldownRemaining }) => {
 
 const seconds = parseInt(cooldownRemaining, 10)
@@ -149,9 +148,9 @@ React.useEffect(() => {
 
     
 return (
-<div className="flex flex-col gap-5 p-4 shadow-lg text-white lg:max-w-[50vw]  2xl:lg:max-w-[50vw] lg:mx-auto 2xl:mx-auto">
+<div className={`${theme === 'dark-mode'?'text-white':'text-black'} flex flex-col gap-5 p-4 shadow-lg  lg:max-w-[50vw]  2xl:lg:max-w-[50vw] lg:mx-auto 2xl:mx-auto`}>
         
-    <h1 className="text-3xl text-white">DIT Faucet</h1>
+    <h1 className="text-3xl ">DIT Faucet</h1>
     <p className='text-15px  break-words  w-full'>
     Get 0.5 free tokens in Sepolia network sent directly to your wallet. 
     You can request one specific token or all available tokens at once.
@@ -159,7 +158,7 @@ return (
     </p>
         
     <FormControl sx={{ }}>
-        <InputLabel id="token-label" sx={{ color: 'white' }}>
+        <InputLabel id="token-label" sx={{ color: theme === 'dark-mode' ? 'white' : 'black' }}>
             Token Name
         </InputLabel>
         <Select
@@ -170,18 +169,18 @@ return (
                 input={<OutlinedInput label="Token Name" />}
                 MenuProps={MenuProps}
                 sx={{
-                    color: 'white',
+                    color: theme === 'dark-mode' ? 'white' : 'black',
                     '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'white',
+                    borderColor: theme === 'dark-mode' ? 'white' : 'black',
                     },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'white',
+                    borderColor: theme === 'dark-mode' ? 'white' : 'black',
                     },
                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'white',
+                    borderColor: theme === 'dark-mode' ? 'white' : 'black',
                     },
                     '& .MuiSelect-icon': {
-                    color: 'white',
+                    color: theme === 'dark-mode' ? 'white' : 'black',
                     },
                 }}
         >
@@ -195,57 +194,15 @@ return (
             errorSelectMessage && (<p className='text-red-600 text-sm'>{errorSelectMessage}</p>)
         }
         </FormControl>
-    {/* <Box component="form" sx={{ }} autoComplete="off">
-        <TextField
-            fullWidth
-            id="amount"
-            label="Wallet address"
-            value={currentAccount}
-            disabled
-            onChange={handleInputChange}
-            placeholder="Wallet address"
-            sx={{
-                '& .MuiInputLabel-root': {
-                color: 'white',
-                },
-                '& .MuiOutlinedInput-root': {
-                color: 'white',
-                '& fieldset': {
-                    borderColor: 'white',
-                },
-                '&:hover fieldset': {
-                    borderColor: 'white',
-                },
-                '&.Mui-focused fieldset': {
-                    borderColor: 'white',
-                },
-                '& input::placeholder': {
-                    color: 'white',
-                    opacity: 1,
-                },
-                },
-                '& .MuiFormHelperText-root': {
-                color: 'white',
-                },
-                }}
-        />
-            {
-                errorTextFieldMessage && (
-                    <p className='text-red-600 text-sm '>
-                        {errorTextFieldMessage}
-                    </p>
-                )
-            }
-        </Box> */}
        
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center justify-center">
                 {
                     isLoading ? (
                         <Loader/>
                 ) : (
-                        <button className="flex-1 p-2
-                        rounded-2xl border-1  hover:bg-white bg-white text-black
-                        hover:text-black transition duration-300 cursor-pointer text-sm font-light"
+                        <button className={`
+                        ${theme === 'dark-mode'?' bg-white text-black':' bg-gray-700 text-white'} flex-1 p-2 rounded-2xl border-1 transition duration-300 cursor-pointer text-sm font-light
+                            `}
                         onClick={() => handleFaucet()}
                         >
                         Receive 0.5 {tokenName || 'Token'}
@@ -277,7 +234,7 @@ return (
                 )
             }
           
-        <p className='text-gray-200'>
+        <p className={`${theme === 'dark-mode' ? 'text-gray-200' : 'text-gray-700'}`}>
             Note: We securely handle the provided wallet address while processing your request. 
             This data is not used by any other DIT services.
         </p>

@@ -263,7 +263,7 @@ return (
 
       {
         arrAmountTo && (
-          <p className='text-sm text-white font-sans p-4'>{arrAmountTo}</p>
+          <p className={`text-sm font-sans p-4 ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>{arrAmountTo}</p>
         )
       }
 

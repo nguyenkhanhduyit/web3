@@ -123,15 +123,16 @@ const handleSend = async() => {
             value={addressReceive}
             type="text"
             className={`bg-transparent my-4 ${theme === 'dark-mode' ? 'placeholder:text-white' : 'placeholder:text-black'} p-2 outline-none border-b text-sm font-light `}
-            placeholder="Enter ETH address"
+            placeholder="Enter ETH with Sepolia network address"
             onChange={handleAddressReceiveChange}
           />
           <input
             value={amount}
             type="text"
             className={`bg-transparent my-4 ${theme === 'dark-mode' ? 'placeholder:text-white' : 'placeholder:text-black'} p-2 outline-none border-b text-sm font-light `}
-            placeholder="Enter value"
+            placeholder="Enter value between on 0.005 - 0.01 ETH"
             onChange={handleAmountChange}
+            
           />
     {
       errorMessage && (

@@ -1,44 +1,3 @@
-// import React,{useContext,useEffect,useState} from 'react'
-// import { TransactionContext } from '../../context/TransactionContext';
-
-// const SwapHistory = ({theme}) => {
-// const {makeTransaction,getMySwapHistory,currentAccount,swaps,swapCount} = useContext(TransactionContext)
-
-// useEffect(() => {
-//   const getSwapHistory = async () => {
-//       if(currentAccount) return
-//       await getMySwapHistory()
-//   }
-//   getSwapHistory()
-// }, [])
-
-// const SwapHistoryCard = ({history}) => {
-//   return (
-//     <>
-//       {/* <p>token in : {history.tokenIn}</p>
-//       <p>token out : {history.tokenOut}</p> */}
-//       <p>trader : {history.trader}</p>
-//       <p>From : {history.amountIn} {history.tokenIn}</p>
-//       <p>To : {history.amountOut} {history.tokenOut}</p>
-//       {/* <p>blocknumber : {history.blockNumber}</p> */}
-//       <p>{history.timestamp}</p>
-//     </>
-//   )
-// }
-//   return (
-//     <div className='text-white text-center min-h-screen'>
-//        {
-//         swaps && swaps.length > 0 && swapCount > 0 ? 
-//         (<>
-//               {swaps.map((history,index)=><SwapHistoryCard key={index} history={history}/>)}
-//         </>) : (<><h1>No have swap history yet.</h1></>)
-//        }
-//     </div>
-//   )
-// }
-
-// export default SwapHistory
-
 
 import React,{useContext,useState,useEffect} from 'react'
 import { TransactionContext } from '../../context/TransactionContext'
@@ -92,30 +51,26 @@ const SwapHistory = ({theme}) => {
 
   const SwapHistoryCard = ({swapHistory}) => {
     return (
-      <div className='flex flex-col items-center w-full mt-3 border border-white rounded-lg shadow-md'>
+      <div className={`${theme === 'dark-mode' ? ' border-white' :' border-gray-700' } flex flex-col items-center w-full mt-3 border rounded-lg shadow-md`}>
         <div className='justify-start w-full mb-6 p-2'>
           <a href={`https://sepolia.etherscan.io/address/${swapHistory.trader}`} 
             target='_blank' rel='noopener noreferrer'>
-            <p className='text-white text-base hover:text-yellow-300'>
-              <span className='text-[#37c7da] font-bold'>Trader </span> {shortenAddress(swapHistory.trader)}
+            <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}>
+              <span className={`${theme === 'dark-mode'? 'text-[#37c7da]':'text-black'} font-bold`}>Trader </span> {shortenAddress(swapHistory.trader)}
             </p>
           </a>
 
-          {/* <a href={`https://sepolia.etherscan.io/address/${transaction.addressFrom}`} 
-            target='_blank' rel='noopener noreferrer'> */}
-            <p className='text-white text-base hover:text-indigo-500'>
-              <span className='text-[#37c7da] font-bold'>From </span> {swapHistory.amountIn} {swapHistory.tokenIn}
+            <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}>
+              <span className={`${theme === 'dark-mode'? 'text-[#37c7da]':'text-black'} font-bold`}>Value From </span> {swapHistory.amountIn} {swapHistory.tokenIn}
             </p>
           {/* </a> */}
-            <p className='text-white text-base hover:text-indigo-500'>
-              <span className='text-[#37c7da] font-bold'>To </span> {swapHistory.amountOut} {swapHistory.tokenOut}
+            <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}>
+              <span className={`${theme === 'dark-mode'? 'text-[#37c7da]':'text-black'} font-bold`}>Value To </span> {swapHistory.amountOut} {swapHistory.tokenOut}
             </p>
 
-          {/* <p className='text-white text-base'>
-            <span className='text-[#37c7da] font-bold'>Value </span> {transaction.value} ETH
-          </p> */}
-          <p className='text-white text-base'>
-            <span className='text-[#37c7da] font-bold'>Date </span> {swapHistory.timestamp}
+          
+          <p className={`${theme === 'dark-mode'? 'text-white hover:text-yellow-300':'text-black hover:text-blue-900'} text-base `}>
+            <span className={`${theme === 'dark-mode'? 'text-[#37c7da]':'text-black'} font-bold`}>Date </span> {swapHistory.timestamp}
           </p>
           
         </div>
@@ -140,7 +95,7 @@ const SwapHistory = ({theme}) => {
         currentAccount && !isLoading ? 
         (
           <>
-          <p className='text-white text-2xl'>Swap History</p>
+          <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Swap History</p>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
               {currentSwaps.map((history, i) => (
                 <SwapHistoryCard key={i} swapHistory={history}/>
@@ -150,15 +105,15 @@ const SwapHistory = ({theme}) => {
             {swaps.length > swapsPerPage && (
               <div className="flex items-center justify-center gap-4 mt-6">
                 <button 
-                  className="px-3 py-1 border-1 border-white text-white rounded disabled:opacity-50"
+                  className={`${theme==='dark-mode'? 'border-white text-white': 'border-black text-black'} px-3 py-1 border-1  rounded disabled:opacity-50 cursor-pointer`}
                   onClick={() => setCurrentPage(prev => prev - 1)}
                   disabled={currentPage === 1}
                 >
                   Previous Page
                 </button>
-                <span className="text-white">{currentPage} / {totalPages}</span>
+                <span className={`${theme==='dark-mode'? ' text-white': ' text-black'}`}>{currentPage} / {totalPages}</span>
                 <button 
-                  className="px-3 py-1 border-1 border-white text-white rounded disabled:opacity-50"
+                  className={`${theme==='dark-mode'? 'border-white text-white': 'border-black text-black'} px-3 py-1 border-1 rounded disabled:opacity-50 cursor-pointer`}
                   onClick={() => setCurrentPage(prev => prev + 1)}
                   disabled={currentPage === totalPages}
                 >
@@ -169,7 +124,7 @@ const SwapHistory = ({theme}) => {
           </>
         ) : !currentAccount && !isLoading ?
         (
-          <p className='text-white text-2xl'>Please connect your wallet to get swaps history.</p>
+          <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Please connect your wallet to get swaps history.</p>
         ):(<Loader/>)
       }
     </div>
