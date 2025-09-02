@@ -203,7 +203,7 @@ const TokenCard = ({ name, symbol, price, icon, market_cap, volume_24h, percent_
 
     return (
     <div className={`mr-10 flex flex-row justify-between items-center w-full h-auto rounded-[7px] 
-    m-2 overflow-auto p-1 'bg-[#eae6e800]'`}>
+    m-2 overflow-auto p-1 **:'bg-[#eae6e800]'`}>
       <div className='flex flex-row gap-2 items-center'>
         <img src={icon} alt="icon" className='w-8 h-8' />
         <div className='flex flex-col'>
@@ -235,7 +235,7 @@ const RecentSearch = ({ symbol, icon, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className={`flex flex-row items-center gap-1 px-3 py-1 mt-3 mr-2 cursor-pointer ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-300'}`}
+      className={`border-[1px] flex flex-row items-center gap-1 px-3 py-1 mt-3 mr-2 cursor-pointer bg-[#eae6e800]`}
       style={{ borderRadius: '32px' }}
     >
       <img src={icon} alt="." className='w-5 h-5' />
@@ -246,7 +246,7 @@ const RecentSearch = ({ symbol, icon, onClick }) => {
 
 const LoadingTokenCard = () => {
   return (
-    <div className={`mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-200'}`}>
+    <div className={`mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 'bg-[#eae6e800]'`}>
       <div className='flex flex-col'>
         <div className='w-[25px] h-[25px] bg-white rounded-full m-1' />
         <div className='w-[25px] h-[25px] bg-white rounded-full m-1' />
@@ -261,17 +261,17 @@ const LoadingTokenCard = () => {
 
 return (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#eae6e800]">
-    <div className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh] max-h-[80vh] overflow-y-auto relative ${theme === 'dark-mode' ? 'background-modal-dark-mode text-white' : 'bg-blue-100 text-gray-900'}`}>
-      <div className={`sticky -top-6 z-20 flex justify-start items-center mb-4 ${theme === 'dark-mode' ? 'bg-[#eae6e800]' : 'bg-blue-100'}`}>
-        <SearchIcon className={`size-14 flex-none ${theme === 'dark-mode' ? 'text-white' : 'text-indigo-700'}`} style={{ fontSize: '16px' }} />
+    <div className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh] max-h-[80vh] overflow-y-auto relative ${theme === 'dark-mode' ? 'background-modal-dark-mode text-white' : 'background-modal-light-mode text-gray-900'}`}>
+      <div className={`sticky -top-6 z-20 flex justify-start items-center mb-4 bg-[#eae6e800]`}>
+        <SearchIcon className={`size-14 flex-none ${theme === 'dark-mode' ? 'text-white' : 'text-black'}`} style={{ fontSize: '16px' }} />
         <input
           type="text"
           placeholder='What are you looking for?'
           onChange={(e) => onSearch(e.target.value)}
-          className={`size-14 flex-grow ${theme === 'dark-mode' ? 'text-gray-400 placeholder:text-gray-400' : 'text-indigo-700 placeholder:text-indigo-700'} placeholder:text-sm placeholder:font-normal rounded-full border-none text-[14px] pl-2 focus:outline-none`}
+          className={`size-14 flex-grow ${theme === 'dark-mode' ? 'text-gray-400 placeholder:text-gray-400' : 'text-black '} placeholder:text-sm placeholder:font-normal rounded-full border-none text-[14px] pl-2 focus:outline-none`}
         />
-        <div className={`flex justify-center items-center h-[17px] w-[17px] rounded-full ${theme === 'dark-mode' ? 'bg-gray-300' : 'bg-indigo-700'}`}>
-          <button onClick={onClose} className={`text-[14px] font-bold ${theme === 'dark-mode' ? 'text-black' : 'text-white'}`}>
+        <div className={`cursor-pointer flex justify-center items-center h-[17px] w-[17px] rounded-full bg-[#eae6e800] border-[1px] p-3 ${theme === 'dark-mode' ? 'border-white' : 'border-black'}`}>
+          <button onClick={onClose} className={`cursor-pointer text-[14px] font-bold ${theme === 'dark-mode' ? 'text-white' : 'text-black'}`}>
             ✕
           </button>
         </div>

@@ -5,7 +5,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useEffect,useState,useContext } from 'react';
 
-export default function SelectToken({values,isTokenOut}) {
+export default function SelectToken({values,isTokenOut,theme}) {
 
   const { 
          currentAccount,tokenInAddress,tokenOutAddress,setTokenInAddress,setTokenOutAddress
@@ -54,7 +54,7 @@ useEffect(
   return (
     <div>
       <FormControl sx={{ m: 1, minWidth: 80 }} className='flex-1 '>
-        <InputLabel id={`${isTokenOut ? 'to-token-input-label':'from-token-input-label'}`} style={{color:'white'}}>
+        <InputLabel id={`${isTokenOut ? 'to-token-input-label':'from-token-input-label'}`} style={{color:theme==='dark-mode'?'white':'black'}}>
         {`${isTokenOut ? 'To':'From'}`}</InputLabel>
         <Select
           labelId={`${isTokenOut ? 'to-token-label':'from-token-label'}`}
@@ -64,18 +64,22 @@ useEffect(
           label={`${isTokenOut ? 'To':'From'}`}
           onChange={handleChange}
           sx={{
-              color: 'white',
+              color: theme === 'dark-mode' ? 'white': 'black',
               '& .MuiOutlinedInput-notchedOutline': {
                 borderColor: 'white',borderWidth: '3px'
               },
               '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'white',borderWidth: '3px'
+                borderColor:  theme === 'dark-mode' ?'white':'black',
+                borderWidth: '3px'
               },
               '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'white',borderWidth: '3px'
+                borderColor: theme === 'dark-mode' ?'white':'black',borderWidth: '3px'
+              },
+               ' .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme === 'dark-mode' ?'white':'black',borderWidth: '3px'
               },
               '& .MuiSelect-icon': {
-                color: 'white',
+                color:theme === 'dark-mode' ?'white':'black',
               },
             }}
         >

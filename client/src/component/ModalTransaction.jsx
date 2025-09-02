@@ -100,7 +100,7 @@ const handleSend = async() => {
       <div ref={modalRef}
         className={`p-6 rounded-lg shadow-xl w-[90vw] max-w-[700px] min-h-[40vh] max-h-[80vh] 
           overflow-y-auto relative 
-          ${theme === 'dark-mode' ? 'background-modal-dark-mode text-white' : 'background-modal-dark-mode text-gray-900'
+          ${theme === 'dark-mode' ? 'background-modal-dark-mode text-white' : 'background-modal-light-mode text-gray-900'
         }`}
       >
         <div className="flex flex-row justify-between">
@@ -109,10 +109,10 @@ const handleSend = async() => {
             style={{ fontSize: '40px' }}
             onClick={() => setShowModalSwap(true)}
           />
-        <div className={`flex justify-center items-center h-[17px] w-[17px] rounded-full 
-          ${theme === 'dark-mode' ? 'bg-gray-300' : 'bg-indigo-700'}`}>
-          <button onClick={onClose} className={`text-[14px] font-bold 
-            ${theme === 'dark-mode' ? 'text-black' : 'text-white'}`}>
+        <div className={`flex justify-center items-center h-[17px] w-[17px] rounded-full cursor-pointer
+          bg-[#eae6e800] border-[1px] p-3 ${theme === 'dark-mode' ? 'border-white' : 'border-black'}`}>
+          <button onClick={onClose} className={`text-[14px] font-bold cursor-pointer
+            ${theme === 'dark-mode' ? 'text-white' : 'text-black'}`}>
             ✕
           </button>
         </div>
@@ -122,14 +122,14 @@ const handleSend = async() => {
           <input
             value={addressReceive}
             type="text"
-            className="bg-transparent my-4 placeholder:text-white p-2 outline-none border-b text-sm font-light "
+            className={`bg-transparent my-4 ${theme === 'dark-mode' ? 'placeholder:text-white' : 'placeholder:text-black'} p-2 outline-none border-b text-sm font-light `}
             placeholder="Enter ETH address"
             onChange={handleAddressReceiveChange}
           />
           <input
             value={amount}
             type="text"
-            className="bg-transparent my-4 placeholder:text-white p-2 outline-none border-b text-sm font-light "
+            className={`bg-transparent my-4 ${theme === 'dark-mode' ? 'placeholder:text-white' : 'placeholder:text-black'} p-2 outline-none border-b text-sm font-light `}
             placeholder="Enter value"
             onChange={handleAmountChange}
           />
@@ -154,19 +154,20 @@ const handleSend = async() => {
             <button
             type="button"
             onClick={handleSend}
-            className="relative w-full h-[7vh] 
-            my-4 border border-[#3d4f7c] rounded-full bg-white overflow-hidden
+            className={`
+              relative w-full h-[7vh] 
+            my-4 border border-[#3d4f7c] rounded-full ${theme === 'dark-mode' ? 'bg-white' : 'bg-gray-700 text-white'} overflow-hidden
             cursor-pointer
             text-black
             font-light
-            "
+              `}
           >
            Make Transaction
           </button>
         )
      }
      <div className='flex flex-col items-end'>
-      <DescriptionIcon onClick={()=>window.location.replace('/transaction-history')} className='cursor-pointer'/>
+      <DescriptionIcon onClick={()=>window.location.replace('/transaction-history')} className={`cursor-pointer ${theme === 'dark-mode' ? 'text-white' : 'text-gray-700 '}`}/>
      </div>
     </div>
   </div>
