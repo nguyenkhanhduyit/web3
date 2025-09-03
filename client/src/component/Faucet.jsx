@@ -151,12 +151,13 @@ return (
 <div className={`${theme === 'dark-mode'?'text-white':'text-black'} flex flex-col gap-10 p-6 shadow-lg  lg:max-w-[50vw]  2xl:lg:max-w-[50vw] lg:mx-auto 2xl:mx-auto`}>
         
     <h1 className="text-3xl ">DIT Faucet</h1>
-    <p className='text-15px'>
+    <span className='text-15px'>
     Get 0.5 free tokens in Sepolia network sent directly to your wallet. 
     You can request one specific token or all available tokens at once.
     Brought to you by DIT Web3. 
-    </p>
     <a className='  break-words  w-full' href="https://cloud.google.com/application/web3/faucet/ethereum/sepolia">Go to page to get ETH Sepolia </a>
+    </span>
+    
         
     <FormControl sx={{ }}>
         <InputLabel id="token-label" sx={{ color: theme === 'dark-mode' ? 'white' : 'black' }}>
