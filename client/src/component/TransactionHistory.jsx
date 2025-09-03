@@ -115,7 +115,7 @@ const TransactionHistory = ({theme}) => {
       {
         currentAccount && !isLoading ? 
         (
-            currentAccount && !isLoading && transactions ? (
+            currentAccount && !isLoading && transactions.length>0 ? (
                 <>
           <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Transaction History</p>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
