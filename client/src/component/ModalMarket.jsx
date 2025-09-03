@@ -3,7 +3,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment'
 
 export default function ModalMarket({ theme,onClose }) {
-
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const [query, setQuery] = useState('')
     const [tokenList, setTokenList] = useState([])
     const [recentSearches, setRecentSearches] = useState([])
@@ -31,7 +31,7 @@ function formatPrice(price) {
 
 const fetchAllTokens = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/tokens/all')
+      const res = await fetch(`${BACKEND_URL}/api/tokens/all`)
       const data = await res.json()
       if (res.status !== 200 || !data.success) throw new Error()
       
