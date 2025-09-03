@@ -148,7 +148,7 @@ React.useEffect(() => {
 
     
 return (
-<div className={`${theme === 'dark-mode'?'text-white':'text-black'} flex flex-col gap-5 p-4 shadow-lg  lg:max-w-[50vw]  2xl:lg:max-w-[50vw] lg:mx-auto 2xl:mx-auto`}>
+<div className={`${theme === 'dark-mode'?'text-white':'text-black'} flex flex-col gap-5 p-6 shadow-lg  lg:max-w-[50vw]  2xl:lg:max-w-[50vw] lg:mx-auto 2xl:mx-auto`}>
         
     <h1 className="text-3xl ">DIT Faucet</h1>
     <p className='text-15px  break-words  w-full'>
