@@ -122,6 +122,26 @@ const Tutorial = ({ theme }) => {
               alt="Wallet created"
               className="mt-3 rounded-lg shadow-md"
             />
+            <img
+              src="/images/setup_metamask_10.png"
+              alt="Wallet created"
+              className="mt-3 rounded-lg shadow-md"
+            />
+            <img
+              src="/images/setup_metamask_11.png"
+              alt="Wallet created"
+              className="mt-3 rounded-lg shadow-md"
+            />
+            <img
+              src="/images/setup_metamask_12.png"
+              alt="Wallet created"
+              className="mt-3 rounded-lg shadow-md"
+            />
+            <img
+              src="/images/setup_metamask_13.png"
+              alt="Wallet created"
+              className="mt-3 rounded-lg shadow-md"
+            />
           </li>
 
           <li>

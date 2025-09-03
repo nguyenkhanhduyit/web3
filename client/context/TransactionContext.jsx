@@ -530,12 +530,18 @@ const faucetToken = async (tokenNameRequestFaucet) => {
     const signer = await getSigner();
     const userAddress = await signer.getAddress();
     
+    const network = await signer.provider.getNetwork();
+    if (network.chainId !== 11155111) {
+      return { state: 0, tx: 'Please switch to Sepolia network' };
+    }
     // Check if user has enough ETH for gas
     const hasEnoughEth = await checkEthBalance(userAddress);
     if (!hasEnoughEth) {
       return {state: 0, tx: 'Insufficient ETH balance for gas fees. Please add some ETH to your wallet.'};
     }
-    
+    if (!ethers.utils.isAddress(tokenData.tokenAddress)) {
+      return { state: 0, tx: `Invalid token address for ${tokenName}` };
+    }    
     const faucet = await createFaucetContract()
 
     if (!tokenNameRequestFaucet || tokenNameRequestFaucet.length === 0) {
@@ -560,7 +566,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
       // console.log('Time until next faucet:', timeUntilNext.toString());
     } catch (error) {
       // console.error('Error calling getTimeUntilNextFaucet:', error);
-      return {state: 0, tx: 'Error checking faucet cooldown: ' + error.message};
+      return {state: 0, tx: 'Error checking faucet cooldown'};
     }
  
     if (!timeUntilNext.eq(0)) {
@@ -648,11 +654,11 @@ const faucetToken = async (tokenNameRequestFaucet) => {
 
   } catch (error) {
     // console.error(`Error requesting ${selectedName}:`, error);
-    return {state:0, tx: `Error requesting faucet: ${error.message}`};
+    return {state:0, tx: `Error requesting faucet`};
   }
   } catch (error) {
     // console.error('Error in faucetToken function:', error);
-    return {state: 0, tx: 'Faucet error: ' + error.message};
+    return {state: 0, tx: 'Faucet error'};
   }
 }
 
