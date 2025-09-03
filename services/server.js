@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express()
 app.use(cors({
-  origin: ['http://localhost:5173','https://dit-web3.vercel.app/'], 
+  origin: true,
   credentials: true           
 }))
 app.use(bodyParser.json())
