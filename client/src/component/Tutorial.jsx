@@ -155,7 +155,7 @@ const Tutorial = ({ theme }) => {
             <img
               src="/images/useweb_2.png"
               alt="Confirm connection"
-              className="mt-3 rounded-lg shadow-md"
+              className="mt-3 rounded-lg shadow-md m-auto"
             />
           </li>
 
