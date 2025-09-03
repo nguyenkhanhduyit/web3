@@ -6,7 +6,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import ModalMarket from './ModalMarket'
 import ModalTransaction from './ModalTransaction';
-import logo from "../../images/logo.png";
+import logo from "/images/logo.png";
 
 
 const Navbar = ({ theme, setTheme }) => {
