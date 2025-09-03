@@ -155,7 +155,7 @@ return (
     Get 0.5 free tokens in Sepolia network sent directly to your wallet. 
     You can request one specific token or all available tokens at once.
     Brought to you by DIT Web3. 
-    <a className='break-words text-blue-700 w-full' href="https://cloud.google.com/application/web3/faucet/ethereum/sepolia"> Go to page to get ETH Sepolia </a>
+    <a className='break-words text-blue-700 w-full' href="https://cloud.google.com/application/web3/faucet/ethereum/sepolia"> To faucet get ETH Sepolia now. </a>
     </span>
     
         
