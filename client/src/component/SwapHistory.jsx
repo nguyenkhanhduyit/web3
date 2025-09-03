@@ -92,9 +92,10 @@ const SwapHistory = ({theme}) => {
      ${windowSize.width < 1500 ? 'min-h-[60vh]' : 'min-h-[50vh]'}`}>
       
       {
-        currentAccount && !isLoading ? 
+        currentAccount  && !isLoading ? 
         (
-          <>
+          currentAccount && swaps.length > 0 && !isLoading ? (
+            <>
           <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Swap History</p>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
               {currentSwaps.map((history, i) => (
@@ -122,6 +123,12 @@ const SwapHistory = ({theme}) => {
               </div>
             )}
           </>
+          )
+          :(
+            <>
+            <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>No have swap history yet.</p>
+            </>
+          )
         ) : !currentAccount && !isLoading ?
         (
           <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Please connect your wallet to get swaps history.</p>

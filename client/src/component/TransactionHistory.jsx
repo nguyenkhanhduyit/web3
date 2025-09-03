@@ -115,7 +115,8 @@ const TransactionHistory = ({theme}) => {
       {
         currentAccount && !isLoading ? 
         (
-          <>
+            currentAccount && !isLoading && transactions ? (
+                <>
           <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Transaction History</p>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
               {currentTransactions.map((transaction, i) => (
@@ -143,6 +144,9 @@ const TransactionHistory = ({theme}) => {
               </div>
             )}
           </>
+            ): (
+              <p className={` text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>No have transaction history yet.</p>
+            )
         ) : !currentAccount && !isLoading ?
         (
           <p className={`text-2xl ${theme === 'dark-mode'? 'text-white':'text-gray-700'}`}>Please connect your wallet to get transaction history.</p>
