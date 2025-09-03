@@ -539,9 +539,7 @@ const faucetToken = async (tokenNameRequestFaucet) => {
     if (!hasEnoughEth) {
       return {state: 0, tx: 'Insufficient ETH balance for gas fees. Please add some ETH to your wallet.'};
     }
-    if (!ethers.utils.isAddress(tokenData.tokenAddress)) {
-      return { state: 0, tx: `Invalid token address for ${tokenName}` };
-    }    
+   
     const faucet = await createFaucetContract()
 
     if (!tokenNameRequestFaucet || tokenNameRequestFaucet.length === 0) {
