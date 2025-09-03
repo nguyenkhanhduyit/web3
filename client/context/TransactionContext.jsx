@@ -18,8 +18,6 @@ import PriceOracle from "../utils/swap/info/abi/PriceOracle.json";
 
 import TokenABI from "../utils/swap/info/abi/Token.json"
 
-import dotenv from 'dotenv';
-dotenv.config();
 
 export const TransactionContext = React.createContext()
 
@@ -37,7 +35,7 @@ export const TransactionsProvider = ({ children }) => {
   const [tokenInAddress, setTokenInAddress] = useState('')
   const [tokenOutAddress, setTokenOutAddress] = useState('')
 
-  const BACKEND_URL = process.env.BACKEND_URL
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const getEthereumProvider = () => {
     const { ethereum } = window
