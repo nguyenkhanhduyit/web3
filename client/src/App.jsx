@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFound from './component/NotFound'; 
 import Faucet from './component/Faucet';
 import SwapHistory from './component/SwapHistory';
+import Tutorial from './component/Tutorial';
 
 function App() {
 
@@ -46,7 +47,8 @@ return (
         } />
         <Route path='/faucet' element={<Faucet theme={theme}/>}/>
         <Route path="/transaction-history" element={<TransactionHistory theme={theme}/>} />
-         <Route path="/swap-history" element={<SwapHistory theme={theme}/>} />
+        <Route path="/swap-history" element={<SwapHistory theme={theme}/>} />
+        <Route path="/tutorial" element={<Tutorial theme={theme}/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </main>
