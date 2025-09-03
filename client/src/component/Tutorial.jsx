@@ -48,7 +48,7 @@ const Tutorial = ({ theme }) => {
             <img
               src="/images/setup_metamask_1.png"
               alt="Accept terms"
-              className="mt-3 rounded-lg shadow-md"
+              className="mt-3 rounded-lg shadow-md m-auto"
             />
           </li>
 
