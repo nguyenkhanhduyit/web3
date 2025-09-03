@@ -95,7 +95,7 @@ const Tutorial = ({ theme }) => {
             <img
               src="/images/setup_metamask_6.png"
               alt="Secret phrase backup"
-              className="mt-3 rounded-lg shadow-md"
+              className="mt-3 rounded-lg shadow-md m-auto"
             />
           </li>
 
@@ -125,22 +125,22 @@ const Tutorial = ({ theme }) => {
             <img
               src="/images/setup_metamask_10.png"
               alt="Wallet created"
-              className="mt-3 rounded-lg shadow-md"
+              className="mt-3 rounded-lg shadow-md m-auto"
             />
             <img
               src="/images/setup_metamask_11.png"
               alt="Wallet created"
-              className="mt-3 rounded-lg shadow-md"
+              className="mt-3 rounded-lg shadow-md m-auto"
             />
             <img
               src="/images/setup_metamask_12.png"
               alt="Wallet created"
-              className="mt-3 rounded-lg shadow-md"
+              className="mt-3 rounded-lg shadow-md m-auto"
             />
             <img
               src="/images/setup_metamask_13.png"
               alt="Wallet created"
-              className="mt-3 rounded-lg shadow-md"
+              className="mt-3 rounded-lg shadow-md m-auto"
             />
           </li>
 
