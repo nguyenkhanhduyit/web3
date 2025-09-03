@@ -37,7 +37,7 @@ const Tutorial = ({ theme }) => {
               and install the extension.
             </p>
             <img
-              src="../images/install_metamask1.png"
+              src="/images/install_metamask1.png"
               alt="Install MetaMask"
               className="mt-3 rounded-lg shadow-md"
             />
