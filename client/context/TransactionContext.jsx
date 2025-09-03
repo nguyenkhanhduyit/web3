@@ -18,7 +18,8 @@ import PriceOracle from "../utils/swap/info/abi/PriceOracle.json";
 
 import TokenABI from "../utils/swap/info/abi/Token.json"
 
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const TransactionContext = React.createContext()
 
@@ -35,6 +36,8 @@ export const TransactionsProvider = ({ children }) => {
 
   const [tokenInAddress, setTokenInAddress] = useState('')
   const [tokenOutAddress, setTokenOutAddress] = useState('')
+
+  const BACKEND_URL = process.env.BACKEND_URL
 
   const getEthereumProvider = () => {
     const { ethereum } = window
@@ -110,13 +113,13 @@ export const TransactionsProvider = ({ children }) => {
       const signer = await getSigner()
       const address = await signer.getAddress()
 
-      const { data } = await axios.post('http://localhost:3001/auth/message', {
+      const { data } = await axios.post(`${BACKEND_URL}/auth/message`, {
         accountAddress: address,
       })
 
       const signature = await signer.signMessage(data.message)
 
-      await axios.post('http://localhost:3001/auth/verify', {
+      await axios.post(`${BACKEND_URL}/auth/verify`, {
         address,
         message: data.message,
         signature,
@@ -131,7 +134,7 @@ export const TransactionsProvider = ({ children }) => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:3001/auth/logout', {}, {
+      await axios.post(`${BACKEND_URL}/auth/logout`, {}, {
         withCredentials: true,
       })
       setCurrentAccount('')
@@ -147,7 +150,7 @@ export const TransactionsProvider = ({ children }) => {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const res = await axios.get('http://localhost:3001/auth/me', {
+        const res = await axios.get(`${BACKEND_URL}/auth/me`, {
           withCredentials: true,
         })
         setCurrentAccount(res.data.address)
