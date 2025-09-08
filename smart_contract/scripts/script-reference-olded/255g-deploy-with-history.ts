@@ -1,13 +1,13 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  console.log("🚀 Deploying contracts with history tracking features...");
+  console.log("Deploying contracts with history tracking features...");
 
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with account:", deployer.address);
 
   // Deploy tokens
-  console.log("\n📝 Deploying tokens...");
+  console.log("\nDeploying tokens...");
   const Token = await ethers.getContractFactory("Token");
   
   const bitcoin = await Token.deploy("Bitcoin", "BTC", 8);
@@ -23,28 +23,28 @@ async function main() {
   console.log("Tether USD deployed to:", tether.address);
 
   // Deploy SimpleDEX
-  console.log("\n🔄 Deploying SimpleDEX...");
+  console.log("\nDeploying SimpleDEX...");
   const SimpleDEX = await ethers.getContractFactory("SimpleDEX");
   const simpleDEX = await SimpleDEX.deploy();
   await simpleDEX.deployed();
   console.log("SimpleDEX deployed to:", simpleDEX.address);
 
   // Deploy Faucet
-  console.log("\n🚰 Deploying Faucet...");
+  console.log("\nDeploying Faucet...");
   const Faucet = await ethers.getContractFactory("Faucet");
   const faucet = await Faucet.deploy();
   await faucet.deployed();
   console.log("Faucet deployed to:", faucet.address);
 
   // Add tokens to faucet
-  console.log("\n➕ Adding tokens to faucet...");
+  console.log("\nAdding tokens to faucet...");
   await faucet.addToken(bitcoin.address);
   await faucet.addToken(ethereum.address);
   await faucet.addToken(tether.address);
-  console.log("✅ All tokens added to faucet");
+  console.log("All tokens added to faucet");
 
   // Mint tokens to faucet for distribution
-  console.log("\n💰 Minting tokens to faucet...");
+  console.log("\nMinting tokens to faucet...");
   const faucetAmounts = {
     bitcoin: ethers.utils.parseUnits("1000", 8),    // 1000 BTC
     ethereum: ethers.utils.parseEther("100000"),    // 100,000 ETH
@@ -54,10 +54,10 @@ async function main() {
   await bitcoin.mint(faucet.address, faucetAmounts.bitcoin);
   await ethereum.mint(faucet.address, faucetAmounts.ethereum);
   await tether.mint(faucet.address, faucetAmounts.tether);
-  console.log("✅ Tokens minted to faucet");
+  console.log("Tokens minted to faucet");
 
   // Add initial liquidity to DEX
-  console.log("\n💧 Adding initial liquidity to DEX...");
+  console.log("\nAdding initial liquidity to DEX...");
   const initialLiquidity = {
     bitcoin: ethers.utils.parseUnits("100", 8),     // 100 BTC
     ethereum: ethers.utils.parseEther("10000"),     // 10,000 ETH
@@ -96,10 +96,10 @@ async function main() {
     initialLiquidity.tether
   );
 
-  console.log("✅ Initial liquidity added to DEX");
+  console.log("Initial liquidity added to DEX");
 
   // Test history tracking features
-  console.log("\n🧪 Testing history tracking features...");
+  console.log("\nTesting history tracking features...");
 
   // Test faucet history
   console.log("Testing faucet history...");
@@ -107,7 +107,7 @@ async function main() {
 
   // Request single token
   await faucet.connect(testUser).requestFaucet(bitcoin.address);
-  console.log("✅ Single token faucet completed");
+  console.log("Single token faucet completed");
 
   // Check faucet history
   const faucetCount = await faucet.getUserFaucetCount(testUser.address);
@@ -140,7 +140,7 @@ async function main() {
     ethers.utils.parseEther("100")
   );
 
-  console.log("✅ Swaps completed");
+  console.log("Swaps completed");
 
   // Check swap history
   const swapCount = await simpleDEX.getUserSwapCount(testUser.address);
@@ -150,7 +150,7 @@ async function main() {
   console.log("Swap history entries:", swapHistory.length);
 
   // Display detailed history
-  console.log("\n📊 Detailed History Summary:");
+  console.log("\nDetailed History Summary:");
   console.log("=== FAUCET HISTORY ===");
   for (let i = 0; i < faucetHistory.length; i++) {
     const entry = faucetHistory[i];
@@ -196,16 +196,16 @@ async function main() {
     }
   };
 
-  console.log("\n📋 Deployment Summary:");
+  console.log("\nDeployment Summary:");
   console.log(JSON.stringify(deploymentInfo, null, 2));
 
-  console.log("\n🎉 Deployment completed successfully!");
+  console.log("\nDeployment completed successfully!");
   console.log("All contracts now support history tracking features.");
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("❌ Deployment failed:", error);
+    console.error("Deployment failed:", error);
     process.exit(1);
-  }); 
+  });

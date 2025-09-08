@@ -1,7 +1,7 @@
 {
-  "faucetAddress": "0xc93948B5874d5E1700B9755Ff77e823bBD6a695C",
-  "deployedAt": "2025-08-31T14:10:02.576Z",
-  "blockNumber": 9104002,
+  "faucetAddress": "0x357127CedA3984a332208231782900027893fb7A",
+  "deployedAt": "2025-09-07T23:16:13.466Z",
+  "blockNumber": 9156166,
   "deployer": "0x45f10654522FF65646Ea31Ef7673AE0F02972505",
   "supportedTokens": [
     "Bitcoin",
@@ -13,22 +13,22 @@
   "addedTokens": [
     {
       "name": "Bitcoin",
-      "address": "0x235AE061F8A0b3924bD3272c2118A2E14bf584A9",
+      "address": "0xca87dd8E72daf02178b2368132610E36c86681e6",
       "symbol": "BTC",
       "decimals": 8
     },
     {
       "name": "Ethereum",
-      "address": "0xF482a0D68D298729d554e7C5C2160564B131875e",
+      "address": "0xcAAAF2a920c517526184329239Bef43C8539738b",
       "symbol": "ETH",
       "decimals": 18
     },
     {
       "name": "Tether USD",
-      "address": "0x7a39FA885B86a8a4997Cd233B5301910E9f09b80",
+      "address": "0xc5Eb9FbA85B00333Fa64543790528F15f06D05f7",
       "symbol": "USDT",
       "decimals": 6
     }
   ],
-  "tokensAddedAt": "2025-08-31T14:17:52.162Z"
+  "tokensAddedAt": "2025-09-07T23:17:27.366Z"
 }

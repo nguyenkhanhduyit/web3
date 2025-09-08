@@ -1,23 +1,17 @@
 {
   "Bitcoin": {
-    "status": "approved",
-    "amount": "40000.0",
-    "transactionHash": "0xb344563dc80ded2ab5dce8ae7303108ad063de07acf4e1c34995b7106ce8cc47",
-    "gasUsed": "45950",
-    "timestamp": "2025-08-18T15:25:37.379Z"
+    "status": "already_approved",
+    "currentAllowance": "40000.0",
+    "timestamp": "2025-09-07T23:05:23.602Z"
   },
   "Ethereum": {
-    "status": "approved",
-    "amount": "1200000.0",
-    "transactionHash": "0x6d77049969e516b0ff89782f889447f09c04a2e65159f89bd16c5ad0c2f9bfce",
-    "gasUsed": "45974",
-    "timestamp": "2025-08-18T15:25:50.976Z"
+    "status": "already_approved",
+    "currentAllowance": "1200000.0",
+    "timestamp": "2025-09-07T23:05:23.824Z"
   },
   "Tether USD": {
-    "status": "approved",
-    "amount": "4500000000.0",
-    "transactionHash": "0x9587e42fb244f3b601814ecfef8759bb8ea9d71e79fc512e5a6d7f69e81c2125",
-    "gasUsed": "45962",
-    "timestamp": "2025-08-18T15:28:14.149Z"
+    "status": "already_approved",
+    "currentAllowance": "4500000000.0",
+    "timestamp": "2025-09-07T23:05:24.051Z"
   }
 }

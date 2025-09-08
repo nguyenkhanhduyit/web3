@@ -25,9 +25,9 @@ async function main() {
       value: txValue
     });
     await tx.wait();
-    console.log("✅ Successful transaction made from", user1.address, "to", user2.address);
+    console.log("Successful transaction made from", user1.address, "to", user2.address);
   } catch (error) {
-    console.log("❌ Transaction failed:", error);
+    console.log("Transaction failed:", error);
   }
 
   // Test 2: Get transaction count
@@ -50,7 +50,7 @@ async function main() {
       console.log("  State:", tx.state); // 0=Pending, 1=Success, 2=Failed
     }
   } catch (error) {
-    console.log("❌ Error getting transactions:", error);
+    console.log("Error getting transactions:", error);
   }
 
   // Test 4: Test transaction with invalid value (too low)
@@ -61,9 +61,9 @@ async function main() {
       value: lowValue
     });
     await tx.wait();
-    console.log("❌ Transaction should have failed but succeeded");
+    console.log("Transaction should have failed but succeeded");
   } catch (error) {
-    console.log("✅ Transaction correctly failed with low value");
+    console.log("Transaction correctly failed with low value");
   }
 
   // Test 5: Test transaction with invalid value (too high)
@@ -74,9 +74,9 @@ async function main() {
       value: highValue
     });
     await tx.wait();
-    console.log("❌ Transaction should have failed but succeeded");
+    console.log("Transaction should have failed but succeeded");
   } catch (error) {
-    console.log("✅ Transaction correctly failed with high value");
+    console.log("Transaction correctly failed with high value");
   }
 
   // Test 6: Test transaction with invalid receiver address
@@ -86,9 +86,9 @@ async function main() {
       value: txValue
     });
     await tx.wait();
-    console.log("❌ Transaction should have failed but succeeded");
+    console.log("Transaction should have failed but succeeded");
   } catch (error) {
-    console.log("✅ Transaction correctly failed with invalid receiver");
+    console.log("Transaction correctly failed with invalid receiver");
   }
 
   // Test 7: Test pending withdrawals
@@ -102,9 +102,9 @@ async function main() {
     try {
       const tx = await transactions.connect(user1).withdrawFailed();
       await tx.wait();
-      console.log("✅ Withdrawal successful");
+      console.log("Withdrawal successful");
     } catch (error) {
-      console.log("❌ Withdrawal failed:", error);
+      console.log("Withdrawal failed:", error);
     }
   } else {
     console.log("\n8. No pending withdrawals to test");
@@ -118,4 +118,4 @@ main()
   .catch((error) => {
     console.error(error);
     process.exit(1);
-  }); 
+  });
