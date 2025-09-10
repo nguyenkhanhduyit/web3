@@ -40,7 +40,8 @@ export const TransactionsProvider = ({ children }) => {
   const getEthereumProvider = () => {
     const { ethereum } = window
     if (!ethereum){
-      alert('MetaMask uninstalled yet.')
+      // alert('MetaMask uninstalled yet.')
+      console.error('MetaMask uninstalled yet.')
       return null
     }
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -126,7 +127,8 @@ export const TransactionsProvider = ({ children }) => {
       setCurrentAccount(address)
     } catch (err) {
       console.error("Login error:", err);
-      alert(err.response?.data?.error || "User refused login request.");
+      // alert(err.response?.data?.error || "User refused login request.");
+     console.error(err.response?.data?.error || "User refused login request.");
     }
   }
 
@@ -140,7 +142,8 @@ export const TransactionsProvider = ({ children }) => {
       window.location.reload()
     } catch (err) {
       console.error("Logout error:", err);
-      alert(err.response?.data?.error || "Error when logout.");
+      // alert(err.response?.data?.error || "Error when logout.");
+      console.error(err.response?.data?.error || "Error when logout.");
     }
   }
   
@@ -300,10 +303,12 @@ export const TransactionsProvider = ({ children }) => {
       setIsLoading(true)
       await tx.wait()
       setIsLoading(false)
-      alert("Rút tiền thành công!")
+      // alert("Rút tiền thành công!")
+      console.log("Rút tiền thành công!")
     } catch (err) {
       console.error(err)
-      alert("Không thể rút tiền: " + err.message)
+      // alert("Không thể rút tiền: " + err.message)
+      console.error("Không thể rút tiền: " + err.message)
     }
   }
 
@@ -405,7 +410,7 @@ const estimateAmountOut = async (amount) => {
     }
     if (amountInSmallestUnits.isZero()) return null;
 
-    // Ước lượng output dựa trên AMM (dùng hàm trong contract để tránh sai số/overflow)
+    // Ước lượng output dựa trên AMM 
     let outBN;
     try {
       outBN = await swapDex.getAmountOut(
