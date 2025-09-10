@@ -42,6 +42,7 @@ export const TransactionsProvider = ({ children }) => {
     if (!ethereum){
       // alert('MetaMask uninstalled yet.')
       console.error('MetaMask uninstalled yet.')
+      window.location.reload()
       return null
     }
     const provider = new ethers.providers.Web3Provider(ethereum);
@@ -129,6 +130,7 @@ export const TransactionsProvider = ({ children }) => {
       console.error("Login error:", err);
       // alert(err.response?.data?.error || "User refused login request.");
      console.error(err.response?.data?.error || "User refused login request.");
+     window.location.reload()
     }
   }
 
@@ -144,6 +146,7 @@ export const TransactionsProvider = ({ children }) => {
       console.error("Logout error:", err);
       // alert(err.response?.data?.error || "Error when logout.");
       console.error(err.response?.data?.error || "Error when logout.");
+      window.location.reload()
     }
   }
   
