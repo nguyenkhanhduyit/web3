@@ -246,14 +246,14 @@ const RecentSearch = ({ symbol, icon, onClick }) => {
 
 const LoadingTokenCard = () => {
   return (
-    <div className={`animate-pulse mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 'bg-[#eae6e800]'`}>
+    <div className={`mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 'bg-[#eae6e800]'`}>
       <div className='flex flex-col'>
-        <div className='w-[25px] h-[25px] bg-white rounded-full m-1' />
-        <div className='w-[25px] h-[25px] bg-white rounded-full m-1' />
+        <div className='w-[25px] h-[25px] bg-white rounded-full m-1 skeleton' />
+        <div className='w-[25px] h-[25px] bg-white rounded-full m-1 skeleton' />
       </div>
       <div className='flex flex-col'>
-        <div className='bg-white w-[20vw] h-[3vh] rounded-2xl m-1' />
-        <div className='bg-white w-[12vw] h-[3vh] rounded-2xl m-1' />
+        <div className='bg-white w-[20vw] h-[3vh] rounded-2xl m-1 skeleton' />
+        <div className='bg-white w-[12vw] h-[3vh] rounded-2xl m-1 skeleton' />
       </div>
     </div>
   )

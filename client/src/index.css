@@ -163,3 +163,27 @@ input[type="number"] {
     radial-gradient(at 50% 50%,  rgb(16, 57, 77) 0, transparent 70%), 
     radial-gradient(at 100% 100%,  rgb(176, 29, 46) 0, transparent 40%);
 } 
+
+
+/* Thêm vào global CSS */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #e2e2e2;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150px;
+  height: 100%;
+  width: 150px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
