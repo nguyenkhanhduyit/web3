@@ -246,18 +246,19 @@ const RecentSearch = ({ symbol, icon, onClick }) => {
 
 const LoadingTokenCard = () => {
   return (
-    <div className={`mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 'bg-[#eae6e800]'`}>
-      <div className='flex flex-col'>
-        <div className='w-[25px] h-[25px] bg-white rounded-full m-1 skeleton' />
-        <div className='w-[25px] h-[25px] bg-white rounded-full m-1 skeleton' />
+    <div className="mr-10 flex flex-row justify-start items-center w-full h-auto rounded-[7px] m-2 overflow-auto p-1 bg-[#eae6e800]">
+      <div className="flex flex-col">
+        <div className="w-[25px] h-[25px] rounded-full m-1 skeleton" />
+        <div className="w-[25px] h-[25px] rounded-full m-1 skeleton" />
       </div>
-      <div className='flex flex-col'>
-        <div className='bg-white w-[20vw] h-[3vh] rounded-2xl m-1 skeleton' />
-        <div className='bg-white w-[12vw] h-[3vh] rounded-2xl m-1 skeleton' />
+      <div className="flex flex-col flex-1">
+        <div className="w-[20vw] h-[3vh] rounded-2xl m-1 skeleton" />
+        <div className="w-[12vw] h-[3vh] rounded-2xl m-1 skeleton" />
       </div>
     </div>
   )
 }
+
 
 return (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#eae6e800]">
